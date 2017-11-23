@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>search page</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+	</head>
+
+	<body>
+		
+		<input type="search" id="searchInput" name="searchInput" placeholder="输入查询内容" />
+		<div id="mapDiv" style="position:absolute;width:1024px; height:768px"></div>
+		
+		<script src="../../js/mui.min.js"></script>
+		<script type="text/javascript" src="http://api.tianditu.com/api?v=4.0"></script>
+		<script type="text/javascript">
+			mui.init();
+			var map;
+	        var zoom = 12;
+	        map = new T.Map('mapDiv');
+	        map.centerAndZoom(new T.LngLat(121.50969, 31.24940), zoom);
+		</script>
+	</body>
+
+</html>

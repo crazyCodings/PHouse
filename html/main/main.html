@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html class="mui-fullscreen">
+	
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>主菜单</title>
+		<link href="../../css/mui.css" rel="stylesheet" />
+		<link href="../../css/style.css" rel="stylesheet" />
+		<style type="text/css">
+			.mui-content {
+				background-image: url(../../img/drawable/icloginmainbk.png);
+				background-size: 100% ;
+				height: 100%;
+			}
+			.menu_div {height: 10%;}
+			.menu_div div > a {float: right;margin: 5% 5% 0 0;}
+			
+			.main_div {padding: 10% 10% ;}
+			/*图标div统一样式*/
+			.img_div {float: left; padding: 20px;padding-left: 40px; }
+			.img_div img{width: 100px;height: 100px;}
+			.img_div label{color: antiquewhite; font-size: large; padding: 10px ;}
+			
+			.img_div_small {float: left; padding: 20px;padding-left: 170px; }
+			.img_div_small img{width: 60px;height: 60px;}
+			.img_div_small label{color: antiquewhite; font-size: medium; padding: 5px ;}
+		</style>
+	</head>
+	<body>
+		<div class="mui-content">
+			<div id="menu_div" class="menu_div">
+				<div class="mui-input-row">
+					<a  id="menubtn"  >menu</a>
+					<a  id="userinfo" >username</a>
+				</div>
+			</div>
+			<div id="main_div" class="main_div">
+				<div>
+					<div class="img_div">
+						<div><img id="img_shImmigrant" src="../../img/drawable/icmain_colloctin.png" /></div>
+						<label>来沪人员</label>
+					</div>
+					<div class="img_div">
+						<div><img id="img_psfthr" src="../../img/drawable/icmain_colloctout.png" /></div>
+						<label>人户分离</label>
+					</div>
+					<div class="img_div">
+						<div><img id="img_multimeter" src="../../img/drawable/icmain_queryall.png" /></div>
+						<label>万用表</label>
+					</div>
+					<div class="img_div">
+						<div><img id="img_copylist" src="../../img/drawable/icmain_querylab.png" /></div>
+						<label>抄告单</label>
+					</div>
+				</div>
+				<div>
+					<div class="img_div_small">
+						<div><img id="img_statistics" src="../../img/drawable/icmain_rptwork.png" /></div>
+						<label>工作量</label>
+					</div>
+					<div class="img_div_small">
+						<div><img id="img_notice" src="../../img/drawable/icmain_colloctnotice.png" /></div>
+						<label>通知</label>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="../../js/mui.js"></script>
+		<script src="../../js/mui.enterfocus.js"></script>
+		<script src="../../js/app.js"></script>
+		<script>
+			(function($, doc) {
+				$.init({
+					statusBarBackground: '#f7f7f7'
+				});
+				$.plusReady(function() {
+					plus.screen.lockOrientation("landscape-primary");
+					//document.getElementById("img_shImmigrant")
+					mui(".img_div, .img_div_small").on('tap','.img_div div, .img_div_small div', function(){
+						var subname = this.firstElementChild.id;
+						if( subname==null || subname=="") {
+							return;
+						}
+						if ( subname.startsWith("img_") ) {
+				        	subname = subname.substr(4);
+				        }
+				        //console.log(subname);
+				        var tips = "";
+				        switch (subname){
+				        	case "shImmigrant": tips = "来沪人员";break;
+				        	case "psfthr": tips = "人户分离";break;
+				        	case "multimeter": tips = "万用表";break;
+				        	case "copylist": tips = "抄告单";break;
+				        	case "statistics": tips = "工作量";break;
+				        	case "notice": tips = "通知";break;
+				        	default:
+				        		break;
+				        }
+				        mui.toast(tips);
+					});
+				});
+			}(mui, document));
+		</script>
+	</body>
+</html>

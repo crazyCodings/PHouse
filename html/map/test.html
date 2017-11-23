@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8" />
+		<title>HELLO WORLD</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.min.css" rel="stylesheet" />
+	</head>
+
+	<body onLoad="onLoad()">
+		<div id="mapDiv" style="position:absolute;width:500px; height:400px"></div>
+
+		<script type="text/javascript" src="http://api.tianditu.com/api?v=4.0"></script>
+		<script>
+			var map;
+			var zoom = 12;
+
+			function onLoad() {
+				map = new T.Map('mapDiv');
+				map.centerAndZoom(new T.LngLat(121.50969, 31.24940), zoom);
+			}
+		</script>
+	</body>
+
+</html>
