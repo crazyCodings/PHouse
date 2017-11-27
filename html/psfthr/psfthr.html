@@ -12,17 +12,17 @@
 			.navigate_div h1{color: #ffffff;font-size: x-large;}
 			
 			.mui-content{background-color: white;}
+			.mui-content input{height: 35px;border-radius: 15px;}
 			.content_div{width: 90%;height: 250px;background-color: #1ea3de;margin: 5%;margin-bottom:0px;border-radius:10px;}
 			.content_div div{float: left;}
 			
-			.baseinfo_div{width: 60%;height:300px;}
-			.baseinfo_div div:first-child{margin-top: 20px;}
-			.baseinfo_div input{height: 35px;border-radius: 15px;}
+			.baseinfo_div{width: 100%;height:300px;}
+			.baseinfo_div div{margin: 20px 20px 0 20px;width: 90%;}
+			.baseinfo_div label{float:left;margin-top: 30px;width: 90px;color: white;}
+			.baseinfo_div input{float:left;margin: 20px 0 0 0;width: 250px !important;}
 			
-			.baseinfo_div label{color: white;}
-			.input_first{margin-left: 50px;width: 90px !important;} 		
-			.input_second {margin-left: 10px;width: 190px !important;}
-			.input_fourth{margin-left:18px;width:366px !important;}
+			.button_div{margin-left: 180px;}
+			.button_div input{width: 200px;margin-left: 20px;background-color:#1ea3de;border: 0;}
 		</style>
 	</head>
 
@@ -35,23 +35,23 @@
 				<div id="baseinfo_div" class="baseinfo_div">
 					<div>
 						<label>姓名</label>
-						<input type="text" name="username" class="input_first" value="" />
+						<input type="text" name="username" value="" />
 						<label>身份证号</label>
-						<input type="text" name="IDCard" id="IDCard" class="input_second" value="" />
+						<input type="text" name="IDCard" id="IDCard" value="" />
 					</div>
 					<div id="">
 						<label>居住原因</label>
-						<input type="text" name="username" class="input_first" class="mui-input" value="" />
+						<input type="text" name="username"value="" />
 						<label>与房主关系</label>
-						<input type="text" name="IDCard" id="IDCard" class="input_second" value="" />
+						<input type="text" name="IDCard" id="IDCard" value="" />
 					</div>
 					<div id="">
 						<label>联系方式</label>
-						<input type="text" name="username" class="input_fifth" value="" />
+						<input type="text" name="username"value="" />
 					</div>
 				</div>
 			</div>
-			<div id="">
+			<div class="button_div">
 				<input type="submit" name="submit" id="submit" value="提交" />
 				<input type="reset" name="reset" id="reset" value="重置" />
 			</div>

@@ -1,0 +1,100 @@
+<!doctype html>
+<html class="mui-fullscreen">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>拓展信息</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.css" rel="stylesheet" />
+		<link href="../../css/style.css" rel="stylesheet" />
+		<style type="text/css">
+			.navigate_div{padding-right: 15px;background-color: #1ea3de;}
+			.navigate_div h1{color: #ffffff;font-size: x-large;}
+			
+			.mui-content{background-color: white;}
+			.mui-content input{height: 35px;border-radius: 15px;}
+			.content_div{width: 90%;height: 400px;background-color: #1ea3de;margin: 5%;margin-bottom:0px;border-radius:10px;}
+			.content_div div{float: left;}
+			
+			.baseinfo_div{width: 100%;height:300px;}
+			.baseinfo_div label{float:left;margin: 20px 0 0 20px;text-align: right;padding-right: 5px; width: 100px;color: white;}
+			.baseinfo_div input{float:left;margin: 20px 0 0 0;width: 250px !important;}
+			
+			.button_div{margin:10px 0 5px 180px;}
+			.button_div input{width: 200px;margin-left: 150px;background-color:#1ea3de;border: 0;}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav navigate_div">
+			<h1 class="mui-title">拓展信息</h1>
+		</header>
+		<div class="mui-content">
+			<div class="content_div" >
+				<div id="baseinfo_div" class="baseinfo_div">
+					<div>
+						<div>
+							<label>姓名</label>
+							<input type="text" name="username" value="" />
+							<label>身份证号</label>
+							<input type="text" name="IDCard" id="IDCard" value="" />
+						</div>
+						<div id="">
+							<label>性别</label>
+							<input type="text" name="username"value="" />
+							<label>绰号</label>
+							<input type="text" name="IDCard" id="IDCard" value="" />
+						</div>
+						<div id="">
+							<label>聋哑人聚集</label>
+							<input type="text" name="username"value="" />
+							<label>宗教信仰</label>
+							<input type="text" name="IDCard" id="IDCard" value="" />
+						</div>
+						<div id="">
+							<label>残、特人员</label>
+							<input type="text" name="username"value="" />
+							<label>特种职业</label>
+							<input type="text" name="IDCard" id="IDCard" value="" />
+						</div>
+						<div id="">
+							<label>非法营运人员</label>
+							<input type="text" name="username"value="" />
+							<label>是否无业</label>
+							<input type="text" name="" id="" value="" />
+						</div>
+						<div id="">
+							<label>14-60岁单身居住</label>
+							<input type="text" name="username"value="" />
+							<label>是否具有上网条件</label>
+							<input type="text" name="" id="" value="" />
+						</div>
+						<div id="">
+							<label>上网虚拟身份类型</label>
+							<input type="text" name="username"value="" />
+							<label>上网虚拟身份号码</label>
+							<input type="text" name="" id="" value="" />
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="button_div">
+				<input type="submit" name="submit" id="submit" value="确认" />
+			</div>
+		</div>
+		<script src="../../js/mui.js"></script>
+		<script src="../../js/mui.enterfocus.js"></script>
+		<script src="../../js/app.js"></script>
+		<script>
+			(function($, doc) {
+				$.init({
+					statusBarBackground: '#f7f7f7'
+				});
+				$.plusReady(function() {
+					plus.screen.lockOrientation("landscape-primary");
+				});
+			}(mui, document));
+		</script>
+	</body>
+
+</html>
