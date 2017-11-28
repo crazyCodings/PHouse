@@ -8,21 +8,14 @@
 		<link href="../../css/mui.css" rel="stylesheet" />
 		<link href="../../css/style.css" rel="stylesheet" />
 		<style type="text/css">
-			.navigate_div{padding-right: 15px;background-color: #1ea3de;}
-			.navigate_div h1{color: #ffffff;font-size: x-large;}
-			
-			.mui-content{background-color: white;}
-			.mui-content input{height: 35px;border-radius: 15px;}
-			.content_div{width: 90%;height: 750px;background-color: #1ea3de;margin: 5%;margin-bottom:0px;border-radius:10px;}
-			.content_div div{float: left;}
 			
 			.baseinfo_div{width: 100%;height:300px;}
-			.baseinfo_div label{float:left;margin-top: 30px;text-align: right;padding-right: 5px; width: 90px;color: white;}
-			.baseinfo_div input{float:left;margin: 20px 0 0 0;width: 150px !important;}
+			.baseinfo_div label{margin: 30px 0 0 0;width: 90px;}
+			.baseinfo_div input{width: 150px !important;}
+			
 			.baseinfo_div div:first-child{width: 480px;}
-			.baseinfo_div > div:nth-child(2){width: calc(100% - 480px - 40px);margin: 20px;}
-			.baseinfo_div > div:nth-child(2) img{width: 70%;margin-left: 30px;}
-			.baseinfo_div > div:nth-child(2) > input{margin-left: 40px;}
+			.baseinfo_div .img_div{width: calc(100% - 480px - 40px);margin: 20px;}
+			.baseinfo_div .img_div div{width: 100%;}
 			
 			.census_register_div{margin-left: 10px;}
 			.census_register_div label{float:left;margin-top: 30px;text-align: right;padding-right: 5px; width: 90px;color: white;}
@@ -30,14 +23,11 @@
 			.census_register_div div:first-child input{margin-left: 310px;background-color: #1ea3de;width: 150px !important;}
 			.census_register_div div:last-child > input{width: 610px !important;}
 			
-			.residence_div label{float:left;margin-top: 30px;text-align: right;padding-right: 5px; width: 90px;color: white;}
-			.residence_div input{float:left;margin: 20px 0 0 0;width: 260px !important;}
+			.residence_div{margin-bottom: 10px;}
 			.residence_div div:first-child input{margin-left: 310px;background-color: #1ea3de;width: 150px !important;}
-			.residence_div div:last-child > input{width: 610px !important;}
-			.residence_div div:nth-last-child(2) > input{width: 610px !important;}
+			.residence_div div:last-child > input{width: 620px !important;}
+			.residence_div div:nth-last-child(2) > input{width: 620px !important;}
 			
-			.button_div{margin:20px 0 20px 180px;}
-			.button_div input{width: 200px;margin-left: 20px;background-color:#1ea3de;border: 0;}
 		</style>
 	</head>
 
@@ -77,11 +67,11 @@
 							<label>来沪（分离）日期</label>
 							<input type="text" name="username"value="" />
 							<label></label>
-							<input type="text" name="" id="" value="身份证识别" />
+							<input type="button" name="" id="" value="身份证识别" />
 						</div>
 					</div>
-					<div id="">
-						<img src="../../img/drawable/icpersonico.png"/>
+					<div class="img_div">
+						<div><img src="../../img/drawable/icpersonico.png"/></div>
 						<input type="button" name="" id="" value="采集照片" />
 					</div>
 				</div>

@@ -8,27 +8,15 @@
 		<link href="../../css/mui.css" rel="stylesheet" />
 		<link href="../../css/style.css" rel="stylesheet" />
 		<style type="text/css">
-			.navigate_div{padding-right: 15px;background-color: #1ea3de;}
-			.navigate_div h1{color: #ffffff;font-size: x-large;}
 			
-			.mui-content{background-color: white;}
-			.content_div{width: 90%;height: 370px;background-color: #1ea3de;margin: 5%;margin-bottom:0px;border-radius:10px;}
-			.content_div div{float: left;}
-			
-			.img_div {padding: 2% 2% ; width: 30%;}
-			.img_div img{width: 80%;height: 90%;}
-			.img_div input{margin-left: 15%;margin-top: 20%;color: #fff;background-color: #007aff;}
-			
-			.baseinfo_div{width: 60%;height:300px;}
-			.baseinfo_div div:first-child{margin-top: 20px;}
-			.baseinfo_div input{height: 35px;border-radius: 15px;}
-			
-			.baseinfo_div label{color: white;}
-			.input_first{margin-left: 50px;width: 90px !important;} 		/*姓名/民族*/
-			.input_second {margin-left: 10px;width: 190px !important;} 		/*身份证号/移动电话/固定电话*/
-			.input_third{margin-left:0px;width:367px !important;} 			/*户籍所在地*/
-			.input_fourth{margin-left:18px;width:366px !important;} 		/*户籍详址/居住地址/房屋编码*/
-			.input_fifth{margin-left: 17px;width: 90px !important;} 		/*居住事由*/
+			.img_div{margin-left: 0px;}
+			.baseinfo_div{float: right;width: calc(100% - 231px);}
+			.baseinfo_div > div label{width: 100px;margin-left: 0px;}
+			.baseinfo_div > div input{margin-top: 14px;}
+			.baseinfo_div > div .input_short{width: 90px !important;}
+			.baseinfo_div > div .input_medium{width: 190px !important;}
+			.baseinfo_div > div .input_long{width: 366px !important;}
+
 		</style>
 	</head>
 
@@ -45,41 +33,41 @@
 				<div id="baseinfo_div" class="baseinfo_div">
 					<div>
 						<label>姓名</label>
-						<input type="text" name="username" class="input_first" value="" />
+						<input type="text" name="username" class="input_short" value="" />
 						<label>身份证号</label>
-						<input type="text" name="IDCard" id="IDCard" class="input_second" value="" />
+						<input type="text" name="IDCard" id="IDCard" class="input_medium" value="" />
 					</div>
 					<div id="">
 						<label>民族</label>
-						<input type="text" name="username" class="input_first" class="mui-input" value="" />
+						<input type="text" name="username" class="input_short" class="mui-input" value="" />
 						<label>移动电话</label>
-						<input type="text" name="IDCard" id="IDCard" class="input_second" value="" />
+						<input type="text" name="IDCard" id="IDCard" class="input_medium" value="" />
 					</div>
 					<div id="">
 						<label>居住事由</label>
-						<input type="text" name="username" class="input_fifth" value="" />
+						<input type="text" name="username" class="input_short" value="" />
 						<label>固定电话</label>
-						<input type="text" name="IDCard" id="IDCard" class="input_second" value="" />
+						<input type="text" name="IDCard" id="IDCard" class="input_medium" value="" />
 					</div>
 					<div id="">
 						<label>户籍所在地</label>
-						<input type="text" name="fe" id="fe" class="input_third" value="" />						
+						<input type="text" name="fe" id="fe" class="input_long" value="" />						
 					</div>
 					<div id="">
 						<label>户籍详址</label>
-						<input type="text" name="fe" id="fe" class="input_fourth" value="" />						
+						<input type="text" name="fe" id="fe" class="input_long" value="" />						
 					</div>
 					<div id="">
 						<label>居住地址</label>
-						<input type="text" name="fe" id="fe" class="input_fourth" value="" />						
+						<input type="text" name="fe" id="fe" class="input_long" value="" />						
 					</div>
 					<div id="">
 						<label>房屋编码</label>
-						<input type="text" name="fe" id="fe" class="input_fourth" value="" />						
+						<input type="text" name="fe" id="fe" class="input_long" value="" />						
 					</div>
 				</div>
 			</div>
-			<div id="" style="margin-left: 45%;margin-top: 10px;">
+			<div class="button_div">
 				<input type="submit" name="submit" id="submit" value="在线上传" />
 			</div>
 		</div>
