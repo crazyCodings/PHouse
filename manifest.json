@@ -208,6 +208,17 @@
 					"html/main/main.html"
 				],
 				"priority": 0
+			},
+			"html/main/main.html": {
+				"resources": [],
+				"refer": [
+					"html/shImmigrant/shImmigrant.html",
+					"html/psfthr/psfthr.html",
+					"html/multimeter/multimeter-base-info.html",
+					"html/copylist/copylist.html",
+					"html/statistics/statistics.html"
+				],
+				"priority": 0
 			}
 		},
 		"idle": {

@@ -1,0 +1,100 @@
+<!doctype html>
+<html class="mui-fullscreen" style="background-color: white;">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>抄告单</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.css" rel="stylesheet" />
+		<link href="../../css/style.css" rel="stylesheet" />
+		<style type="text/css">
+			.baseinfo_div{width: 100%;height:400px;}
+			.button_div input{margin-left: 130px;}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav navigate_div">
+			<h1 class="mui-title">抄告单</h1>
+		</header>
+		<div class="mui-content">
+			<div class="content_div" >
+				<div id="baseinfo_div" class="baseinfo_div">
+					<div>
+						<label>抄告人</label>
+						<input type="text" name="username" value="" />
+						<label>抄告时间</label>
+						<input type="text" name="username" value="" />
+					</div>
+					<div id="">
+						<label>被抄告人姓名</label>
+						<input type="text" name="username"value="" />
+						<label>被抄告人证件号码</label>
+						<input type="text" name="IDCard" id="IDCard" value="" />
+					</div>
+					<div id="">
+						<label>街镇</label>
+						<input type="text" name="username"value="" />
+						<label></label>
+						<input type="button" name="IDCard" id="IDCard" value="点击识别身份证" />
+					</div>
+					<div id="">
+						<label>详址</label>
+						<input type="text" name="username"value="" />
+						<label>抄告内容</label>
+						<input type="text" name="IDCard" id="IDCard" value="" />
+					</div>
+					<div id="">
+						<label>社会治安类</label>
+						<input type="text" name="username"value="" />
+						<label>安全生产类</label>
+						<input type="text" name="username"value="" />
+					</div>
+					<div id="">
+						<label>食药品、卫生类</label>
+						<input type="text" name="username"value="" />
+						<label>城市管理类</label>
+						<input type="text" name="username"value="" />
+					</div>
+					<div id="">
+						<label>文化计生类</label>
+						<input type="text" name="username"value="" />
+						<label>消防类</label>
+						<input type="text" name="username"value="" />
+					</div>
+				</div>
+				<div id="img_div2">
+					<div class="img_div">
+						<div><img src="../../img/drawable/home1.jpg"/></div>
+						<input type="button" name="" id="" value="采集照片" />
+					</div>
+					<div class="img_div">
+						<img src="../../img/drawable/home2.jpg"/>
+						<input type="button" name="" id="" value="采集照片" />
+					</div>
+					<div class="img_div">
+						<img src="../../img/drawable/home3.jpg"/>
+						<input type="button" name="" id="" value="采集照片" />
+					</div>
+				</div>
+			</div>
+			<div class="button_div">
+				<input type="submit" name="submit" id="submit" value="确认" />
+			</div>
+		</div>
+		<script src="../../js/mui.js"></script>
+		<script src="../../js/mui.enterfocus.js"></script>
+		<script src="../../js/app.js"></script>
+		<script>
+			(function($, doc) {
+				$.init({
+					statusBarBackground: '#f7f7f7'
+				});
+				$.plusReady(function() {
+					plus.screen.lockOrientation("landscape-primary");
+				});
+			}(mui, document));
+		</script>
+	</body>
+
+</html>

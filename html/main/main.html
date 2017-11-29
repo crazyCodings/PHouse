@@ -84,17 +84,54 @@
 				        }
 				        //console.log(subname);
 				        var tips = "";
+				        var uri = "";
 				        switch (subname){
-				        	case "shImmigrant": tips = "来沪人员";break;
-				        	case "psfthr": tips = "人户分离";break;
-				        	case "multimeter": tips = "万用表";break;
-				        	case "copylist": tips = "抄告单";break;
-				        	case "statistics": tips = "工作量";break;
-				        	case "notice": tips = "通知";break;
+				        	case "shImmigrant": 
+				        		tips = "来沪人员"; 
+				        		uri = "../shImmigrant/shImmigrant.html";
+				        		break;
+				        	case "psfthr": 
+				        		tips = "人户分离";
+				        		uri = "../psfthr/psfthr.html";
+				        		break;
+				        	case "multimeter": 
+					        	tips = "万用表";
+					        	uri = "../multimeter/multimeter-base-info.html";
+					        	break;
+				        	case "copylist": 
+					        	tips = "抄告单";
+					        	uri = "../copylist/copylist.html";
+					        	break;
+				        	case "statistics": 
+					        	tips = "工作量";
+					        	uri = "../statistics/statistics.html";
+					        	break;
+				        	case "notice": 
+					        	tips = "通知";
+					        	break;
 				        	default:
 				        		break;
 				        }
-				        mui.toast(tips);
+				        if( uri != ""){
+				        	var currentWebView = plus.webview.getWebviewById(uri);	
+				        	if (currentWebView!=null){
+				        		
+				        		mui.openWindow({
+						        	url: uri,
+						        	id : uri,
+									extras:{
+										name: tips  //扩展参数
+									},
+									show:{
+								      autoShow : true,	//页面loaded事件发生后自动显示，默认为true
+								      aniShow: "zoom-out" //页面显示动画，默认为”slide-in-right“；
+								    }
+						        });
+				        	} else {
+				        		currentWebView = plus.webview.create(uri , uri);
+				        	}
+				        	currentWebView.show("zoom-out");
+				        }
 					});
 				});
 			}(mui, document));

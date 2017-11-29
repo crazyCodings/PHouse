@@ -84,6 +84,9 @@
 								clearInterval(id);
 								$.fire(mainPage, 'show', null);
 								mainPage.show("pop-in");
+							} else {
+								$.fire(mainPage, 'show', null);
+								mainPage.show("pop-in");
 							}
 						},20);
 					};
