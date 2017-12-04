@@ -219,6 +219,13 @@
 					"html/statistics/statistics.html"
 				],
 				"priority": 0
+			},
+			"html/login/newLogin.html": {
+				"resources": [],
+				"refer": [
+					"html/main/main.html"
+				],
+				"priority": 0
 			}
 		},
 		"idle": {
