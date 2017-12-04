@@ -80,12 +80,16 @@
 						//使用定时器的原因：
 						//可能执行太快，main页面loaded事件尚未触发就执行自定义事件，此时必然会失败
 						var id = setInterval(function () {
+							if( mainPage ) {
+								main_loaded_flag = true;
+							}
 							if(main_loaded_flag){
 								clearInterval(id);
 								$.fire(mainPage, 'show', null);
 								mainPage.show("pop-in");
 							}
-						},20);
+							console.log(id);
+						},1000);
 					};
 					//检查 "登录状态/锁屏状态" 结束
 					var loginButton = doc.getElementById('loginButton');

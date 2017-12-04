@@ -1,0 +1,78 @@
+<!doctype html>
+<html class="mui-fullscreen">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>选择居村委</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.css" rel="stylesheet" />
+		<link href="../../css/style.css" rel="stylesheet" />
+		<style type="text/css">
+			
+			.content_div{width:70%;margin-left: 120px;}
+			.baseinfo_div{float: right;width: calc(100% - 231px);margin: 50px 0 0 100px;}
+			.baseinfo_div > div label{width: 100px;margin-left: 0px;margin-top: 40px;}
+			.baseinfo_div > div input{margin-top: 24px;height: 50px;margin-left: 10px;}
+
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav navigate_div">
+			<h1 class="mui-title">选择居村委</h1>
+		</header>
+		<div class="mui-content">
+			<div class="content_div" >
+				<div id="baseinfo_div" class="baseinfo_div">
+					<div>
+						<label>居村委</label>
+						<input type="text" name="username" value="" />
+					</div>
+					<div id="">
+						<label>姓名</label>
+						<input type="text" name="IDCard" id="IDCard" value="" />
+					</div>
+					<div id="">
+						<label>编号</label>
+						<input type="text" name="IDCard" id="IDCard" value="" />
+					</div>
+					<div id="">
+						<label>确认</label>
+						<input type="button" name="query_village" id="query_village" value="确认" />						
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="../../js/mui.js"></script>
+		<script src="../../js/mui.enterfocus.js"></script>
+		<script src="../../js/app.js"></script>
+		<script>
+			(function($, doc) {
+				$.init({
+					statusBarBackground: '#f7f7f7'
+				});
+				$.plusReady(function() {
+					plus.screen.lockOrientation("landscape-primary");
+					document.getElementById('query_village').addEventListener('tap',function () {
+						var uri = "shImmigrant-query-detail.html";
+						var currentWebView = plus.webview.getWebviewById(uri);	
+			        	if (currentWebView!=null){
+			        		mui.openWindow({
+					        	url: uri,
+					        	id : uri,
+								show:{
+							      autoShow : true,	//页面loaded事件发生后自动显示，默认为true
+							      aniShow: "zoom-out" //页面显示动画，默认为”slide-in-right“；
+							    }
+					        });
+			        	} else {
+			        		currentWebView = plus.webview.create(uri , uri);
+			        	}
+			        	currentWebView.show("zoom-out");
+					});
+				});
+			}(mui, document));
+		</script>
+	</body>
+
+</html>

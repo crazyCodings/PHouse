@@ -216,7 +216,8 @@
 					"html/psfthr/psfthr.html",
 					"html/multimeter/multimeter-base-info.html",
 					"html/copylist/copylist.html",
-					"html/statistics/statistics.html"
+					"html/statistics/statistics.html",
+					"html/shImmigrant/shImmigrant-query-selector.html"
 				],
 				"priority": 0
 			},
@@ -224,6 +225,14 @@
 				"resources": [],
 				"refer": [
 					"html/main/main.html"
+				],
+				"priority": 0
+			},
+			"html/shImmigrant/shImmigrant-query-selector.html": {
+				"resources": [],
+				"refer": [
+					"html/shImmigrant/shImmigrant.html",
+					"html/shImmigrant/shImmigrant-query-detail.html"
 				],
 				"priority": 0
 			}

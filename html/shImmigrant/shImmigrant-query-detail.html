@@ -1,0 +1,122 @@
+<!doctype html>
+<html class="mui-fullscreen">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>房屋定位</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.css" rel="stylesheet" />
+		<link href="../../css/style.css" rel="stylesheet" />
+		<link type="text/css" rel="stylesheet" href="../../css/jsgrid/jsgrid.css" />
+		<link type="text/css" rel="stylesheet" href="../../css/jsgrid/theme.css" />
+		<style type="text/css">
+			.content_div{width:95%;margin: 10px 0 0 20px;background-color: white;height: 95%;overflow: scroll}
+			.query_div{float: right;width: calc(100% - 231px);margin: 10px 0 0 120px;}
+			.query_div > div label{margin-top: 20px;margin-left: 0px;color: black;}
+			.query_div > div input{margin-top: 12px;margin-left: 10px;width: 300px !important;height: 25px;}
+			.query_div > div .search_btn{width: 100px !important;}
+			
+			#result_list{width: 100%;margin-top: 10px;}
+
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav navigate_div">
+			<h1 class="mui-title">房屋定位</h1>
+		</header>
+		<div class="mui-content">
+			<div class="content_div" >
+				<div id="query_div" class="query_div">
+					<div>
+						<label><span style="color: red;">*</span>道路查询</label>
+						<input type="text" name="username" value="" />
+					</div>
+					<div id="">
+						<label>精确查找</label>
+						<input type="text" name="IDCard" id="IDCard" value="" />
+						<input type="button" class="search_btn" value="查询" />
+					</div>
+					<div id="">
+						<label>用户输入</label>
+						<input type="text" name="IDCard" id="IDCard" value="" placeholder="请输入查询信息"/>
+						<input type="button" class="search_btn" value="查询" />
+					</div>
+					<div id="">
+						<label>条码查询</label>
+						<input type="text" name="IDCard" id="IDCard" value="" placeholder="请输入条码查询信息"/>
+						<input type="button" class="search_btn" value="查询" />				
+					</div>
+				</div>
+				<div id="jsGrid"></div>
+			</div>
+		</div>
+		<script src="../../js/mui.js"></script>
+		<script src="../../js/mui.enterfocus.js"></script>
+		<script src="../../js/app.js"></script>
+		<script type="text/javascript" src="../../js/jquery/jquery-1.8.3.js"></script>
+		<script type="text/javascript" src="../../js/jsgrid/jsgrid.min.js"></script>
+		<script src="../../js/datasource/db.js"></script>
+		<script>
+			(function($$, doc) {
+				$$.init({
+					statusBarBackground: '#f7f7f7'
+				});
+				$$.plusReady(function() {
+					plus.screen.lockOrientation("landscape-primary");
+					var clients = [
+				        /*{ "Name": "Otto Clay", "Age": 25, "Country": 1, "Address": "Ap #897-1459 Quam Avenue", "Married": false },
+				        { "Name": "Connor Johnston", "Age": 45, "Country": 2, "Address": "Ap #370-4647 Dis Av.", "Married": true },
+				        { "Name": "Lacey Hess", "Age": 29, "Country": 3, "Address": "Ap #365-8835 Integer St.", "Married": false },
+				        { "Name": "Timothy Henson", "Age": 56, "Country": 1, "Address": "911-5143 Luctus Ave", "Married": true },*/
+				       	{ "squence": 1, "mlph": "1号", "housename": "101室（101室）", "householdname": "张银宝", "IDCard": "310111196505090035", "buildingsname": "姚圣荣", "type_of_residence": "个人房", "type_of_buildings": "出租房屋", "policeno": "友谊路派出所"},
+				       	{ "squence": 2, "mlph": "1号", "housename": "101室（101室）", "householdname": "张银宝", "IDCard": "310111196505090035", "buildingsname": "姚圣荣", "type_of_residence": "个人房", "type_of_buildings": "出租房屋", "policeno": "友谊路派出所"},
+				       	{ "squence": 3, "mlph": "1号", "housename": "101室（101室）", "householdname": "张银宝", "IDCard": "310111196505090035", "buildingsname": "姚圣荣", "type_of_residence": "个人房", "type_of_buildings": "出租房屋", "policeno": "友谊路派出所"},
+				        { "squence": 4, "mlph": "1号", "housename": "101室（101室）", "householdname": "张银宝", "IDCard": "310111196505090035", "buildingsname": "姚圣荣", "type_of_residence": "个人房", "type_of_buildings": "出租房屋", "policeno": "友谊路派出所"},
+				        { "squence": 5, "mlph": "1号", "housename": "101室（101室）", "householdname": "张银宝", "IDCard": "310111196505090035", "buildingsname": "姚圣荣", "type_of_residence": "个人房", "type_of_buildings": "出租房屋", "policeno": "友谊路派出所"},
+				       	{ "squence": 6, "mlph": "1号", "housename": "101室（101室）", "householdname": "张银宝", "IDCard": "310111196505090035", "buildingsname": "姚圣荣", "type_of_residence": "个人房", "type_of_buildings": "出租房屋", "policeno": "友谊路派出所"},
+				       	{ "squence": 6, "mlph": "1号", "housename": "101室（101室）", "householdname": "张银宝", "IDCard": "310111196505090035", "buildingsname": "姚圣荣", "type_of_residence": "个人房", "type_of_buildings": "出租房屋", "policeno": "友谊路派出所"},
+				        { "squence": 7, "mlph": "1号", "housename": "101室（101室）", "householdname": "张银宝", "IDCard": "310111196505090035", "buildingsname": "姚圣荣", "type_of_residence": "个人房", "type_of_buildings": "出租房屋", "policeno": "友谊路派出所"},
+				        { "squence": 8, "mlph": "1号", "housename": "101室（101室）", "householdname": "张银宝", "IDCard": "310111196505090035", "buildingsname": "姚圣荣", "type_of_residence": "个人房", "type_of_buildings": "出租房屋", "policeno": "友谊路派出所"},
+				       	{ "squence": 9, "mlph": "1号", "housename": "101室（101室）", "householdname": "张银宝", "IDCard": "310111196505090035", "buildingsname": "姚圣荣", "type_of_residence": "个人房", "type_of_buildings": "出租房屋", "policeno": "友谊路派出所"},
+				       	{ "squence": 0, "mlph": "1号", "housename": "101室（101室）", "householdname": "张银宝", "IDCard": "310111196505090035", "buildingsname": "姚圣荣", "type_of_residence": "个人房", "type_of_buildings": "出租房屋", "policeno": "友谊路派出所"},
+				        { "squence": 11, "mlph": "1号", "housename": "101室（101室）", "householdname": "张银宝", "IDCard": "310111196505090035", "buildingsname": "姚圣荣", "type_of_residence": "个人房", "type_of_buildings": "出租房屋", "policeno": "友谊路派出所"},
+				        { "squence": 39, "mlph": "1号", "housename": "101室（101室）", "householdname": "张银宝", "IDCard": "310111196505090035", "buildingsname": "姚圣荣", "type_of_residence": "个人房", "type_of_buildings": "出租房屋", "policeno": "友谊路派出所"},
+				       	{ "squence": 41, "mlph": "1号", "housename": "101室（101室）", "householdname": "张银宝", "IDCard": "310111196505090035", "buildingsname": "姚圣荣", "type_of_residence": "个人房", "type_of_buildings": "出租房屋", "policeno": "友谊路派出所"},
+				       	{ "squence": 104, "mlph": "1号", "housename": "101室（101室）", "householdname": "张银宝", "IDCard": "310111196505090035", "buildingsname": "姚圣荣", "type_of_residence": "个人房", "type_of_buildings": "出租房屋", "policeno": "友谊路派出所"},
+				        { "squence": 21, "mlph": "1号", "housename": "101室（101室）", "householdname": "张银宝", "IDCard": "310111196505090035", "buildingsname": "姚圣荣", "type_of_residence": "个人房", "type_of_buildings": "出租房屋", "policeno": "友谊路派出所"},
+				        { "squence": 101, "mlph": "1号", "housename": "101室（101室）", "householdname": "张银宝", "IDCard": "310111196505090035", "buildingsname": "姚圣荣", "type_of_residence": "个人房", "type_of_buildings": "出租房屋", "policeno": "友谊路派出所"}
+				    ];
+		
+				    $("#jsGrid").jsGrid({
+						width: "100%",
+						height: "480px",
+						//inserting: true,
+						//editing: true,
+						sorting: true,
+						paging: true,
+						rowClick: function(args) {
+		                    showDetailsDialog(args.item);
+		                },
+						data: clients,
+						fields: [
+				            { title: "序号", name: "squence", width: 40, type: "number"},
+				            { title: "门楼牌号", name: "mlph", width: 50 },
+				            { title: "房屋名称", name: "housename", width: 100 },
+				            { title: "房主姓名", name: "householdname", width: 80},
+				            { title: "房主身份证号码", name: "IDCard", width: 180 },
+				            { title: "房屋单位名称", name: "buildingsname", width: 100 },
+				            { title: "居住类型", name: "type_of_residence", width: 80},
+				            { title: "居住房屋类型", name: "type_of_buildings", width: 80 },
+				            { title: "派出所名称", name: "policeno", width: 100 }
+				        ]
+					});
+				});
+				var showDetailsDialog = function(client){
+					mui.toast("姓名：" + client.householdname + " : 身份证号：" + client.IDCard);
+				}
+			}(mui, document));
+		</script>
+	</body>
+
+</html>
