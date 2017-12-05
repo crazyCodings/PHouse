@@ -235,6 +235,22 @@
 					"html/shImmigrant/shImmigrant-query-detail.html"
 				],
 				"priority": 0
+			},
+			"html/shImmigrant/shImmigrant-query-detail.html": {
+				"resources": [],
+				"refer": [
+					"html/shImmigrant/shImmigrant.html",
+					"html/shImmigrant/shImmigrant-house-info.html"
+				],
+				"priority": 0
+			},
+			"html/shImmigrant/shImmigrant-house-info.html": {
+				"resources": [],
+				"refer": [
+					"html/shImmigrant/shImmigrant.html",
+					"html/shImmigrant/shImmigrant-new.html"
+				],
+				"priority": 0
 			}
 		},
 		"idle": {

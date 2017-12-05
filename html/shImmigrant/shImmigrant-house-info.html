@@ -1,0 +1,102 @@
+<!doctype html>
+<html class="mui-fullscreen">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>房屋信息</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.css" rel="stylesheet" />
+		<link href="../../css/style.css" rel="stylesheet" />
+		<style type="text/css">
+			
+			.img_div{margin-left: 0px;}
+			.baseinfo_div{float: right;width: calc(100% - 231px);}
+			.baseinfo_div > div label{width: 100px;margin-left: 0px;}
+			.baseinfo_div > div input{margin-top: 14px;}
+			.baseinfo_div > div .input_short{width: 90px !important;}
+			.baseinfo_div > div .input_medium{width: 190px !important;}
+			.baseinfo_div > div .input_long{width: 366px !important;}
+
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav navigate_div">
+			<h1 class="mui-title" style="font-size: large">
+				<span style="float: left;width: 120px;margin-left: 0px;text-align: left;">房主：<span>张银宝</span></span>
+				<span style="float: left;margin-left: 10px;">身份证号码：<span>310111196505090035</span></span>
+				<input type="button" id="back_btn" style="float: right;margin: 5px 10px 0 0;" value="返回"/>
+				<input type="button" id="new_btn" style="float: right;margin: 5px 10px 0 0;" value="新增"/>
+			</h1>
+		</header>
+		<div class="mui-content">
+			<div class="content_div" >
+				<div id="img_div" class="img_div">
+					<div><img src="../../img/drawable/icpersonico.png"/></div>
+					<input type="button" name="collection_photo" id="collection_photo" value="采集照片" />
+				</div>
+				<div id="baseinfo_div" class="baseinfo_div">
+					<div>
+						<label>姓名</label>
+						<input type="text" name="username" class="input_short" value="" />
+						<label>身份证号</label>
+						<input type="text" name="IDCard" id="IDCard" class="input_medium" value="" />
+					</div>
+					<div id="">
+						<label>民族</label>
+						<input type="text" name="username" class="input_short" class="mui-input" value="" />
+						<label>移动电话</label>
+						<input type="text" name="IDCard" id="IDCard" class="input_medium" value="" />
+					</div>
+				</div>
+			</div>
+			<div class="button_div">
+				<input type="submit" name="submit" id="submit" value="在线上传" />
+			</div>
+		</div>
+		<script src="../../js/mui.js"></script>
+		<script src="../../js/mui.enterfocus.js"></script>
+		<script src="../../js/app.js"></script>
+		<script>
+			(function($, doc) {
+				$.init({
+					statusBarBackground: '#f7f7f7'
+				});
+				var pageSourceId;
+				$.plusReady(function() {
+					plus.screen.lockOrientation("landscape-primary");
+					var shareInfo = plus.webview.currentWebview().shareInfo;
+					pageSourceId = shareInfo.pageSourceId;
+					document.getElementById('back_btn').addEventListener('tap',function () {
+						backfunction();
+					})
+					document.getElementById('new_btn').addEventListener('tap',function () {
+					    createNewPage();
+					})
+				});
+				mui.back = function() {
+					backfunction();
+				}
+				var backfunction = function() {
+					var sourcePage = plus.webview.getWebviewById(pageSourceId);
+					if (sourcePage) {
+						mui.fire(sourcePage, 'closeMaskEvent');
+					}
+				}
+				var newPage = null;
+				var createNewPage = function () {
+					var uri = "shImmigrant-new.html";
+					if( newPage ){
+						newPage.show("fade-in");
+					} else {
+						newPage = plus.webview.create(uri, uri);
+						newPage.addEventListener("loaded", function() {
+							newPage.show('fade-in', 300);
+						}, false);
+					}
+				}
+			}(mui, document));
+		</script>
+	</body>
+
+</html>

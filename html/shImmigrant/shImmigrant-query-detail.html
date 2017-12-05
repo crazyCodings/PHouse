@@ -62,8 +62,12 @@
 				$$.init({
 					statusBarBackground: '#f7f7f7'
 				});
+				// 创建悬浮窗口
+				var floatw = null;
+				var ws = null;
 				$$.plusReady(function() {
 					plus.screen.lockOrientation("landscape-primary");
+					ws = plus.webview.currentWebview();
 					var clients = [
 				        /*{ "Name": "Otto Clay", "Age": 25, "Country": 1, "Address": "Ap #897-1459 Quam Avenue", "Married": false },
 				        { "Name": "Connor Johnston", "Age": 45, "Country": 2, "Address": "Ap #370-4647 Dis Av.", "Married": true },
@@ -113,7 +117,48 @@
 					});
 				});
 				var showDetailsDialog = function(client){
-					mui.toast("姓名：" + client.householdname + " : 身份证号：" + client.IDCard);
+					floatWebview();
+				}
+				window.addEventListener('closeMaskEvent', function(event){
+					closeMask();
+				});
+				
+		        function floatWebview() {
+		        	ws = plus.webview.currentWebview();
+		            if(floatw) { // 避免快速多次点击创建多个窗口
+		                floatw.show("fade-in");
+		            } else {
+		            	var top = plus.display.resolutionHeight * 0.1;// - 10%;
+		                floatw = plus.webview.create("shImmigrant-house-info.html", "shImmigrant-house-info.html", {
+		                    background: "transparent",
+		                    bounce : "all",
+		                    height : "80%",
+		                    scalable : false,
+		                    scrollIndicator : "none",
+		                    top : top,
+		                    width : "90%",
+		                    left : "40px"
+		                }, {
+							shareInfo:{"pageSourceId": ws.id}
+						});
+		                floatw.addEventListener("loaded", function() {
+							floatw.show('fade-in', 300);
+						}, false);
+		                ws.setStyle({mask:'rgba(0,0,0,0.5)'});
+		                ws.addEventListener("maskClick", closeMask, false);
+		            }
+		        }
+		        var closeMask = function () {
+					ws.setStyle({
+						mask: "none"
+					});
+					if (!floatw) {
+						floatw = plus.webview.getWebviewById("shImmigrant-house-info.html");
+					}
+					if (floatw) {
+						floatw.close();
+						floatw = null;
+					}
 				}
 			}(mui, document));
 		</script>
