@@ -1,0 +1,45 @@
+{
+	"results": [{
+		"gender": "female",
+		"name": {
+			"title": "mademoiselle",
+			"first": "marine",
+			"last": "da silva"
+		},
+		"location": {
+			"street": "7362 rue paul bert",
+			"city": "carrouge vd",
+			"state": "bern",
+			"postcode": 1103
+		},
+		"email": "marine.dasilva@example.com",
+		"login": {
+			"username": "yellowkoala158",
+			"password": "parola",
+			"salt": "BAwzWdYm",
+			"md5": "5c839cb72336665d256e0f3a218ce43f",
+			"sha1": "8e44351a232e0c9d8ee2dcce468abe587499c189",
+			"sha256": "604ad30574e321c4426a918dea854fd34488614a3abcc5f2459d79ecc98c9c86"
+		},
+		"dob": "1949-12-04 09:41:20",
+		"registered": "2010-11-19 13:13:56",
+		"phone": "(151)-659-7145",
+		"cell": "(771)-116-2907",
+		"id": {
+			"name": "AVS",
+			"value": "756.XNCJ.YALH.96"
+		},
+		"picture": {
+			"large": "https://randomuser.me/api/portraits/women/23.jpg",
+			"medium": "https://randomuser.me/api/portraits/med/women/23.jpg",
+			"thumbnail": "https://randomuser.me/api/portraits/thumb/women/23.jpg"
+		},
+		"nat": "CH"
+	}],
+	"info": {
+		"seed": "9644bea052cd9419",
+		"results": 1,
+		"page": 1,
+		"version": "1.1"
+	}
+}

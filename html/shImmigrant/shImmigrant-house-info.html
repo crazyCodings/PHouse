@@ -7,16 +7,19 @@
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 		<link href="../../css/mui.css" rel="stylesheet" />
 		<link href="../../css/style.css" rel="stylesheet" />
+		<link type="text/css" rel="stylesheet" href="../../css/jsgrid/jsgrid.css" />
+		<link type="text/css" rel="stylesheet" href="../../css/jsgrid/theme.css" />
 		<style type="text/css">
 			
-			.img_div{margin-left: 0px;}
-			.baseinfo_div{float: right;width: calc(100% - 231px);}
-			.baseinfo_div > div label{width: 100px;margin-left: 0px;}
-			.baseinfo_div > div input{margin-top: 14px;}
-			.baseinfo_div > div .input_short{width: 90px !important;}
-			.baseinfo_div > div .input_medium{width: 190px !important;}
-			.baseinfo_div > div .input_long{width: 366px !important;}
+			/*body header input*/ #back_btn, #new_btn { height: 30px;border-radius: 15px; float:left;margin: 15px 0 0 0;width: 60px; }
+			.content_div{width: 100%;height: 200px;overflow:scroll;background-color: #1ea3de;margin: 0;margin-bottom:0px;border-radius:10px;}
 
+			.client-photo { float: left; margin: 0 20px 0 10px; }
+	        .client-photo img { border-radius: 50%; border: 1px solid #ddd; }
+	        .client-info { margin-top: 10px; }
+	        .client-info p { line-height: 25px; }
+	        .client-btn { float: left; margin: 0 20px 0 10px; }
+	        .client-btn input { width:200px !important;margin: 0 20px 0 20px; }
 		</style>
 	</head>
 
@@ -30,40 +33,20 @@
 			</h1>
 		</header>
 		<div class="mui-content">
-			<div class="content_div" >
-				<div id="img_div" class="img_div">
-					<div><img src="../../img/drawable/icpersonico.png"/></div>
-					<input type="button" name="collection_photo" id="collection_photo" value="采集照片" />
-				</div>
-				<div id="baseinfo_div" class="baseinfo_div">
-					<div>
-						<label>姓名</label>
-						<input type="text" name="username" class="input_short" value="" />
-						<label>身份证号</label>
-						<input type="text" name="IDCard" id="IDCard" class="input_medium" value="" />
-					</div>
-					<div id="">
-						<label>民族</label>
-						<input type="text" name="username" class="input_short" class="mui-input" value="" />
-						<label>移动电话</label>
-						<input type="text" name="IDCard" id="IDCard" class="input_medium" value="" />
-					</div>
-				</div>
-			</div>
-			<div class="button_div">
-				<input type="submit" name="submit" id="submit" value="在线上传" />
-			</div>
+			<div id="jsGrid"></div>
 		</div>
 		<script src="../../js/mui.js"></script>
 		<script src="../../js/mui.enterfocus.js"></script>
 		<script src="../../js/app.js"></script>
+		<script src="../../js/jquery/jquery-1.8.3.js"></script>
+		<script src="../../js/jsgrid/jsgrid.min.js"></script>
 		<script>
-			(function($, doc) {
-				$.init({
+			(function($$, doc) {
+				$$.init({
 					statusBarBackground: '#f7f7f7'
 				});
 				var pageSourceId;
-				$.plusReady(function() {
+				$$.plusReady(function() {
 					plus.screen.lockOrientation("landscape-primary");
 					var shareInfo = plus.webview.currentWebview().shareInfo;
 					pageSourceId = shareInfo.pageSourceId;
@@ -95,6 +78,47 @@
 						}, false);
 					}
 				}
+				$("#jsGrid").jsGrid({
+	                height: "100%",
+	                width: "100%",
+	                autoload: true,
+	                paging: false,
+	                controller: {
+	                    loadData: function() {
+	                        var deferred = $.Deferred();
+	
+	                        $.ajax({
+	                            url: 'http://api.randomuser.me/?results=10',
+	                            dataType: 'jsonp',
+	                            success: function(data){
+	                                deferred.resolve(data.results);
+	                            }
+	                        });
+	
+	                        return deferred.promise();
+	                    }
+	                },
+	                rowRenderer: function(item) {
+	                    var user = item;
+	                    var $photo = $("<div>").addClass("client-photo").append($("<img>").attr("src", user.picture.large));
+	                    var $info = $("<div>").addClass("client-info")
+	                        .append($("<p>").append($("<strong>").text(user.name.first.capitalize() + " " + user.name.last.capitalize())))
+	                        .append($("<p>").text("Location: " + user.location.city.capitalize() + ", " + user.location.street))
+	                        .append($("<p>").text("Email: " + user.email))
+	                        .append($("<p>").text("Cell: " + user.cell));
+	                    var $btn = $("<div>").addClass("client-btn")
+	                    	.append($("<input>").attr("type", "button").attr("value", "Edit"))
+	                    	.append($("<input>").attr("type", "button").attr("value", "Delete"))
+	                    	.append($("<input>").attr("type", "button").attr("value", "Show"));
+	
+	                    return $("<tr>").append($("<td>").append($photo).append($info).append($btn));
+	                }
+	            });
+	
+	
+	            String.prototype.capitalize = function() {
+	                return this.charAt(0).toUpperCase() + this.slice(1);
+	            };
 			}(mui, document));
 		</script>
 	</body>
