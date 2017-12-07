@@ -21,3 +21,5 @@
 .img_div div{width: 100%;}
 .img_div img{width: 70%;margin-left: 30px;}
 .img_div input{margin:20px 0 0 18px;color: #fff;background-color: #007aff;width: 150px !important;}
+
+.clear_float { clear: both;}

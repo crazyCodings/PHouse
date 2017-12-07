@@ -217,7 +217,8 @@
 					"html/multimeter/multimeter-base-info.html",
 					"html/copylist/copylist.html",
 					"html/statistics/statistics.html",
-					"html/shImmigrant/shImmigrant-query-selector.html"
+					"html/shImmigrant/shImmigrant-query-selector.html",
+					"html/psfthr/psfthr-query-selector.html"
 				],
 				"priority": 0
 			},
@@ -249,6 +250,20 @@
 				"refer": [
 					"html/shImmigrant/shImmigrant.html",
 					"html/shImmigrant/shImmigrant-new.html"
+				],
+				"priority": 0
+			},
+			"html/psfthr/psfthr-query-selector.html": {
+				"resources": [],
+				"refer": [
+					"html/psfthr/psfthr-address-people-info.html"
+				],
+				"priority": 0
+			},
+			"html/psfthr/psfthr-address-people-info.html": {
+				"resources": [],
+				"refer": [
+					"html/psfthr/psfthr-register.html"
 				],
 				"priority": 0
 			}

@@ -1,0 +1,79 @@
+<!doctype html>
+<html class="mui-fullscreen">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>居住地址核实</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.css" rel="stylesheet" />
+		<link href="../../css/style.css" rel="stylesheet" />
+		<style type="text/css">
+			
+			.content_div{width:70%;margin-left: 120px;}
+			.baseinfo_div{float: right;width: calc(100% - 100px);margin: 50px 0 0 50px;}
+			.baseinfo_div > div label{width: 100px;margin-left: 0px;margin-top: 40px;}
+			.baseinfo_div > div input{margin-top: 24px;height: 50px;margin-left: 10px;width: 350px !important; }
+
+			#btn_div input { width: 230px !important; }
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav navigate_div">
+			<h1 class="mui-title">居住地址核实</h1>
+		</header>
+		<div class="mui-content">
+			<div class="content_div" >
+				<div id="baseinfo_div" class="baseinfo_div">
+					<div>
+						<label>房屋编码</label>
+						<input type="text" name="username" value="" />
+					</div>
+					<div id="">
+						<label>路名</label>
+						<input type="text" name="IDCard" id="IDCard" value="" />
+					</div>
+					<div id="">
+						<label>详址</label>
+						<input type="text" name="IDCard" id="IDCard" value="" />
+					</div>
+					<div id="btn_div">
+						<input type="button" name="btn_input_div" id="query_village" value="查询" />	
+						<input type="reset" name="btn_input_div" id="reset_btn" value="重置" />
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="../../js/mui.js"></script>
+		<script src="../../js/mui.enterfocus.js"></script>
+		<script src="../../js/app.js"></script>
+		<script>
+			(function($, doc) {
+				$.init({
+					statusBarBackground: '#f7f7f7'
+				});
+				$.plusReady(function() {
+					plus.screen.lockOrientation("landscape-primary");
+					document.getElementById('query_village').addEventListener('tap',function () {
+						var uri = "psfthr-address-people-info.html";
+						var currentWebView = plus.webview.getWebviewById(uri);	
+			        	if (currentWebView!=null){
+			        		mui.openWindow({
+					        	url: uri,
+					        	id : uri,
+								show:{
+							      autoShow : true,	//页面loaded事件发生后自动显示，默认为true
+							      aniShow: "zoom-out" //页面显示动画，默认为”slide-in-right“；
+							    }
+					        });
+			        	} else {
+			        		currentWebView = plus.webview.create(uri , uri);
+			        	}
+			        	currentWebView.show("zoom-out");
+					});
+				});
+			}(mui, document));
+		</script>
+	</body>
+
+</html>

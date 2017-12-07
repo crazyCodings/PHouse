@@ -1,0 +1,69 @@
+<!doctype html>
+<html class="mui-fullscreen">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>居住地址人员查询</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.css" rel="stylesheet" />
+		<link href="../../css/style.css" rel="stylesheet" />
+		<link type="text/css" rel="stylesheet" href="../../css/jsgrid/jsgrid.css" />
+		<link type="text/css" rel="stylesheet" href="../../css/jsgrid/theme.css" />
+		<style type="text/css">
+			
+			#back_btn { height: 30px;border-radius: 15px; float:right;margin: 5px 50px 5px 0;width: 60px; }
+			.content_div{width: 100%;height: 200px;overflow:scroll;background-color: #1ea3de;margin: 0;margin-bottom:0px;border-radius:10px;}
+			
+			#second_title { background-color: #c4e2ff;color:white;width: 100%; height: 30px;}
+			#second_title div { margin: 5px 0 5px 20px;font-size: large; float: left;}
+			#house_info { clear: none; }
+			#house_info { float:left;width: 300px;height: 300px; background-color: black;}
+			#jsGrid1 { float:left;width: 200px;height: 300px;border: 1px;background-color: red; }
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav navigate_div">
+			<h1 class="mui-title" style="font-size: large">
+				居住地址人员查询
+			</h1>
+			<input type="button" name="back_btn" id="back_btn" value="返回" />
+		</header>
+		
+		<div class="mui-content">
+			<div id="second_title">
+				<div>房屋地址：</div><div>上海市宝山区宝钢一村1号104室</div>
+			</div>
+			<div id="house_div">
+				<div id="house_info">
+					<div><label>居住房屋类型</label><label>自住房屋</label></div>
+					<div><label>房主证件类型</label><label></label></div>
+					<div><label>房主证件编号</label><label>310223193401121826</label></div>
+					<div><label>房主姓名</label><label>吴玲梅</label></div>
+					<div><label>房主联系电话</label><label>13818984611</label></div>
+					<div><label>居住类型</label><label>个人房</label></div>
+				</div>
+				<div id="jsGrid1" style="border: 1px;"></div>
+			</div>
+		</div>
+		<script src="../../js/mui.js"></script>
+		<script src="../../js/mui.enterfocus.js"></script>
+		<script src="../../js/app.js"></script>
+		<script src="../../js/jquery/jquery-1.8.3.js"></script>
+		<script src="../../js/jsgrid/jsgrid.min.js"></script>
+		<script>
+			(function($$, doc) {
+				$$.init({
+					statusBarBackground: '#f7f7f7'
+				});
+				$$.plusReady(function() {
+					plus.screen.lockOrientation("landscape-primary");
+					document.getElementById('back_btn').addEventListener('tap',function () {
+						mui.back();
+					})
+				});
+			}(mui, document));
+		</script>
+	</body>
+
+</html>
