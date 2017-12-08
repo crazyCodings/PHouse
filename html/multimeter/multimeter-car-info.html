@@ -146,6 +146,17 @@
 				});
 				$.plusReady(function() {
 					plus.screen.lockOrientation("landscape-primary");
+					document.getElementById('submit').addEventListener('tap',function () {
+						var extendsPage = plus.webview.getWebviewById("multimeter-extend-info.html");
+						var baseInfoPage = plus.webview.getWebviewById("multimeter-base-info.html");
+						if(baseInfoPage){
+							baseInfoPage.close();
+						}
+						if(extendsPage){
+							extendsPage.close();
+						}
+						mui.back();
+					})
 				});
 			}(mui, document));
 		</script>

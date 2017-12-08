@@ -111,8 +111,8 @@
 				</div>
 			</div>
 			<div class="button_div">
-				<input type="submit" name="submit" id="submit" value="提交" />
-				<input type="reset" name="reset" id="reset" value="重置" />
+				<input type="button" name="confirm_btn" id="confirm_btn" value="确认" />
+				<input type="reset" name="reset" id="reset" value="清空" />
 			</div>
 		</div>
 		<script src="../../js/mui.js"></script>
@@ -125,7 +125,27 @@
 				});
 				$.plusReady(function() {
 					plus.screen.lockOrientation("landscape-primary");
+					document.getElementById('confirm_btn').addEventListener('tap',function () {
+						mui.confirm("继续？", "填写拓展信息？", null, function(e){
+							if(e.index==1){
+								createWebviewByURI("multimeter-extend-info.html");
+							}else{
+								mui.back();
+							}
+						});
+					})
 				});
+				var createWebviewByURI = function (uri, item) {
+					var newPage = null;
+					if( newPage ){
+						newPage.show("fade-in");
+					} else {
+						newPage = plus.webview.create(uri, uri, {}, {"item":item});
+						newPage.addEventListener("loaded", function() {
+							newPage.show('fade-in', 300);
+						}, false);
+					}
+				}
 			}(mui, document));
 		</script>
 	</body>

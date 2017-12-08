@@ -1,0 +1,88 @@
+<!doctype html>
+<html class="mui-fullscreen">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>人户分离去向不明登记</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.css" rel="stylesheet" />
+		<link href="../../css/style.css" rel="stylesheet" />
+		<style type="text/css">
+			
+			.content_div {height: 310px;}
+			.img_div{margin-left: 0px;}
+			.img_div img {width: 100%;margin-left: 0px;}
+			.baseinfo_div{float: right;width: calc(100% - 231px);}
+			.baseinfo_div > div label{width: 100px;margin-left: 0px;}
+			.baseinfo_div > div input{margin-top: 10px;}
+			.baseinfo_div > div .input_short{width: 100px !important;}
+			.baseinfo_div > div .input_medium{width: 160px !important;}
+			.baseinfo_div > div .input_long{width: 366px !important;}
+			
+			.button_div{margin-left:270px;}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav navigate_div">
+			<h1 class="mui-title">人户分离去向不明登记</h1>
+		</header>
+		<div class="mui-content">
+			<div class="content_div" >
+				<div id="img_div" class="img_div">
+					<div><img src="../../img/drawable/icpersonico.png"/></div>
+				</div>
+				<div id="baseinfo_div" class="baseinfo_div">
+					<div>
+						<label>姓名</label>
+						<input type="text" name="username" id="username" class="input_short" value="" />
+						<label>身份证号</label>
+						<input type="text" name="IDCard" id="IDCard" class="input_medium" value="" />
+					</div>
+					<div id="">
+						<label>户籍地址</label>
+						<input type="text" name="username" class="input_long" class="mui-input" value="" />
+					</div>
+					<div id="">
+						<label>街道</label>
+						<input type="text" name="username" class="input_long" value="" />
+					</div>
+					<div id="">
+						<label>所属公安机关</label>
+						<input type="text" name="fe" id="fe" class="input_long" value="" />						
+					</div>
+					<div id="">
+						<label>居委会</label>
+						<input type="text" name="fe" id="fe" class="input_long" value="" />						
+					</div>
+					<div id="">
+						<label>注销原因</label>
+						<input type="text" name="fe" id="fe" class="input_long" value="" />						
+					</div>
+				</div>
+			</div>
+			<div class="button_div">
+				<input type="submit" name="submit" id="submit" value="确认提交" />
+			</div>
+		</div>
+		<script src="../../js/mui.js"></script>
+		<script src="../../js/mui.enterfocus.js"></script>
+		<script src="../../js/app.js"></script>
+		<script>
+			(function($, doc) {
+				$.init({
+					statusBarBackground: '#f7f7f7'
+				});
+				var ws = null;
+				$.plusReady(function() {
+					plus.screen.lockOrientation("landscape-primary");
+					ws = plus.webview.currentWebview();
+					var parentInfo = ws.item;
+					document.getElementById("username").value = parentInfo.name.first;
+					document.getElementById("IDCard").value = parentInfo.id.value;
+				});
+			}(mui, document));
+		</script>
+	</body>
+
+</html>

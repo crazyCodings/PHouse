@@ -76,16 +76,15 @@
 						mui.back();
 					});
 					document.getElementById('register').addEventListener('tap',function () {
-					    registerNewCustomer();
+					    createWebviewByURI("psfthr-register.html");
 					});
 				});
-				var newPage = null;
-				var registerNewCustomer = function () {
-					var uri = "psfthr-register.html";
+				var createWebviewByURI = function (uri, item) {
+					var newPage = null;
 					if( newPage ){
 						newPage.show("fade-in");
 					} else {
-						newPage = plus.webview.create(uri, uri);
+						newPage = plus.webview.create(uri, uri, {}, {"item":item});
 						newPage.addEventListener("loaded", function() {
 							newPage.show('fade-in', 300);
 						}, false);
@@ -101,7 +100,7 @@
 	                        var deferred = $.Deferred();
 	
 	                        $.ajax({
-	                            url: 'http://api.randomuser.me/?results=80',
+	                            url: 'http://api.randomuser.me/?results=3',
 	                            dataType: 'jsonp',
 	                            success: function(data){
 	                                deferred.resolve(data.results);
@@ -113,14 +112,20 @@
 	                },
 	                rowRenderer: function(item) {
 	                    var user = item;
+	                    user.status_btn = "状态";
 	                    var $photo = $("<div>").addClass("client-photo").append($("<img>").attr("src", user.picture.large));
 	                    var $info = $("<div>").addClass("client-info")
 	                        .append($("<p>").append($("<strong>").text(user.name.first.capitalize() + " " + user.name.last.capitalize())))
 	                        .append($("<p>").text("Location: " + user.location.city.capitalize() + ", " + user.location.street))
 	                        .append($("<p>").text("Email: " + user.email))
-	                        .append($("<p>").text("Cell: " + user.cell)
-	                        				.append($("<input>").attr("type", "button").attr("value", "状态")));
+	                        .append($("<p>").text("Cell1: " + user.cell)
+	                        				.append($("<input>").attr("type", "button").attr("name", "status_btn").attr("value", user.status_btn)));
 	                    return $("<tr>").append($("<td>").append($photo).append($info));
+	                },
+	                rowClick: function(item) {
+	                	if ( item.event.target.name == "status_btn" ){
+	                		createWebviewByURI("psfthr-leave.html", item.item);
+	                	}
 	                }
 	            });
 	

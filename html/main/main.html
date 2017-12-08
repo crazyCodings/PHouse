@@ -73,7 +73,6 @@
 				});
 				$.plusReady(function() {
 					plus.screen.lockOrientation("landscape-primary");
-					//document.getElementById("img_shImmigrant")
 					mui(".img_div, .img_div_small").on('tap','.img_div div, .img_div_small div', function(){
 						var subname = this.firstElementChild.id;
 						if( subname==null || subname=="") {
@@ -82,29 +81,32 @@
 						if ( subname.startsWith("img_") ) {
 				        	subname = subname.substr(4);
 				        }
-				        //console.log(subname);
-				        var tips = "";
-				        var uri = "";
+				        var tips = "", uri = "",id = "";
 				        switch (subname){
 				        	case "shImmigrant": 
 				        		tips = "来沪人员"; 
-				        		uri = "../shImmigrant/shImmigrant-query-selector.html";
+				        		id = "shImmigrant-query-selector.html"
+				        		uri = "../shImmigrant/";
 				        		break;
 				        	case "psfthr": 
 				        		tips = "人户分离";
-				        		uri = "../psfthr/psfthr-query-selector.html";
+				        		id = "psfthr-query-selector.html";
+				        		uri = "../psfthr/";
 				        		break;
 				        	case "multimeter": 
 					        	tips = "万用表";
-					        	uri = "../multimeter/multimeter-base-info.html";
+					        	id = "multimeter-base-info.html";
+					        	uri = "../multimeter/";
 					        	break;
 				        	case "copylist": 
 					        	tips = "抄告单";
-					        	uri = "../copylist/copylist.html";
+					        	id = "copylist.html";
+					        	uri = "../copylist/";
 					        	break;
 				        	case "statistics": 
 					        	tips = "工作量";
-					        	uri = "../statistics/statistics.html";
+					        	id = "statistics.html";
+					        	uri = "../statistics/";
 					        	break;
 				        	case "notice": 
 					        	tips = "通知";
@@ -112,13 +114,14 @@
 				        	default:
 				        		break;
 				        }
+				        uri = uri + id;
 				        if( uri != ""){
-				        	var currentWebView = plus.webview.getWebviewById(uri);	
+				        	var currentWebView = plus.webview.getWebviewById(id);	
 				        	if (currentWebView!=null){
 				        		
 				        		mui.openWindow({
 						        	url: uri,
-						        	id : uri,
+						        	id : id,
 									extras:{
 										name: tips  //扩展参数
 									},
@@ -128,7 +131,7 @@
 								    }
 						        });
 				        	} else {
-				        		currentWebView = plus.webview.create(uri , uri);
+				        		currentWebView = plus.webview.create(uri , id);
 				        	}
 				        	currentWebView.show("zoom-out");
 				        }
