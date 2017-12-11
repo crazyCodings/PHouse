@@ -123,7 +123,7 @@
 					closeMask();
 				});
 				
-		        function floatWebview() {
+		        var floatWebview = function () {
 		        	ws = plus.webview.currentWebview();
 		            if(floatw) { // 避免快速多次点击创建多个窗口
 		                floatw.show("fade-in");
@@ -141,7 +141,11 @@
 		                }, {
 							shareInfo:{"pageSourceId": ws.id}
 						});
+						floatw.addEventListener("loading", function() {
+		                	plus.nativeUI.showWaiting();
+						}, false);
 		                floatw.addEventListener("loaded", function() {
+		                	plus.nativeUI.closeWaiting();
 							floatw.show('fade-in', 300);
 						}, false);
 		                ws.setStyle({mask:'rgba(0,0,0,0.5)'});
