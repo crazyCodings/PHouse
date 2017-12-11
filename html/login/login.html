@@ -65,31 +65,12 @@
 				});
 				$.plusReady(function() {
 					plus.screen.lockOrientation("landscape-primary");
-					var mainPage = plus.webview.getWebviewById("main");
-					var main_loaded_flag = false;
-					if(!mainPage){
-						mainPage = $.preload({
-							"id": 'main',
-							"url": '../main/main.html'
-						});
-					}else{
-						main_loaded_flag = true;
-					}
-					
+					var page = mui.preload({
+						url : '../main/main.html',
+						id : 'main'
+					});
 					var toMain = function() {
-						//使用定时器的原因：
-						//可能执行太快，main页面loaded事件尚未触发就执行自定义事件，此时必然会失败
-						var id = setInterval(function () {
-							if( mainPage ) {
-								main_loaded_flag = true;
-							}
-							if(main_loaded_flag){
-								clearInterval(id);
-								$.fire(mainPage, 'show', null);
-								mainPage.show("pop-in");
-							}
-							console.log(id);
-						},1000);
+						page.show("pop-in");
 					};
 					//检查 "登录状态/锁屏状态" 结束
 					var loginButton = doc.getElementById('loginButton');
