@@ -13,7 +13,7 @@
 			.baseinfo_div{float: right;width: calc(100% - 231px);margin: 50px 0 0 100px;}
 			.baseinfo_div > div label{width: 100px;margin-left: 0px;margin-top: 40px;}
 			.baseinfo_div > div input{margin-top: 24px;height: 50px;margin-left: 10px;}
-
+			
 		</style>
 	</head>
 
@@ -24,17 +24,17 @@
 		<div class="mui-content">
 			<div class="content_div" >
 				<div id="baseinfo_div" class="baseinfo_div">
-					<div>
+					<div >
 						<label>居村委</label>
-						<input type="text" name="username" value="" />
+						<input type="text" class="mui-input-clear mui-icon-search" name="village" id="village" value="" />
 					</div>
 					<div id="">
 						<label>姓名</label>
-						<input type="text" name="IDCard" id="IDCard" value="" />
+						<input type="text" name="name" id="name" value="" />
 					</div>
 					<div id="">
 						<label>编号</label>
-						<input type="text" name="IDCard" id="IDCard" value="" />
+						<input type="text" name="identifier" id="identifier" value="" />
 					</div>
 					<div id="">
 						<label>确认</label>
@@ -70,6 +70,10 @@
 			        	}
 			        	currentWebView.show("zoom-out");
 					});
+					
+					document.getElementById('village').addEventListener('tap',function () {
+					    mui.toast(123);
+					})
 				});
 			}(mui, document));
 		</script>
