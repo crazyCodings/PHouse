@@ -281,6 +281,16 @@
 					"html/multimeter/multimeter-car-info.html"
 				],
 				"priority": 0
+			},
+			"html/test/main.html": {
+				"resources": [],
+				"refer": [
+					"html/psfthr/psfthr-query-selector.html",
+					"html/shImmigrant/shImmigrant-query-selector.html",
+					"html/multimeter/multimeter-base-info.html",
+					"html/statistics/statistics.html"
+				],
+				"priority": 0
 			}
 		},
 		"idle": {
