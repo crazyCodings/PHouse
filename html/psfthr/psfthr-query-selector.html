@@ -27,19 +27,19 @@
 				<div id="baseinfo_div" class="baseinfo_div">
 					<div>
 						<label>房屋编码</label>
-						<input type="text" name="username" value="" />
+						<input type="text" name="houseId" id="houseId" value="" />
 					</div>
 					<div id="">
 						<label>路名</label>
-						<input type="text" name="IDCard" id="IDCard" value="" />
+						<input type="text" name="roadname" id="roadname" value="" />
 					</div>
 					<div id="">
 						<label>详址</label>
-						<input type="text" name="IDCard" id="IDCard" value="" />
+						<input type="text" name="detailAddress" id="detailAddress" value="" />
 					</div>
 					<div id="btn_div">
-						<input type="button" name="btn_input_div" id="query_village" value="查询" />	
 						<input type="reset" name="btn_input_div" id="reset_btn" value="重置" />
+						<input type="button" name="btn_input_div" id="query_village" value="查询" />
 					</div>
 				</div>
 			</div>
@@ -55,23 +55,38 @@
 				$.plusReady(function() {
 					plus.screen.lockOrientation("landscape-primary");
 					document.getElementById('query_village').addEventListener('tap',function () {
-						var uri = "psfthr-address-people-info.html";
-						var currentWebView = plus.webview.getWebviewById(uri);	
-			        	if (currentWebView!=null){
-			        		mui.openWindow({
-					        	url: uri,
-					        	id : uri,
-								show:{
-							      autoShow : true,	//页面loaded事件发生后自动显示，默认为true
-							      aniShow: "zoom-out" //页面显示动画，默认为”slide-in-right“；
-							    }
-					        });
-			        	} else {
-			        		currentWebView = plus.webview.create(uri , uri);
-			        	}
-			        	currentWebView.show("zoom-out");
+						
+						//调用查询接口，查询数据，把查询结果传给新页面
+						var houseid = document.getElementById("houseId").value,
+							roadname = document.getElementById("roadname").value,
+							detailAddress = document.getElementById("detailAddress").value;
+						console.log(houseid + " : " + roadname + " : " + detailAddress);
+						var houserinfo = {};
+						openHousePage(houserinfo);
 					});
 				});
+				var openHousePage = function (houserinfo) {
+					var uri = "psfthr-address-people-info.html";
+					var currentWebView = plus.webview.getWebviewById(uri);	
+		        	if (currentWebView!=null){
+		        		mui.openWindow({
+				        	url: uri,
+				        	id : uri,
+							show:{
+						      autoShow : true,			//页面loaded事件发生后自动显示，默认为true
+						      aniShow: "zoom-out" 		//页面显示动画，默认为”slide-in-right“；
+						   	},extras:{
+						   		houserinfo : houserinfo
+						   	},waiting:{
+						   		autoShow : true,		//自动显示等待框，默认为true
+      							title : '正在加载...',	//等待对话框上显示的提示内容
+						   	}
+				        });
+		        	} else {
+		        		currentWebView = plus.webview.create(uri , uri);
+		        	}
+		        	currentWebView.show("zoom-out");
+				}
 			}(mui, document));
 		</script>
 	</body>

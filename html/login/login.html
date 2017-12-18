@@ -44,20 +44,16 @@
 						<input id='password' type="password" class="mui-input-clear mui-input" placeholder="请输入密码">
 					</div>
 					<div class="mui-input-row">
-						<label>验证码</label>
-						<input id='validitycode' type="text">
-					</div>
-					<div class="mui-input-row">
-						<!--<input id="loginButton" type="button" class="mui-btn-block" value="登录" />-->
 						<button id="loginButton" type="button" class="mui-btn mui-btn-primary mui-btn-block">登录</button>
 						<label>版本：v1.0.0</label>
 					</div>
 				</div>
 			</div>
 		</div>
-		<script src="../../js/mui.min.js"></script>
+		<script src="../../js/mui.js"></script>
 		<script src="../../js/mui.enterfocus.js"></script>
 		<script src="../../js/app.js"></script>
+		<script src="../../js/Base.js"></script>
 		<script>
 			(function($, doc) {
 				$.init({
@@ -72,16 +68,35 @@
 					var toMain = function() {
 						page.show("pop-in");
 					};
-					//检查 "登录状态/锁屏状态" 结束
 					var loginButton = doc.getElementById('loginButton');
 					var accountBox = doc.getElementById('username');
 					var passwordBox = doc.getElementById('password');
 					loginButton.addEventListener('tap', function(event) {
+						//防止多次重复点击，增加loading状态
+						if(this.textContent.indexOf("Loading...") > -1){
+			            	return ;
+			            }
+						mui(this).button('loading');
+						setTimeout(function() {
+			                mui(this).button('reset');
+			            }.bind(this), 3000);
+			            
 						var loginInfo = {
 							account: accountBox.value,
 							password: passwordBox.value
 						};
-						console.log(loginInfo.account + "\t" + loginInfo.password);
+						
+						/*
+						if(Base.userInfoVerification(loginInfo)){
+							app.login(loginInfo, function(err){
+								console.log("debug:" + err);		//返回状态是在app.js 里处理，还是交由给前端展示页面处理？
+								if(err){
+									plus.nativeUI.toast(err);
+									return;
+								}
+								toMain();
+							});
+						}*/
 						toMain();
 					});
 					var backButtonPress = 0;
