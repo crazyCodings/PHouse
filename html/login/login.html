@@ -37,11 +37,11 @@
 				<div id="login_div" class="login_div">
 					<div class="mui-input-row">
 						<label>账号</label>
-						<input id='username' type="text" class="mui-input-clear mui-input" placeholder="请输入账号">
+						<input id='username' type="text" class="mui-input-clear mui-input" placeholder="请输入账号" value="13011085">
 					</div>
 					<div class="mui-input-row">
 						<label>密码</label>
-						<input id='password' type="password" class="mui-input-clear mui-input" placeholder="请输入密码">
+						<input id='password' type="password" class="mui-input-clear mui-input" placeholder="请输入密码" value="1">
 					</div>
 					<div class="mui-input-row">
 						<button id="loginButton" type="button" class="mui-btn mui-btn-primary mui-btn-block">登录</button>
@@ -51,6 +51,7 @@
 			</div>
 		</div>
 		<script src="../../js/mui.js"></script>
+		<script src="../../js/Utils.js"></script>
 		<script src="../../js/mui.enterfocus.js"></script>
 		<script src="../../js/app.js"></script>
 		<script src="../../js/Base.js"></script>
@@ -83,21 +84,24 @@
 			            
 						var loginInfo = {
 							account: accountBox.value,
-							password: passwordBox.value
+							password: window.btoa(passwordBox.value) // 加密密码
 						};
 						
-						/*
 						if(Base.userInfoVerification(loginInfo)){
-							app.login(loginInfo, function(err){
-								console.log("debug:" + err);		//返回状态是在app.js 里处理，还是交由给前端展示页面处理？
-								if(err){
-									plus.nativeUI.toast(err);
+							app.login(loginInfo, function(data){
+								if(data.result=="1"){
+									plus.nativeUI.toast(data.msg);
 									return;
 								}
+								plus.geolocation.getCurrentPosition( function(p){
+									console.log('-->Send Geolocation\nLatitude:' + p.coords.latitude + '\nLongitude:' + p.coords.longitude + '\nAltitude:' + p.coords.altitude);
+									app.sendGPS(p.coords.longitude, p.coords.latitude, "GPS");
+								}, function(e){
+									mui.toast("获取位置信息失败");
+								});
 								toMain();
 							});
-						}*/
-						toMain();
+						}
 					});
 					var backButtonPress = 0;
 					$.back = function(event) {

@@ -61,8 +61,17 @@
 							roadname = document.getElementById("roadname").value,
 							detailAddress = document.getElementById("detailAddress").value;
 						console.log(houseid + " : " + roadname + " : " + detailAddress);
-						var houserinfo = {};
-						openHousePage(houserinfo);
+						var houserinfo = {
+							"houseid" : houseid,
+							"roadname" : roadname,
+							"detailAddress" : detailAddress
+						};
+						if(houserinfo.houseid == "" || (roadname == "" && detailAddress=="") ){
+							mui.toast("请填写查询条件！");
+							return;
+						}
+						//app.queryRhflFwryxx();
+						//openHousePage(houserinfo);
 					});
 				});
 				var openHousePage = function (houserinfo) {

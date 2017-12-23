@@ -16,3 +16,6 @@ var Base = {
 		return true;
 	}
 }
+var User =  function(){
+	return app.getState();
+}
