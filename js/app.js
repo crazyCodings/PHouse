@@ -61,7 +61,7 @@
 					return callback(jsonData);
 				}
 				if(jsonData.result=="0"){ // 登录成功
-					return owner.createState(jsonData.datas[0], callback);
+					return owner.createState(jsonData, callback);
 				} else {
 					return callback(jsonData);
 				}
@@ -180,17 +180,14 @@
 	}
 
 	/**
-	 * 默认为异步，当参数中指定同步参数时，方法为同步
+	 * 查询房屋和人信息
 	 * @param {Object} data	传入的参数
-	 * @param {Object} method 后台提供的接口方法名称 , 注：区分大小写
-	 * @param {Object} callback	前台调用后的回调函数
+	 * @param {Object} callback 前台调用后的回调函数
+	 * @param {Object} asyn	默认为异步，当参数中指定同步参数时，方法为同步
 	 */
 	owner.queryRhflFwryxx = function(data, callback, asyn) {
-		callback = callback || $.noop;
-		var localServiceInfo = JSON.parse(localStorage.getItem('$serviceinfo'));
 		var userInfo = Utils.getUser();
-		var url = localServiceInfo.url,
-			SoapAction = "queryRhflFwryxx";
+		var SoapAction = "queryRhflFwryxx";
 		var sendData = {
 			"fwid" : data.houseid,
 			"lmdm" : data.roadcode,
@@ -198,41 +195,38 @@
 			"jzdz" : data.detailAddress,
 			"ICLoginInfo" : userInfo
 		};
-		if(asyn == undefined) { asyn = true; } else { asyn = false; }
-		var soapdata = soapxml(sendData, SoapAction);
-		mui.ajax(url, {
-			data: soapdata,
-			dataType: 'xml',
-			type: 'post',
-			async: asyn,
-			timeout: 5000,
-			headers: {
-				'Cache-Control': 'no-cache',
-				'SoapAction': SoapAction,
-				'Content-Type': 'text/xml'
-			},
-			success: function(data) {
-				if(successInfo(SoapAction, data)){
-					var jsonData = JSON.parse(data.childNodes[0].textContent);
-					if(jsonData.result == "0"){
-						//Done
-						return callback(jsonData);
-					}else if(jsonData.result == "1"){
-						mui.toast(jsonData.msg);
-					}
-				}
-			},
-			error: function( xhr, type, errorThrown) {
-				failInfo(SoapAction, xhr, type, errorThrown);
-			}
-		});
+		var success = callback;
+		invokeBackEndInterface(SoapAction, sendData, success, null, asyn);
 	};
 	
-	owner.sendGPS = function(x, y, bz, asyn){
-		var localServiceInfo = JSON.parse(localStorage.getItem('$serviceinfo'));
+	/**
+	 * 查询人户分离照片
+	 * @param {Object} data
+	 * @param {Object} callback
+	 * @param {Object} asyn
+	 */
+	owner.queryRhflPhoto = function(data, callback, asyn) {
 		var userInfo = Utils.getUser();
-		var url = localServiceInfo.url,
-			SoapAction = "saveGps";
+		var SoapAction = "queryRhflPhoto";
+		var sendData = {
+			"rid" : data.rid,
+			"syrklbdm" : data.syrklbdm,
+			"ICLoginInfo" : userInfo
+		};
+		var success = callback;
+		invokeBackEndInterface(SoapAction, sendData, success, null, asyn);
+	};
+	
+	/**
+	 * 
+	 * @param {Object} x 纬度
+	 * @param {Object} y 经度
+	 * @param {Object} bz 备注
+	 * @param {Object} asyn 
+	 */
+	owner.sendGPS = function(x, y, bz, asyn){
+		var SoapAction = "saveGps";
+		var userInfo = Utils.getUser();
 		var sendData = {
 			"entity": {
 				"userid" : userInfo.xgyid,
@@ -249,37 +243,19 @@
 			"entityname" : "TAppGps",
 			"ICLoginInfo" : userInfo
 		};
-		if(asyn == undefined) { asyn = true; } else { asyn = false; }
-		var soapdata = soapxml(sendData, SoapAction);
-		mui.ajax(url, {
-			data: soapdata,
-			dataType: 'xml',
-			type: 'post',
-			async: asyn,
-			timeout: 2000,
-			headers: {
-				'Cache-Control': 'no-cache',
-				'SoapAction': SoapAction,
-				'Content-Type': 'text/xml'
-			},
-			success: function(data) {
-				if(successInfo(SoapAction, data)){
-					var jsonData = JSON.parse(data.childNodes[0].textContent);
-					if(jsonData.result == "0"){
-						//Done nothing
-					}else if(jsonData.result == "1"){
-						mui.toast(jsonData.msg);
-					}
-				}
-			},
-			error: function( xhr, type, errorThrown) {
-				failInfo(SoapAction, xhr, type, errorThrown);
+		var success = function(data) {
+			if(data.result == "0"){
+				//Done nothing
+			}else if( data.result == "1"){
+				mui.toast(data.msg);
 			}
-		});
+		}
+		invokeBackEndInterface(SoapAction, sendData, success, null, asyn);
 	};
 
 	owner.createState = function(data, callback) {
 		var state = owner.getState();
+		data = data.datas[0];
 		state.userType = data.USERTYPE;
 		state.personType = data.YHLX;
 		state.account = data.XGYID;
@@ -334,8 +310,16 @@
 		var settingsText = localStorage.getItem('$settings') || "{}";
 		return JSON.parse(settingsText);
 	}
-	
-	owner.invokeBackEndInterface = function(soapAction, sendData, successCallback, failCallback, asyn) {
+	/**
+	 * 统一调用后端接口
+	 * @param {Object} soapAction 调用方法
+	 * @param {Object} sendData 请求参数
+	 * @param {Object} successCallback 成功回调函数
+	 * @param {Object} failCallback 失败回调函数
+	 * @param {Object} asyn
+	 */
+	var invokeBackEndInterface = function(soapAction, sendData, successCallback, failCallback, asyn) {
+		console.log("-->soapaction:" + soapAction + "\n-->:" + JSON.stringify(sendData));
 		var localServiceInfo = JSON.parse(localStorage.getItem('$serviceinfo'));
 		var userInfo = Utils.getUser();
 		var url = localServiceInfo.url;
@@ -348,7 +332,7 @@
 			dataType: 'xml',
 			type: 'post',
 			async: asyn,
-			timeout: 5000,
+			timeout: 30000,
 			headers: {
 				'Cache-Control': 'no-cache',
 				'SoapAction': soapAction,
@@ -357,6 +341,7 @@
 			success: function(data) {
 				if(successInfo(soapAction, data)){
 					var jsonData = JSON.parse(data.childNodes[0].textContent);
+					jsonData.sendData = sendData;
 					successCallback(jsonData);
 				}
 			},
@@ -388,16 +373,16 @@
 	
 	var successInfo = function(soapaction, data) {
 		if(!data) {
-			console.error('success:-->soapaction: ' + soapaction + '\nreturn data is ' + data + ', please checked!');
+			console.error('success:<--soapaction: ' + soapaction + '\nreturn data is ' + data + ', please checked!');
 			mui.toast('哎呀，通讯异常了呢！');
 			return false;
 		}
 		var jsonData = JSON.parse(data.childNodes[0].textContent);
-		console.log('success:-->soapaction: ' + soapaction + "\njsonData:" + jsonData);
+		console.log('success:<--soapaction: ' + soapaction + "\n<--jsonData:" + JSON.stringify(jsonData));
 		return true;
 	};
 	var failInfo = function(soapaction, xhr, type, errorThrown) {
-		console.error('fail:-->soapaction: ' + soapaction + '\ntype: ' + type + '\nxhr: ' + xhr + '\nerrorThrown: ' + errorThrown);
+		console.error('fail:<--soapaction: ' + soapaction + '\ntype: ' + type + '\nxhr: ' + xhr + '\nerrorThrown: ' + errorThrown);
 		if(type == "abort") {
 			mui.toast('服务器连接异常！');
 		} else if(type == "timeout") {

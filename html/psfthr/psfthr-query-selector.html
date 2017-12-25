@@ -31,11 +31,11 @@
 					</div>
 					<div id="">
 						<label>路名</label>
-						<input type="text" name="roadname" id="roadname" value="" />
+						<input type="text" name="roadname" id="roadname" value="003321" />
 					</div>
 					<div id="">
 						<label>详址</label>
-						<input type="text" name="detailAddress" id="detailAddress" value="" />
+						<input type="text" name="detailAddress" id="detailAddress" value="24号102室" />
 					</div>
 					<div id="btn_div">
 						<input type="reset" name="btn_input_div" id="reset_btn" value="重置" />
@@ -47,6 +47,7 @@
 		<script src="../../js/mui.js"></script>
 		<script src="../../js/mui.enterfocus.js"></script>
 		<script src="../../js/app.js"></script>
+		<script src="../../js/Utils.js"></script>
 		<script>
 			(function($, doc) {
 				$.init({
@@ -60,18 +61,54 @@
 						var houseid = document.getElementById("houseId").value,
 							roadname = document.getElementById("roadname").value,
 							detailAddress = document.getElementById("detailAddress").value;
-						console.log(houseid + " : " + roadname + " : " + detailAddress);
 						var houserinfo = {
 							"houseid" : houseid,
 							"roadname" : roadname,
+							"roadcode" : roadname,
 							"detailAddress" : detailAddress
 						};
-						if(houserinfo.houseid == "" || (roadname == "" && detailAddress=="") ){
+						if(houserinfo.houseid == "" && (roadname == "" || detailAddress=="") ){
 							mui.toast("请填写查询条件！");
 							return;
 						}
-						//app.queryRhflFwryxx();
-						//openHousePage(houserinfo);
+						app.queryRhflFwryxx(houserinfo, function(data){
+							if(data.result == "0"){
+								openHousePage(data.datas);
+								console.log(JSON.stringify(data.datas.fwryxx));
+								var fwryxxArr = data.datas.fwryxx;
+								for (var i = 0; i < fwryxxArr.length; i++) {
+									var filename = data.sendData.rid + ".png";
+									var rid = fwryxxArr[i].rid,
+										syrklbdm = fwryxxArr[i].syrklbdm;
+									//var de = new plus.io.DirectoryEntry();
+									app.queryRhflPhoto(
+										{
+											"rid" : rid, 
+											"syrklbdm" : syrklbdm,
+										}, function(data){
+										if(data.result=='0'){
+											Utils.saveBase64AsPicture(data.sendData.rid + ".png", data.img);
+										}
+									});
+									/*plus.io.resolveLocalFileSystemURL("_doc/img/" + filename, function(entry) {
+										//已存在
+									},function(e) {	//本地不存在，从服务器获取
+										app.queryRhflPhoto(
+											{
+												"rid" : rid, 
+												"syrklbdm" : syrklbdm,
+											}, function(data){
+											if(data.result=='0'){
+												Utils.saveBase64AsPicture(filename, data.img);
+											}
+										});
+									});*/
+								}
+							}else{
+								mui.toast(data.msg);
+							}
+						});
+						
 					});
 				});
 				var openHousePage = function (houserinfo) {
@@ -84,15 +121,15 @@
 							show:{
 						      autoShow : true,			//页面loaded事件发生后自动显示，默认为true
 						      aniShow: "zoom-out" 		//页面显示动画，默认为”slide-in-right“；
-						   	},extras:{
+						   	}, extras: {
 						   		houserinfo : houserinfo
-						   	},waiting:{
+						   	}, waiting: {
 						   		autoShow : true,		//自动显示等待框，默认为true
       							title : '正在加载...',	//等待对话框上显示的提示内容
 						   	}
 				        });
 		        	} else {
-		        		currentWebView = plus.webview.create(uri , uri);
+		        		currentWebView = plus.webview.create(uri , uri , {} , {houserinfo : houserinfo});
 		        	}
 		        	currentWebView.show("zoom-out");
 				}

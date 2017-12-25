@@ -60,6 +60,53 @@
 			sysimei: state.deviceImei
 		}
 		return User;
+	},
+	/**
+	 * 检查文件是否存在
+	 * @param {Object} path
+	 */
+	Utils.checkLocalFile = function(path) {
+		plus.io.resolveLocalFileSystemURL(path, function(entry) {
+			console.log("图片存在: " + path + " 存在");
+			//如果文件存在,则直接设置本地图片
+			//setImgFromLocal(imgId, relativePath);
+		}, function(e) {
+			console.log("图片不存在,从服务端获取" + relativePath);
+			//如果文件不存在,联网下载图片
+			//setImgFromNet(imgId, loadUrl, relativePath);
+		});
+	},
+	/**
+	 * base64图片数据保存，保存路径:/storage/emulated/0/Android/data/io.dcloud.HBuilder/apps/HBuilder/doc/img
+	 * @param {String} filaname
+	 * @param {String} base64
+	 * @return {String}｝图片src路径
+	 */
+	Utils.saveBase64AsPicture = function(filaname, base64) {
+		var relativePath = "_doc/img/" + filaname;
+		var bitmap = new plus.nativeObj.Bitmap();
+		base64 = "data:image/jpg;base64," + base64;
+		bitmap.loadBase64Data(base64, function() {
+			console.log("加载Base64图片数据成功");
+		}, function(e) {
+			console.log('加载Base64图片数据失败：' + JSON.stringify(e));
+		});
+		bitmap.save(relativePath, {}, function(i) {
+			var sd_path = plus.io.convertLocalFileSystemURL(relativePath);
+			console.log('保存图片成功\n路径：' + sd_path + "\n" + JSON.stringify(i));
+			return sd_path;
+		}, function(e) {
+			console.log('保存图片失败：' + JSON.stringify(e));
+			return "";
+		});
+	},
+	/**
+	 * 照片路径
+	 * @param {Object} picName
+	 */
+	Utils.getPicturePath = function(picName) {
+		var relativePath = "_doc/img/" + picName;
+		return plus.io.convertLocalFileSystemURL(relativePath);
 	}
 	
 })(window.Utils = {})
