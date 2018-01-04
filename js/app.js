@@ -9,13 +9,22 @@
 	owner.login = function(loginInfo, callback) {
 
 		var serviceinfo = {
+			//宝山地址
 			app_ip: "101.230.193.58",
 			app_port: "5112",
 			path: "/rfcj_bs/services/rfcjService",
 			namespace: "http://webService.bsfj.gaj.sh",
 			projectfilter: "rfcj", // 兼容不同项目
-			appid: "ssgaj.ydjw.78", //公安网路径 */
+			appid: "ssgaj.ydjw.78", //公安网路径 
 			imei : plus.device.imei
+			//崇明地址
+			/*app_ip: "10.244.12.152",
+			app_port: "5113",
+			path: "/rfcj/services/rfcjService",
+			namespace: "http://webService.bsfj.gaj.sh",
+			projectfilter: "rfcj", // 兼容不同项目
+			appid: "ssgaj.ydjw.test", //公安网路径 
+			imei : plus.device.imei*/
 		};
 		var url = "http://" + serviceinfo.app_ip + ":" + serviceinfo.app_port + serviceinfo.path;
 		serviceinfo.url = url;
@@ -38,7 +47,7 @@
 			type: 'POST',
 			catche: false,
 			ifModified: true,
-			timeout: 3000, // 超时时间设置为3秒；
+			timeout: 30000, // 超时时间设置为3秒；
 			headers: {
 				'appId': serviceinfo.appid,
 				'timestamp': milliseconds,
@@ -76,110 +85,6 @@
 	}
 
 	/**
-	 * 信息采集
-	 * 向服务端提交信息
-	 **/
-	owner.collection = function(data, callback) {
-		callback = callback || $.noop;
-		var address = JSON.parse(localStorage.getItem('$serviceinfo'));
-		var url = "http://" + address.app_ip + ":" + address.app_port + address.path;
-		var userInfo = JSON.parse(localStorage.getItem('$state'));
-		var sendData = {
-			jh: userInfo.policeNo,
-			xm: userInfo.account,
-			pcsbm: userInfo.policeStation,
-			accountname: userInfo.policeNo,
-			zjhm: userInfo.identityNum,
-			password: '',
-			method: 'saveInfo',
-			data: data
-		};
-		var soapdata = soapxml(sendData);
-		mui.ajax(url, {
-			data: soapdata,
-			dataType: 'xml',
-			type: 'post',
-			timeout: 2000,
-			headers: {
-				'appId': address.appid,
-				'Cache-Control': 'no-cache',
-				'SoapAction': 'login',
-				'Content-Type': 'text/xml'
-			},
-			success: function(data) {
-				if(!data) {
-					console.error('return data is ' + data + ', please checked!');
-					mui.toast('哎呀，通讯异常了呢！');
-					return;
-				}
-				var jsonData = JSON.parse(data.childNodes[0].textContent);
-				return callback(jsonData);
-			},
-			error: function(xhr, type, errorThrown) {
-				//异常处理；
-				console.log("queryInfo-->" + type);
-				if(type == "abort") {
-					mui.toast('服务器连接异常！');
-				} else if(type == "timeout") {
-					mui.toast('服务器连接超时！');
-				}
-			}
-		});
-	}
-
-	/**
-	 * 信息采集
-	 * 向服务端提交信息
-	 **/
-	owner.saveInfoNoMsg = function(data, callback) {
-		callback = callback || $.noop;
-		var address = JSON.parse(localStorage.getItem('$serviceinfo'));
-		var url = "http://" + address.app_ip + ":" + address.app_port + address.path;
-		var userInfo = JSON.parse(localStorage.getItem('$state'));
-		var sendData = {
-			jh: userInfo.policeNo,
-			xm: userInfo.account,
-			pcsbm: userInfo.policeStation,
-			accountname: userInfo.policeNo,
-			zjhm: userInfo.identityNum,
-			password: '',
-			method: 'saveInfoNoMsg',
-			data: data
-		};
-		var soapdata = soapxml(sendData);
-		mui.ajax(url, {
-			data: soapdata,
-			dataType: 'xml',
-			type: 'post',
-			timeout: 2000,
-			headers: {
-				'appId': address.appid,
-				'Cache-Control': 'no-cache',
-				'SoapAction': 'login',
-				'Content-Type': 'text/xml'
-			},
-			success: function(data) {
-				if(!data) {
-					console.error('return data is ' + data + ', please checked!');
-					mui.toast('哎呀，通讯异常了呢！');
-					return;
-				}
-				var jsonData = JSON.parse(data.childNodes[0].textContent);
-				return callback(jsonData);
-			},
-			error: function(xhr, type, errorThrown) {
-				//异常处理；
-				console.log("queryInfo-->" + type);
-				if(type == "abort") {
-					mui.toast('服务器连接异常！');
-				} else if(type == "timeout") {
-					mui.toast('服务器连接超时！');
-				}
-			}
-		});
-	}
-
-	/**
 	 * 查询房屋和人信息
 	 * @param {Object} data	传入的参数
 	 * @param {Object} callback 前台调用后的回调函数
@@ -198,6 +103,23 @@
 		var success = callback;
 		invokeBackEndInterface(SoapAction, sendData, success, null, asyn);
 	};
+	/**
+	 * 人户分离注销、离开前查询请求 
+	 * @param {Object} data
+	 * @param {Object} callback
+	 * @param {Object} asyn
+	 */
+	owner.cancelRhflReq = function(data, callback, asyn) {
+		var userInfo = Utils.getUser();
+		var SoapAction = "cancelRhflReq";
+		var sendData = {
+			"fwid" : data.houseid,
+			"rid" : data.rid,
+			"ICLoginInfo" : userInfo
+		};
+		var success = callback;
+		invokeBackEndInterface(SoapAction, sendData, success, null, asyn);
+	};
 	
 	/**
 	 * 查询人户分离照片
@@ -211,6 +133,23 @@
 		var sendData = {
 			"rid" : data.rid,
 			"syrklbdm" : data.syrklbdm,
+			"ICLoginInfo" : userInfo
+		};
+		var success = callback;
+		invokeBackEndInterface(SoapAction, sendData, success, null, asyn);
+	};
+	
+	/**
+	 * 人户分离信息发送、接收查询
+	 * @param {Object} data
+	 * @param {Object} callback
+	 * @param {Object} asyn
+	 */
+	owner.queryRhflMsgList = function(data, callback, asyn) {
+		var userInfo = Utils.getUser();
+		var SoapAction = "queryRhflMsgList";
+		var sendData = {
+			"RhflMsgQueryVo" : data,
 			"ICLoginInfo" : userInfo
 		};
 		var success = callback;

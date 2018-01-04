@@ -9,6 +9,9 @@
 		<link href="../../css/style.css" rel="stylesheet" />
 		<style type="text/css">
 			
+			#back_btn { height: 30px;border-radius: 15px; float:right;margin: 5px 50px 5px 0;width: 60px; }
+			#receive_btn { height: 30px;border-radius: 15px; float:right;margin: 5px 40px 5px 0;width: 80px; }
+			#menu2_btn { height: 30px;border-radius: 15px; float:right;margin: 5px 40px 5px 0;width: 80px; }
 			.content_div{width:70%;margin-left: 120px;}
 			.baseinfo_div{float: right;width: calc(100% - 100px);margin: 50px 0 0 50px;}
 			.baseinfo_div > div label{width: 100px;margin-left: 0px;margin-top: 40px;}
@@ -19,8 +22,16 @@
 	</head>
 
 	<body>
-		<header class="mui-bar mui-bar-nav navigate_div">
+		<!--<header class="mui-bar mui-bar-nav navigate_div">
 			<h1 class="mui-title">居住地址核实</h1>
+		</header>-->
+		<header class="mui-bar mui-bar-nav navigate_div">
+			<h1 class="mui-title" style="font-size: large">
+				居住地址核实
+			</h1>
+			<input type="button" name="back_btn" id="back_btn" value="返回" />
+			<input type="button" name="menu_btn" id="receive_btn" value="信息接收" />
+			<input type="button" name="menu_btn" id="menu2_btn" value="信息发送" />
 		</header>
 		<div class="mui-content">
 			<div class="content_div" >
@@ -55,6 +66,14 @@
 				});
 				$.plusReady(function() {
 					plus.screen.lockOrientation("landscape-primary");
+					document.getElementById('receive_btn').addEventListener('tap',function () {
+						var uri = "psfthr-receive-statistics.html";
+						openNewPageByURI(uri, "");
+					});
+					document.getElementById('menu2_btn').addEventListener('tap',function () {
+						var uri = "psfthr-send-statistics.html";
+						openNewPageByURI(uri, "");
+					});
 					document.getElementById('query_village').addEventListener('tap',function () {
 						
 						//调用查询接口，查询数据，把查询结果传给新页面
@@ -73,7 +92,8 @@
 						}
 						app.queryRhflFwryxx(houserinfo, function(data){
 							if(data.result == "0"){
-								openHousePage(data.datas);
+								var uri = "psfthr-address-people-info.html";
+								openNewPageByURI(uri, data.datas);
 								console.log(JSON.stringify(data.datas.fwryxx));
 								var fwryxxArr = data.datas.fwryxx;
 								for (var i = 0; i < fwryxxArr.length; i++) {
@@ -111,8 +131,7 @@
 						
 					});
 				});
-				var openHousePage = function (houserinfo) {
-					var uri = "psfthr-address-people-info.html";
+				var openNewPageByURI = function (uri, houserinfo) {
 					var currentWebView = plus.webview.getWebviewById(uri);	
 		        	if (currentWebView!=null){
 		        		mui.openWindow({

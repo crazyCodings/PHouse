@@ -6,7 +6,7 @@
 	 */
 	Utils.preFixInteger = function(num, length){
 		return ( Array(length).join('0') + num ).slice(-length);
-	}
+	},
 	/**
 	 * 获取当前时间
 	 */

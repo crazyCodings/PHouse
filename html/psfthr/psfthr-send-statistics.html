@@ -1,0 +1,123 @@
+<!doctype html>
+<html class="mui-fullscreen">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>人户分离信息发送</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.css" rel="stylesheet" />
+		<link href="../../css/style.css" rel="stylesheet" />
+		<link type="text/css" rel="stylesheet" href="../../css/jsgrid/jsgrid.css" />
+		<link type="text/css" rel="stylesheet" href="../../css/jsgrid/theme.css" />
+		<style type="text/css">
+			.content_div{width:95%;margin: 10px 0 0 20px;background-color: white;height: 95%;overflow: scroll}
+			.query_div{float: right;width: calc(100% - 231px);margin: 10px 0 0 120px;}
+			.query_div > div label{margin-top: 20px;margin-left: 0px;color: black;}
+			.query_div > div input{margin-top: 12px;margin-left: 10px;width: 180px !important;height: 25px;}
+			.query_div > div .search_btn{width: 100px !important;margin-left: 250px;}
+			
+			#result_list{width: 100%;margin-top: 10px;}
+
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav navigate_div">
+			<h1 class="mui-title">人户分离信息发送</h1>
+		</header>
+		<div class="mui-content">
+			<div class="content_div" >
+				<div id="query_div" class="query_div">
+					<div>
+						<label>发送日期</label>
+						<input type="text" name="sDate" id="sDate" value="" />
+						<label><span style="color: red;">*</span>信息状态</label>
+						<input type="text" name="msgStatue" id="msgStatue" value="" />
+					</div>
+					<div>
+						<label>姓名</label>
+						<input type="text" name="username" id="username" value="" />
+						<label>证件号码</label>
+						<input type="text" name="IDCard" id="IDCard" value="" />
+					</div>
+					<div>
+						<input type="button" id="search_btn" class="search_btn" value="查询" />				
+					</div>
+				</div>
+				<div id="jsGrid"></div>
+			</div>
+		</div>
+		<script src="../../js/mui.js"></script>
+		<script src="../../js/mui.enterfocus.js"></script>
+		<script src="../../js/app.js"></script>
+		<script src="../../js/Utils.js"></script>
+		<script type="text/javascript" src="../../js/jquery/jquery-1.8.3.js"></script>
+		<script type="text/javascript" src="../../js/jsgrid/jsgrid.min.js"></script>
+		<script src="../../js/datasource/db.js"></script>
+		<script>
+			(function($$, doc) {
+				$$.init({
+					statusBarBackground: '#f7f7f7'
+				});
+				// 创建悬浮窗口
+				var floatw = null;
+				var ws = null;
+				$$.plusReady(function() {
+					plus.screen.lockOrientation("landscape-primary");
+					var user = Utils.getUser();
+					document.getElementById('search_btn').addEventListener('tap',function () {
+					     var q = {
+					     	"startTime" : document.getElementById("sDate").value,
+					     	"xm" : document.getElementById("username").value,
+					     	"zjhm"  : document.getElementById("IDCard").value,
+					     	"option" : document.getElementById("msgStatue").value,
+					     	"optype" : "01",
+					     	"usertype" : user.usertype,
+					     	"pcsdm" : user.pcsdm,
+					     	"jcwdm" : user.jcwdm
+					     };
+					     app.queryRhflMsgList(q, function(d){
+					     	mui.toast("返回成功");
+					     });
+					});
+					ws = plus.webview.currentWebview();
+					var clients = [
+				       	{ "name": 1, "IDCard": "310111196505090035", "dataTime": "2017-12-27", "sendStreet": "广中路街道", 
+				       	"sendHomeVillageName": "昌里第四居委", "receivedStreet": "新股村大家园而居委", "detailAddress": "上海市红空去水电路191弄18号601室", 
+				       	"receivedHomeVillageName": "出租房屋", "msgType": "友谊路派出所"},
+				        { "name": 101, "IDCard": "310111196505090035", "dataTime": "2017-12-27", "sendStreet": "张银宝", 
+				        "sendHomeVillageName": "何家寨居委", "receivedStreet": "新股村大家园而居委", "detailAddress": "上海市红空去水电路191弄18号601室", 
+				        "receivedHomeVillageName": "出租房屋", "msgType": "友谊路派出所"}
+				    ];
+		
+				    $("#jsGrid").jsGrid({
+						width: "100%",
+						height: "480px",
+						//inserting: true,
+						//editing: true,
+						sorting: true,
+						paging: true,
+						rowClick: function(args) {
+		                    //showDetailsDialog(args.item);
+		                },
+						data: clients,
+						fields: [
+				            { title: "姓名", name: "name", width: 50},
+				            { title: "身份证号", name: "IDCard", width: 130 },
+				            { title: "时间", name: "dataTime", width: 50 },
+				            { title: "发送街道名称", name: "sendStreet", width: 50},
+				            { title: "发送居委名称", name: "sendHomeVillageName", width: 50 },
+				            { title: "接收街道名称", name: "receivedStreet", width: 50 },
+				            { title: "接收居委名称", name: "receivedHomeVillageName", width: 50},
+				            { title: "详细地址", name: "detailAddress", width: 80 },
+				            { title: "信息类型", name: "msgType", width: 50 },
+				            { title: "操作", name: "policeno", width: 50 }
+				        ]
+					});
+				});
+				
+			}(mui, document));
+		</script>
+	</body>
+
+</html>

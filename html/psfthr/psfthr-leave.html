@@ -11,10 +11,11 @@
 			
 			.content_div {height: 310px;}
 			.img_div{margin-left: 0px;}
-			.img_div img {width: 100%;margin-left: 0px;}
+			.img_div img { border-radius: 5%; width: 100%;margin-left: 0px;}
 			.baseinfo_div{float: right;width: calc(100% - 231px);}
 			.baseinfo_div > div label{width: 100px;margin-left: 0px;}
-			.baseinfo_div > div input{margin-top: 10px;}
+			.baseinfo_div  div input{margin-top: 10px; background-color: #777777; }
+			.baseinfo_div > div:nth-last-child(1) > input{margin-top: 10px; background-color: darkseagreen; }
 			.baseinfo_div > div .input_short{width: 100px !important;}
 			.baseinfo_div > div .input_medium{width: 160px !important;}
 			.baseinfo_div > div .input_long{width: 366px !important;}
@@ -39,25 +40,25 @@
 						<label>身份证号</label>
 						<input type="text" name="IDCard" id="IDCard" class="input_medium" value="" />
 					</div>
-					<div id="">
+					<div>
 						<label>户籍地址</label>
-						<input type="text" name="username" class="input_long" class="mui-input" value="" />
+						<input type="text" name="address" id="address" class="input_long" class="mui-input" value="" />
 					</div>
-					<div id="">
+					<div>
 						<label>街道</label>
-						<input type="text" name="username" class="input_long" value="" />
+						<input type="text" name="street" id="street" class="input_long" value="" />
 					</div>
-					<div id="">
+					<div>
 						<label>所属公安机关</label>
-						<input type="text" name="fe" id="fe" class="input_long" value="" />						
+						<input type="text" name="policStation" id="policStation" class="input_long" value="" />						
 					</div>
-					<div id="">
+					<div>
 						<label>居委会</label>
-						<input type="text" name="fe" id="fe" class="input_long" value="" />						
+						<input type="text" name="jwh" id="jwh" class="input_long" value="" />						
 					</div>
-					<div id="">
+					<div>
 						<label>注销原因</label>
-						<input type="text" name="fe" id="fe" class="input_long" value="" />						
+						<input type="text" name="logoff" id="logoff" class="input_long" value="" />						
 					</div>
 				</div>
 			</div>
@@ -68,6 +69,7 @@
 		<script src="../../js/mui.js"></script>
 		<script src="../../js/mui.enterfocus.js"></script>
 		<script src="../../js/app.js"></script>
+		<script src="../../js/Utils.js"></script>
 		<script>
 			(function($, doc) {
 				$.init({
@@ -76,10 +78,33 @@
 				var ws = null;
 				$.plusReady(function() {
 					plus.screen.lockOrientation("landscape-primary");
+					/*[].forEach(document.querySelectorAll("#baseinfo_div input"), function(p){
+						p.attr("readonly", "readonly");
+					});*/
+					var arr = document.querySelectorAll("#baseinfo_div input");
+					for (var i=0; i < arr.length - 1; i++) {
+						arr[i].setAttribute("readonly", "readonly");
+					}
 					ws = plus.webview.currentWebview();
 					var parentInfo = ws.item;
-					document.getElementById("username").value = parentInfo.name.first;
-					document.getElementById("IDCard").value = parentInfo.id.value;
+					document.querySelectorAll("#img_div div img")[0].src = Utils.getPicturePath(parentInfo.rid + ".png");
+					document.getElementById("username").value = parentInfo.xm;
+					document.getElementById("IDCard").value = parentInfo.zjhm;
+					document.getElementById("address").value = parentInfo.hjdz;
+					document.getElementById("street").value = parentInfo.hjdjdhz;
+					document.getElementById("policStation").value = parentInfo.hjdzzjghz;
+					document.getElementById("jwh").value = parentInfo.hjdjwhhz;
+					
+					document.getElementById('submit').addEventListener('tap',function () {
+						console.log(parentInfo.rylx);
+
+						if(document.getElementById("logoff").value == ""){
+					    	mui.alert("注销原因不能为空！");
+					    	return;
+					    }
+					    //
+					    mui.toast("开始注销：此为测试，禁止操作数据");
+					})
 				});
 			}(mui, document));
 		</script>

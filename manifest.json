@@ -256,7 +256,10 @@
 			"html/psfthr/psfthr-query-selector.html": {
 				"resources": [],
 				"refer": [
-					"html/psfthr/psfthr-address-people-info.html"
+					"html/psfthr/psfthr-address-people-info.html",
+					"html/psfthr/statistics.html",
+					"html/psfthr/psfthr-receive-statistics.html",
+					"html/psfthr/psfthr-send-statistics.html"
 				],
 				"priority": 0
 			},

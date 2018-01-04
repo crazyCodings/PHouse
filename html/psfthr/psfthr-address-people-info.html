@@ -23,10 +23,10 @@
 			#house_info div span { float: none; color: black;display:block;margin-top: 15px; }
 			#jsGrid { float: left;margin-top: 30px; border: #FF0000;}
 			.client-photo { float: left; margin: 0 20px 0 10px; }
-	        .client-photo img { width:104px; height: 124px; border-radius: 5%; border: 1px solid #ddd;}
+	        .client-photo img { width:125px; height: 160px; border-radius: 5%; border: 1px solid #ddd;}
 	        .client-info { margin-top: 10px; }
 	        .client-info p { line-height: 25px; }
-	        .client-info p input{ height: 25px; width: 80px !important;float: right;margin: 0 100px 10px 0;}
+	        .client-info input{ height: 35px; width: 80px !important;float: right;margin: 0 100px 10px 0;}
 	        
 	        #register { margin-left: 300px; }
 		</style>
@@ -125,12 +125,26 @@
 		                rowRenderer: function(item) {
 		                    var user = item;
 		                    user.status_btn = "状态";
+		                    if(user.rylx=="01"){user.status_btn = "离开"; } //户籍人员 显示离开
+		                    else if(user.rylx=="02" || user.rylx=="03"){ user.status_btn = ""; } //02来沪人员  03 境外人员 不显示按钮
+		                    else if(user.rylx=="04"){ user.status_btn = "注销"; } //人在户不在 显示注销
+		                    else if(user.rylx=="05"){ user.status_btn = "注销"; } //人在户不在居在 显示注销
+		                    else if(user.rylx=="06"){ 
+		                    	if( user.txnum == "0") 
+		                    		user.status_btn = "在住";
+		                    	else
+		                    		user.status_btn = "待核实";
+		                    } //户在人不在   if( txnum = 0) 在住  else 显示待核实（非按钮）
+		                    else if(user.rylx=="07"){ user.status_btn = "在住"; } //居在人不在  显示在住
+		                    
 		                    var $photo = $("<div>").addClass("client-photo").append($("<img>").attr("src", Utils.getPicturePath(user.rid + ".png")));
 		                    var $info = $("<div>").addClass("client-info")
 		                        .append($("<p>").append($("<strong>").text(user.xm )))
 		                        .append($("<p>").text("人员类型: " + user.rylxmc))
-		                        .append($("<p>").text("证件号码: " + user.zjhm)
-		                        				.append($("<input>").attr("type", "button").attr("name", "status_btn").attr("value", user.status_btn)));
+		                        .append($("<p>").text("证件号码: " + user.zjhm));
+		                    if(user.rylx=="01" || user.rylx=="04" || user.rylx=="05" || user.rylx=="06" || user.rylx=="07"){
+		                    	$info.append($("<input>").attr("type", "button").attr("name", "status_btn").attr("value", user.status_btn).attr("data-type", user.rylx));
+		                    }
 		                    return $("<tr>").append($("<td>").append($photo).append($info));
 		                    /*var $photo = $("<div>").addClass("client-photo").append($("<img>").attr("src", user.picture.large));
 		                    var $info = $("<div>").addClass("client-info")
@@ -143,7 +157,34 @@
 		                },
 		                rowClick: function(item) {
 		                	if ( item.event.target.name == "status_btn" ){
-		                		createWebviewByURI("psfthr-leave.html", item.item);
+		                		var uri = "",
+		                			usertype = item.event.target.getAttribute("data-type");
+		                		if(usertype == "01" || usertype == "04" || usertype == "05"){	// 01 户籍人员 04人在户不在 05 人在户不在居在
+		                			// 离开注销，查询人员信息
+		                			uri = "psfthr-leave.html"; 
+		                			if(uri == "") return ;
+									var queryCondition = {
+										"houseid" : housrInfo.fwjbxx.fwid,
+										"rid" : item.item.rid
+									};
+									if(queryCondition.houseid == ""  || queryCondition.rid=="" ){
+										console.error("--------查询条件为空");
+										return;
+									}
+			                		app.cancelRhflReq(queryCondition, function(data){
+			                			item.datas = data.datas;
+			                			item.datas.rylx = usertype;
+			                			//console.log(JSON.stringify(item));
+			                			createWebviewByURI(uri, item.datas);
+			                		});
+		                		}else if(usertype == "06" || usertype == "07"){  // 06 户在人不在   07居在人不在
+		                			//确认是否在住， 06：insertHzrbzRhflRyxx 07:insertJzrbzRhflRyxx
+		                			mui.confirm('在住确认', '', ['在住', '不在住'], function(e){
+		                				mui.toast("此为测试，禁止操作数据");
+		                			});
+		                			
+		                		}
+		                		
 		                	}
 		                }
 		            });
