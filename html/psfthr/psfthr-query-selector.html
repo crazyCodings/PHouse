@@ -9,7 +9,7 @@
 		<link href="../../css/style.css" rel="stylesheet" />
 		<style type="text/css">
 			
-			#back_btn { height: 30px;border-radius: 15px; float:right;margin: 5px 50px 5px 0;width: 60px; }
+			#back_btn { height: 30px;border-radius: 15px; float:right;margin: 5px 50px 5px 0;width: 60px; display: none;}
 			#receive_btn { height: 30px;border-radius: 15px; float:right;margin: 5px 40px 5px 0;width: 80px; }
 			#menu2_btn { height: 30px;border-radius: 15px; float:right;margin: 5px 40px 5px 0;width: 80px; }
 			.content_div{width:70%;margin-left: 120px;}
@@ -74,6 +74,9 @@
 						var uri = "psfthr-send-statistics.html";
 						openNewPageByURI(uri, "");
 					});
+					document.getElementById('back_btn').addEventListener('tap',function () {
+					    mui.back();
+					})
 					document.getElementById('query_village').addEventListener('tap',function () {
 						
 						//调用查询接口，查询数据，把查询结果传给新页面
