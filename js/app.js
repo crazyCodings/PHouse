@@ -10,21 +10,21 @@
 
 		var serviceinfo = {
 			//宝山地址
-			app_ip: "101.230.193.58",
+			/*app_ip: "101.230.193.58",
 			app_port: "5112",
 			path: "/rfcj_bs/services/rfcjService",
 			namespace: "http://webService.bsfj.gaj.sh",
 			projectfilter: "rfcj", // 兼容不同项目
 			appid: "ssgaj.ydjw.78", //公安网路径 
-			imei : plus.device.imei
+			imei : plus.device.imei*/
 			//崇明地址
-			/*app_ip: "10.244.12.152",
+			app_ip: "10.244.12.152",
 			app_port: "5113",
 			path: "/rfcj/services/rfcjService",
 			namespace: "http://webService.bsfj.gaj.sh",
 			projectfilter: "rfcj", // 兼容不同项目
 			appid: "ssgaj.ydjw.test", //公安网路径 
-			imei : plus.device.imei*/
+			imei : plus.device.imei
 		};
 		var url = "http://" + serviceinfo.app_ip + ":" + serviceinfo.app_port + serviceinfo.path;
 		serviceinfo.url = url;

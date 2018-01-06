@@ -107,6 +107,16 @@
 	Utils.getPicturePath = function(picName) {
 		var relativePath = "_doc/img/" + picName;
 		return plus.io.convertLocalFileSystemURL(relativePath);
-	}
+	},
 	
+	/**
+	 * 兼容startswith
+	 */
+	Utils.startsWith = function() {
+		if(typeof String.prototype.startsWith != 'function') {
+			String.prototype.startsWith = function(prefix) {
+				return this.slice(0, prefix.length) === prefix;
+			};
+		}
+	}
 })(window.Utils = {})
