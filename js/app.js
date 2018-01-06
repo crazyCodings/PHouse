@@ -271,7 +271,7 @@
 			dataType: 'xml',
 			type: 'post',
 			async: asyn,
-			timeout: 30000,
+			timeout: 60000,
 			headers: {
 				'Cache-Control': 'no-cache',
 				'SoapAction': soapAction,

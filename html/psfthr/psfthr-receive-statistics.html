@@ -30,9 +30,9 @@
 				<div id="query_div" class="query_div">
 					<div>
 						<label>发送日期</label>
-						<input type="text" name="username" value="" />
+						<input type="text" name="sDate" id="sDate" value="" />
 						<label><span style="color: red;">*</span>信息状态</label>
-						<input type="text" name="username" value="" />
+						<input type="text" name="msgStatue" id="msgStatue" value="" />
 					</div>
 					<div id="">
 						<label>姓名</label>
@@ -42,12 +42,12 @@
 					</div>
 					<div id="">
 						<label>接收派出所</label>
-						<input type="text" name="IDCard" id="IDCard" value="" placeholder=""/>
+						<input type="text" name="receiveStation" id="receiveStation" value="" placeholder=""/>
 					</div>
 					<div id="">
 						<label>接收居村委</label>
-						<input type="text" name="IDCard" id="IDCard" value="" placeholder=""/>
-						<input type="button" class="search_btn" value="查询" />				
+						<input type="text" name="receiveVillage" id="receiveVillage" value="" placeholder=""/>
+						<input type="button" class="search_btn" id="search_btn" value="查询" />				
 					</div>
 				</div>
 				<div id="jsGrid"></div>
@@ -56,6 +56,7 @@
 		<script src="../../js/mui.js"></script>
 		<script src="../../js/mui.enterfocus.js"></script>
 		<script src="../../js/app.js"></script>
+		<script src="../../js/Utils.js"></script>
 		<script type="text/javascript" src="../../js/jquery/jquery-1.8.3.js"></script>
 		<script type="text/javascript" src="../../js/jsgrid/jsgrid.min.js"></script>
 		<script src="../../js/datasource/db.js"></script>
@@ -70,14 +71,27 @@
 				$$.plusReady(function() {
 					plus.screen.lockOrientation("landscape-primary");
 					ws = plus.webview.currentWebview();
-					var clients = [
-				       	{ "name": 1, "IDCard": "310111196505090035", "dataTime": "2017-12-27", "sendStreet": "广中路街道", 
-				       	"sendHomeVillageName": "昌里第四居委", "receivedStreet": "新股村大家园而居委", "detailAddress": "上海市红空去水电路191弄18号601室", 
-				       	"receivedHomeVillageName": "出租房屋", "msgType": "友谊路派出所"},
-				        { "name": 101, "IDCard": "310111196505090035", "dataTime": "2017-12-27", "sendStreet": "张银宝", 
-				        "sendHomeVillageName": "何家寨居委", "receivedStreet": "新股村大家园而居委", "detailAddress": "上海市红空去水电路191弄18号601室", 
-				        "receivedHomeVillageName": "出租房屋", "msgType": "友谊路派出所"}
-				    ];
+					var user = Utils.getUser();
+					var clients = [];
+					document.getElementById('search_btn').addEventListener('tap',function () {
+					     var q = {
+					     	"startTime" : document.getElementById("sDate").value,
+					     	"xm" : document.getElementById("username").value,
+					     	"zjhm"  : document.getElementById("IDCard").value,
+					     	"option" : document.getElementById("msgStatue").value,
+					     	"receiveOrg" : document.getElementById("receiveVillage").value,
+					     	"receiveStreet" : document.getElementById("receiveStation").value,
+					     	"optype" : "02",
+					     	"usertype" : user.usertype,
+					     	"pcsdm" : user.pcsdm,
+					     	"jcwdm" : user.jcwdm
+					     };
+					     app.queryRhflMsgList(q, function(d){
+						    var $grid = $("#jsGrid");
+						    clients = d.datas;
+						    $grid.jsGrid("loadData");
+					     });
+					});
 		
 				    $("#jsGrid").jsGrid({
 						width: "100%",
@@ -89,18 +103,46 @@
 						rowClick: function(args) {
 		                    //showDetailsDialog(args.item);
 		                },
+		                controller: {
+		                    loadData: function() {
+		                        return clients;
+		                    }
+		                },
 						data: clients,
 						fields: [
-				            { title: "姓名", name: "name", width: 50},
-				            { title: "身份证号", name: "IDCard", width: 130 },
-				            { title: "时间", name: "dataTime", width: 50 },
-				            { title: "发送街道名称", name: "sendStreet", width: 50},
-				            { title: "发送居委名称", name: "sendHomeVillageName", width: 50 },
-				            { title: "接收街道名称", name: "receivedStreet", width: 50 },
-				            { title: "接收居委名称", name: "receivedHomeVillageName", width: 50},
-				            { title: "详细地址", name: "detailAddress", width: 80 },
-				            { title: "信息类型", name: "msgType", width: 50 },
-				            { title: "操作", name: "policeno", width: 50 }
+				            { title: "姓名", name: "INVOLVER_NAME", width: 50},
+				            { title: "身份证号", name: "INVOLVER_IDCARD", width: 140 },
+				            { title: "时间", name: "CREATE_DATE", width: 50 ,
+				            	itemTemplate : function(value){
+				            		return value.substr(0,4) + "-" + value.substr(4,2) + "-" + value.substr(6,2);
+				            	}
+				            },
+				            { title: "发送街道名称", name: "SENDER_ORG_STREET_NAME", width: 50},
+				            { title: "发送居委名称", name: "SENDER_ORG_NAME", width: 50 },
+				            { title: "接收街道名称", name: "RECEIVER_ORG_STREET_NAME", width: 50 },
+				            { title: "接收居委名称", name: "RECEIVER_ORG_NAME", width: 50},
+				            { title: "详细地址", name: "INVOLVER_HOUSE_ADDRESS", width: 80 },
+				            { title: "信息类型", name: "MSG_STATUS", width: 50,
+				            	itemTemplate : function(value, item){
+				            		if(value=="00"){
+				            			if(item["CHECK_FLAG"]=="1"){	
+				            				return "已查看提醒";
+				            			}else{	
+				            				return "未查看提醒";	
+				            			}
+				            		}else if(value=="01"){
+				            			return "待核实";
+				            		}else {
+				            			return "已核实";
+				            		}
+				            	}
+				            },
+				            { title: "操作", name: "MSG_STATUS", width: 50 , 
+				            	itemTemplate : function(value, item){
+				            		if(value=="01") return "<button>核实</button>";
+				            		else return "<button>查看</button>";
+				            	}
+				            }
 				        ]
 					});
 				});

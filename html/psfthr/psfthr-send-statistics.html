@@ -77,18 +77,13 @@
 					     	"jcwdm" : user.jcwdm
 					     };
 					     app.queryRhflMsgList(q, function(d){
-					     	mui.toast("返回成功");
+						    var $grid = $("#jsGrid");
+						    clients = d.datas;
+						    $grid.jsGrid("loadData");
 					     });
 					});
 					ws = plus.webview.currentWebview();
-					var clients = [
-				       	{ "name": 1, "IDCard": "310111196505090035", "dataTime": "2017-12-27", "sendStreet": "广中路街道", 
-				       	"sendHomeVillageName": "昌里第四居委", "receivedStreet": "新股村大家园而居委", "detailAddress": "上海市红空去水电路191弄18号601室", 
-				       	"receivedHomeVillageName": "出租房屋", "msgType": "友谊路派出所"},
-				        { "name": 101, "IDCard": "310111196505090035", "dataTime": "2017-12-27", "sendStreet": "张银宝", 
-				        "sendHomeVillageName": "何家寨居委", "receivedStreet": "新股村大家园而居委", "detailAddress": "上海市红空去水电路191弄18号601室", 
-				        "receivedHomeVillageName": "出租房屋", "msgType": "友谊路派出所"}
-				    ];
+					var clients = [];
 		
 				    $("#jsGrid").jsGrid({
 						width: "100%",
@@ -100,9 +95,14 @@
 						rowClick: function(args) {
 		                    //showDetailsDialog(args.item);
 		                },
+		                controller: {
+		                    loadData: function() {
+		                        return clients;
+		                    }
+		                },
 						data: clients,
 						fields: [
-				            { title: "姓名", name: "name", width: 50},
+				            /*{ title: "姓名", name: "name", width: 50},
 				            { title: "身份证号", name: "IDCard", width: 130 },
 				            { title: "时间", name: "dataTime", width: 50 },
 				            { title: "发送街道名称", name: "sendStreet", width: 50},
@@ -111,7 +111,47 @@
 				            { title: "接收居委名称", name: "receivedHomeVillageName", width: 50},
 				            { title: "详细地址", name: "detailAddress", width: 80 },
 				            { title: "信息类型", name: "msgType", width: 50 },
-				            { title: "操作", name: "policeno", width: 50 }
+				            { title: "操作", name: "policeno", width: 50 }*/
+				            { title: "姓名", name: "INVOLVER_NAME", width: 50},
+				            { title: "身份证号", name: "INVOLVER_IDCARD", width: 140 },
+				            { title: "时间", name: "CREATE_DATE", width: 50 ,
+				            	itemTemplate : function(value){
+				            		return value.substr(0,4) + "-" + value.substr(4,2) + "-" + value.substr(6,2);
+				            	}
+				            },
+				            { title: "发送街道名称", name: "SENDER_ORG_STREET_NAME", width: 50},
+				            { title: "发送居委名称", name: "SENDER_ORG_NAME", width: 50 },
+				            { title: "接收街道名称", name: "RECEIVER_ORG_STREET_NAME", width: 50 },
+				            { title: "接收居委名称", name: "RECEIVER_ORG_NAME", width: 50},
+				            { title: "详细地址", name: "INVOLVER_HOUSE_ADDRESS", width: 80 },
+				            { title: "信息类型", name: "MSG_STATUS", width: 50 ,
+				            	itemTemplate : function(value, item){
+				            		if(value=="00"){
+				            			if(item["CHECK_FLAG"]=="1"){	
+				            				return "已查看提醒";
+				            			}else{	
+				            				return "未查看提醒";	
+				            			}
+				            		}else if(value=="01"){
+				            			return "待核实";
+				            		}else {
+				            			return "已核实";
+				            		}
+				            	}
+				            },
+				            { title: "核实结果", name: "MSG_STATUS", width: 50,
+				            	itemTemplate : function(value, item){
+				            		if (value =="02"){
+				            			return "已不在住";
+				            		}else if (value =="03"){
+				            			return "仍然在住";
+				            		}else if (value =="04"){
+				            			return "逾期自动核实";
+				            		}else{
+				            			return "无"
+				            		}
+				            	}
+				            }
 				        ]
 					});
 				});

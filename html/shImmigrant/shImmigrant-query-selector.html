@@ -14,6 +14,8 @@
 			.baseinfo_div > div label{width: 100px;margin-left: 0px;margin-top: 40px;}
 			.baseinfo_div > div input{margin-top: 24px;height: 50px;margin-left: 10px;}
 			
+			#confirm_btn {float: right;margin-right: 10px;}
+			#confirm_btn input{background-color: cadetblue;}
 		</style>
 	</head>
 
@@ -24,20 +26,19 @@
 		<div class="mui-content">
 			<div class="content_div" >
 				<div id="baseinfo_div" class="baseinfo_div">
-					<div >
+					<div>
 						<label>居村委</label>
 						<input type="text" class="mui-input-clear mui-icon-search" name="village" id="village" value="" />
 					</div>
-					<div id="">
+					<div>
 						<label>姓名</label>
-						<input type="text" name="name" id="name" value="" />
+						<input type="text" name="username" id="username" value="" />
 					</div>
-					<div id="">
+					<div>
 						<label>编号</label>
 						<input type="text" name="identifier" id="identifier" value="" />
 					</div>
-					<div id="">
-						<label>确认</label>
+					<div id="confirm_btn">
 						<input type="button" name="query_village" id="query_village" value="确认" />						
 					</div>
 				</div>
@@ -70,10 +71,6 @@
 			        	}
 			        	currentWebView.show("zoom-out");
 					});
-					
-					document.getElementById('village').addEventListener('tap',function () {
-					    mui.toast(123);
-					})
 				});
 			}(mui, document));
 		</script>
