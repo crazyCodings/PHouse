@@ -1,3 +1,6 @@
+
+
+
 (function(Utils){
 	/**
 	 * 从后开始截取字符串、数字长度，不足前面补0
@@ -5,7 +8,6 @@
 	 * @param {Object} length
 	 */
 	Utils.preFixInteger = function(num, length){
-		num = num==""? 0 : num;
 		return ( Array(length).join('0') + num ).slice(-length);
 	},
 	/**
@@ -58,9 +60,7 @@
 			xgypid: state.IDCard,
 			yhlx: state.personType,
 			usertype: state.userType,
-			sysimei: state.deviceImei,
-			key : state.key,
-			countyid : state.countyid
+			sysimei: state.deviceImei
 		}
 		return User;
 	},
@@ -110,6 +110,16 @@
 	Utils.getPicturePath = function(picName) {
 		var relativePath = "_doc/img/" + picName;
 		return plus.io.convertLocalFileSystemURL(relativePath);
-	}
+	},
 	
+	/**
+	 * 兼容startswith
+	 */
+	Utils.startsWith = function() {
+		if(typeof String.prototype.startsWith != 'function') {
+			String.prototype.startsWith = function(prefix) {
+				return this.slice(0, prefix.length) === prefix;
+			};
+		}
+	}
 })(window.Utils = {})
