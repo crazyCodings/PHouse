@@ -16,7 +16,9 @@
 			namespace: "http://webService.bsfj.gaj.sh",
 			projectfilter: "rfcj", // 兼容不同项目
 			appid: "ssgaj.ydjw.78", //公安网路径 
-			imei : plus.device.imei
+			imei : plus.device.imei,
+			key : "1a100d2c0dcb19c4430e7d73762b34c3",
+			countyid : "13"
 			//崇明地址
 			/*app_ip: "10.244.12.152",
 			app_port: "5113",
@@ -156,6 +158,54 @@
 		invokeBackEndInterface(SoapAction, sendData, success, null, asyn);
 	};
 	
+	owner.queryHouseInfoListPrecise = function(data, callback, asyn) {
+		var userInfo = Utils.getUser();
+		var SoapAction = "queryHouseInfoListPrecise";
+		var sendData = {
+			"JzzHousePreciseQueryVo" : data.JzzHousePreciseQueryVo,
+			"BaseOperator" : data.BaseOperator,
+			"ICLoginInfo" : userInfo
+		};
+		var success = callback;
+		invokeBackEndInterface(SoapAction, sendData, success, null, asyn);
+	};
+	
+	owner.queryHouseInfoListFuzzy = function(data, callback, asyn) {
+		var userInfo = Utils.getUser();
+		var SoapAction = "queryHouseInfoListFuzzy";
+		var sendData = {
+			"JzzHouseFuzzyQueryVo" : data.JzzHouseFuzzyQueryVo,
+			"BaseOperator" : data.BaseOperator,
+			"ICLoginInfo" : userInfo
+		};
+		var success = callback;
+		invokeBackEndInterface(SoapAction, sendData, success, null, asyn);
+	};
+	
+	owner.queryJzrByFwbm = function(data, callback, asyn) {
+		var userInfo = Utils.getUser();
+		var SoapAction = "queryJzrByFwbm";
+		var sendData = {
+			"BasePersonInHouseQueryVo" : data.BasePersonInHouseQueryVo,
+			"BaseOperator" : data.BaseOperator,
+			"ICLoginInfo" : userInfo
+		};
+		var success = callback;
+		invokeBackEndInterface(SoapAction, sendData, success, null, asyn);
+	};
+	
+	owner.queryBasePersonInfo = function(data, callback, asyn) {
+		var userInfo = Utils.getUser();
+		var SoapAction = "queryBasePersonInfo";
+		var sendData = {
+			"BasePersonInfoQueryVo" : data.BasePersonInfoQueryVo,
+			"BaseOperator" : data.BaseOperator,
+			"ICLoginInfo" : userInfo
+		};
+		var success = callback;
+		invokeBackEndInterface(SoapAction, sendData, success, null, asyn);
+	};
+	
 	/**
 	 * 
 	 * @param {Object} x 纬度
@@ -194,6 +244,7 @@
 
 	owner.createState = function(data, callback) {
 		var state = owner.getState();
+		var localServiceInfo = JSON.parse(localStorage.getItem('$serviceinfo'));
 		data = data.datas[0];
 		state.userType = data.USERTYPE;
 		state.personType = data.YHLX;
@@ -211,6 +262,8 @@
 		state.homeVillageName = data.JCWMC;
 		state.token = "token123456789";
 		state.deviceImei = plus.device.imei;
+		state.key = localServiceInfo.key;
+		state.countyid = localServiceInfo.countyid;
 		owner.setState(state);
 		return callback(data);
 	};

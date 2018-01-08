@@ -15,21 +15,21 @@
 			.content_div{width: 100%;height: 200px;overflow:scroll;background-color: #1ea3de;margin: 0;margin-bottom:0px;border-radius:10px;}
 
 			.client-photo { float: left; margin: 0 20px 0 10px; }
-	        .client-photo img { border-radius: 50%; border: 1px solid #ddd; }
+	        .client-photo img { width:125px; height: 160px; border-radius: 5%; border: 1px solid #ddd;background-image: url(../../img/drawable/icpersonico.png);background-size: contain;}
 	        .client-info { margin-top: 10px; }
 	        .client-info p { line-height: 25px; }
 	        .client-btn { float: left; margin: 0 20px 0 10px; }
-	        .client-btn input { width:200px !important;margin: 0 20px 0 20px; }
+	        .client-btn input { width:100px !important;margin: 0 20px 0 20px; }
 		</style>
 	</head>
 
 	<body>
 		<header class="mui-bar mui-bar-nav navigate_div">
 			<h1 class="mui-title" style="font-size: large">
-				<span style="float: left;width: 120px;margin-left: 0px;text-align: left;">房主：<span>张银宝</span></span>
-				<span style="float: left;margin-left: 10px;">身份证号码：<span>310111196505090035</span></span>
+				<span style="float: left;width: 120px;margin-left: 0px;text-align: left;">房主：<span id="houser_hold_name"></span></span>
+				<span style="float: left;margin-left: 10px;">身份证号码：<span id="houser_hold_id"></span></span>
 				<input type="button" id="back_btn" style="float: right;margin: 5px 10px 0 0;" value="返回"/>
-				<input type="button" id="new_btn" style="float: right;margin: 5px 10px 0 0;" value="新增"/>
+				<input type="button" id="add_btn" style="float: right;margin: 5px 10px 0 0;" value="新增"/>
 			</h1>
 		</header>
 		<div class="mui-content">
@@ -38,6 +38,7 @@
 		<script src="../../js/mui.js"></script>
 		<script src="../../js/mui.enterfocus.js"></script>
 		<script src="../../js/app.js"></script>
+		<script src="../../js/Utils.js"></script>
 		<script src="../../js/jquery/jquery-1.8.3.js"></script>
 		<script src="../../js/jsgrid/jsgrid.min.js"></script>
 		<script>
@@ -45,17 +46,22 @@
 				$$.init({
 					statusBarBackground: '#f7f7f7'
 				});
-				var pageSourceId;
+				var pageSourceId, house_info , user ;
 				$$.plusReady(function() {
 					plus.screen.lockOrientation("landscape-primary");
 					var shareInfo = plus.webview.currentWebview().shareInfo;
-					pageSourceId = shareInfo.pageSourceId;
+					pageSourceId = shareInfo.pageSourceId,
+					house_info = shareInfo.house_info;
+					document.getElementById("houser_hold_name").textContent = house_info.fzxm;
+					document.getElementById("houser_hold_id").textContent = house_info.fzzjhm;
+					user = Utils.getUser();
 					document.getElementById('back_btn').addEventListener('tap',function () {
 						backfunction();
-					})
-					document.getElementById('new_btn').addEventListener('tap',function () {
-					    createNewPage();
-					})
+					});
+					document.getElementById('add_btn').addEventListener('tap',function () {
+					    createNewPage({ id : 'add_btn'});
+					});
+					showGrid();
 				});
 				mui.back = function() {
 					backfunction();
@@ -67,54 +73,80 @@
 					}
 				}
 				var newPage = null;
-				var createNewPage = function () {
+				var createNewPage = function (info) {
 					var uri = "shImmigrant-new.html";
-					if( newPage ){
-						newPage.show("fade-in");
-					} else {
-						newPage = plus.webview.create(uri, uri);
-						newPage.addEventListener("loaded", function() {
-							newPage.show('fade-in', 300);
-						}, false);
+					if(info.id=="add_btn"){
+						uri = "shImmigrant-add.html";
 					}
-				}
-				$("#jsGrid").jsGrid({
-	                height: "100%",
-	                width: "100%",
-	                autoload: true,
-	                paging: false,
-	                controller: {
-	                    loadData: function() {
-	                        var deferred = $.Deferred();
-	
-	                        $.ajax({
-	                            url: 'http://api.randomuser.me/?results=10',
-	                            dataType: 'jsonp',
-	                            success: function(data){
-	                                deferred.resolve(data.results);
-	                            }
-	                        });
-	
-	                        return deferred.promise();
-	                    }
-	                },
-	                rowRenderer: function(item) {
-	                    var user = item;
-	                    var $photo = $("<div>").addClass("client-photo").append($("<img>").attr("src", user.picture.large));
-	                    var $info = $("<div>").addClass("client-info")
-	                        .append($("<p>").append($("<strong>").text(user.name.first.capitalize() + " " + user.name.last.capitalize())))
-	                        .append($("<p>").text("Location: " + user.location.city.capitalize() + ", " + user.location.street))
-	                        .append($("<p>").text("Email: " + user.email))
-	                        .append($("<p>").text("Cell: " + user.cell));
-	                    var $btn = $("<div>").addClass("client-btn")
-	                    	.append($("<input>").attr("type", "button").attr("value", "Edit"))
-	                    	.append($("<input>").attr("type", "button").attr("value", "Delete"))
-	                    	.append($("<input>").attr("type", "button").attr("value", "Show"));
-	
-	                    return $("<tr>").append($("<td>").append($photo).append($info).append($btn));
-	                }
-	            });
-	
+					newPage = plus.webview.create(uri, uri, null, {info: info});
+					newPage.addEventListener("loaded", function() {
+						newPage.show('fade-in', 300);
+					}, false);
+				};
+				var showGrid = function(){
+					$("#jsGrid").jsGrid({
+		                height: "100%",
+		                width: "100%",
+		                autoload: true,
+		                paging: false,
+		                controller: {
+		                    loadData: function() {
+		                        var deferred = $.Deferred();
+		                        var q= {
+					            	"BasePersonInHouseQueryVo" : {
+						            	"houseseq" : house_info.fwbm
+					            	},
+					            	"BaseOperator" : {
+					            		"countyid" : user.countyid,
+						            	"policeid" : user.policeid,
+						            	"jcwdm" : house_info.jcwdm,
+						            	"applattice" : user.latticepoint,
+						            	"terminalNo" : user.sysimei,
+						            	"oprNo" : user.xgyid,
+						            	"key" : user.key
+					            	}
+					            };
+		                        app.queryJzrByFwbm(q, function(data){
+		                        	console.log(data.datas);
+		                        	deferred.resolve(data.datas);
+		                        });
+		                        return deferred.promise();
+		                    }
+		                },
+		                rowRenderer: function(item) {
+		                   	var $photo = $("<div>").addClass("client-photo").append($("<img>").attr("src", Utils.getPicturePath(item.chidcard + ".png")));
+		                    var $info = $("<div>").addClass("client-info")
+		                        .append($("<p>").append($("<strong>").text(item.chname )))
+		                        .append($("<p>").text("身份证号: " + item.chidcard))
+		                        .append($("<p>").text("登记号: " + item.regcode));
+		                    var $btn = $("<div>").addClass("client-btn")
+		                    	.append($("<input>").attr("type", "button").attr("value", "编辑").attr("id", "edit_btn"))
+		                    	.append($("<input>").attr("type", "button").attr("value", "注销").attr("id", "delete_btn"))
+		                    	.append($("<input>").attr("type", "button").attr("value", "查看").attr("id", "show_btn"));
+		                    return $("<tr>").append($("<td>").append($photo).append($info).append($btn));
+		                },
+		                rowClick: function(item) {
+		                	
+		                	if(item.event.target.id == "delete_btn" ){
+		                		mui.confirm('确认注销居住人吗？', '', ['是', '否'], function(index){
+		                			if(index.index == '0'){
+		                				mui.toast('当前为测试，不能操作数据');
+		                			}		                			
+		                		}, 'div');
+		                		return;
+		                	}
+		                	if ( item.event.target.id == "edit_btn" || item.event.target.id == "show_btn"){
+		                		var info = {
+		                			"id" : item.event.target.id,
+		                			"personinfo" : item.item,
+		                			"houseinfo" : house_info
+		                		};
+		                		createNewPage(info);
+		                	}
+		                	
+		                }
+		            });
+				};
 	
 	            String.prototype.capitalize = function() {
 	                return this.charAt(0).toUpperCase() + this.slice(1);

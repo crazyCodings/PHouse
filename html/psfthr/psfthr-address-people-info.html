@@ -146,14 +146,6 @@
 		                    	$info.append($("<input>").attr("type", "button").attr("name", "status_btn").attr("value", user.status_btn).attr("data-type", user.rylx));
 		                    }
 		                    return $("<tr>").append($("<td>").append($photo).append($info));
-		                    /*var $photo = $("<div>").addClass("client-photo").append($("<img>").attr("src", user.picture.large));
-		                    var $info = $("<div>").addClass("client-info")
-		                        .append($("<p>").append($("<strong>").text(user.name.first.capitalize() + " " + user.name.last.capitalize())))
-		                        .append($("<p>").text("Location: " + user.location.city.capitalize() + ", " + user.location.street))
-		                        .append($("<p>").text("Email: " + user.email))
-		                        .append($("<p>").text("Cell1: " + user.cell)
-		                        				.append($("<input>").attr("type", "button").attr("name", "status_btn").attr("value", user.status_btn)));
-		                    return $("<tr>").append($("<td>").append($photo).append($info));*/
 		                },
 		                rowClick: function(item) {
 		                	if ( item.event.target.name == "status_btn" ){

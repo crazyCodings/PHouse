@@ -12,10 +12,12 @@
 		<style type="text/css">
 			.content_div{width:95%;margin: 10px 0 0 20px;background-color: white;height: 95%;overflow: scroll}
 			.query_div{float: right;width: calc(100% - 231px);margin: 10px 0 0 120px;}
+			.query_div div { width: 100%; }
 			.query_div > div label{margin-top: 20px;margin-left: 0px;color: black;}
 			.query_div > div input{margin-top: 12px;margin-left: 10px;width: 300px !important;height: 25px;}
-			.query_div > div .search_btn{width: 100px !important;}
-			
+			.query_div > div .search_btn{width: 100px !important;float: right;background-color: cadetblue;}
+			.query_div .road {width: 100px !important;}
+			#query_div > div:first-child input{ width: 150px !important;}
 			#result_list{width: 100%;margin-top: 10px;}
 
 		</style>
@@ -29,23 +31,28 @@
 			<div class="content_div" >
 				<div id="query_div" class="query_div">
 					<div>
+						<label>派出所</label>
+						<input type="text" name="policeStation" id="policeStation" value="" />
+						<label>居村委</label>
+						<input type="text" name="village" id="village" value="" />
+					</div>
+					<div>
 						<label><span style="color: red;">*</span>道路查询</label>
-						<input type="text" name="username" value="" />
+						<input type="text" class="roadname" id="roadname" value="003892" placeholder=""/>
 					</div>
-					<div id="">
+					<div>
 						<label>精确查找</label>
-						<input type="text" name="IDCard" id="IDCard" value="" />
-						<input type="button" class="search_btn" value="查询" />
+						<input type="text" class="road" value="" id="lane1" placeholder="弄"/>
+						<input type="text" class="road" value="" id="lane2" placeholder="支弄"/>
+						<input type="text" class="road" value="" id="lane3" placeholder="号"/>
+						<input type="text" class="road" value="" id="house_no" placeholder="室号"/>
+						<input type="text" class="road" value="" id="house_name" placeholder="房屋名称"/>
+						<input type="button" class="search_btn" id="detail_search" value="查询" />
 					</div>
-					<div id="">
+					<div>
 						<label>用户输入</label>
-						<input type="text" name="IDCard" id="IDCard" value="" placeholder="请输入查询信息"/>
-						<input type="button" class="search_btn" value="查询" />
-					</div>
-					<div id="">
-						<label>条码查询</label>
-						<input type="text" name="IDCard" id="IDCard" value="" placeholder="请输入条码查询信息"/>
-						<input type="button" class="search_btn" value="查询" />				
+						<input type="text" name="fuzzy_info" id="fuzzy_info" value="" placeholder="门弄牌号信息"/>
+						<input type="button" class="search_btn" id="fuzzy_search" value="查询" />
 					</div>
 				</div>
 				<div id="jsGrid"></div>
@@ -54,6 +61,7 @@
 		<script src="../../js/mui.js"></script>
 		<script src="../../js/mui.enterfocus.js"></script>
 		<script src="../../js/app.js"></script>
+		<script src="../../js/Utils.js"></script>
 		<script type="text/javascript" src="../../js/jquery/jquery-1.8.3.js"></script>
 		<script type="text/javascript" src="../../js/jsgrid/jsgrid.min.js"></script>
 		<script src="../../js/datasource/db.js"></script>
@@ -63,15 +71,68 @@
 					statusBarBackground: '#f7f7f7'
 				});
 				// 创建悬浮窗口
-				var floatw = null;
-				var ws = null;
+				var floatw = null, ws = null, user = {};
 				$$.plusReady(function() {
 					plus.screen.lockOrientation("landscape-primary");
+					user = Utils.getUser();
 					ws = plus.webview.currentWebview();
-					var clients = [
-				        { "squence": 101, "mlph": "1号", "housename": "101室（101室）", "householdname": "张银宝", "IDCard": "310111196505090035", "buildingsname": "姚圣荣", "type_of_residence": "个人房", "type_of_buildings": "出租房屋", "policeno": "友谊路派出所"}
-				    ];
-		
+					
+					document.getElementById("policeStation").value = user.pcsmc;
+					document.getElementById("policeStation").textContent = "310113360000";
+					document.getElementById("village").value = user.jcwdm.split(',')[0];
+					document.getElementById("village").textContent = "13007003";
+					var clients = [],q = {};
+				    document.getElementById('detail_search').addEventListener('tap',function () {
+			            q= {
+			            	"JzzHousePreciseQueryVo" : {
+				            	"jlxdm" : document.getElementById("roadname").value,
+				            	"yjmlph" : Utils.preFixInteger(document.getElementById("lane1").value, 6),
+				            	"ejmlph" : Utils.preFixInteger(document.getElementById("lane2").value, 6),
+				            	"sjmlph" : Utils.preFixInteger(document.getElementById("lane3").value, 6),
+				            	"sh" : document.getElementById("house_no").value,
+				            	"fwms" : document.getElementById("house_name").value,
+				            	"latticepoint" : "",
+				            	"txm" : ""
+			            	},
+			            	"BaseOperator" : {
+			            		"countyid" : user.countyid,	//宝山代码 13
+				            	"policeid" : user.policeid,
+				            	"jcwdm" : document.getElementById("village").value,
+				            	"applattice" : user.latticepoint,
+				            	"terminalNo" : user.sysimei,
+				            	"oprNo" : user.xgyid,
+				            	"key" : user.key
+			            	}
+			            }
+			            app.queryHouseInfoListPrecise(q, function(d){
+			            	var $grid = $("#jsGrid");
+						    clients = d.datas;
+						    $grid.jsGrid("loadData");
+			            });
+				    });
+				    document.getElementById('fuzzy_search').addEventListener('tap',function () {
+				        q= {
+			            	"JzzHouseFuzzyQueryVo" : {
+				            	"jlxdm" : document.getElementById("roadname").value,
+				            	"mlphxx" : document.getElementById("fuzzy_info").value,
+				            	"latticepoint" : ""
+			            	},
+			            	"BaseOperator" : {
+			            		"countyid" : user.countyid,	//宝山代码 13
+				            	"policeid" : user.policeid,
+				            	"jcwdm" : document.getElementById("village").value,
+				            	"applattice" : user.latticepoint,
+				            	"terminalNo" : user.sysimei,
+				            	"oprNo" : user.xgyid,
+				            	"key" : user.key
+			            	}
+			            }
+			            app.queryHouseInfoListFuzzy(q, function(d){
+			            	var $grid = $("#jsGrid");
+						    clients = d.datas;
+						    $grid.jsGrid("loadData");
+			            });
+				    });
 				    $("#jsGrid").jsGrid({
 						width: "100%",
 						height: "480px",
@@ -80,30 +141,35 @@
 						sorting: true,
 						paging: true,
 						rowClick: function(args) {
+							console.log(args);
 		                    showDetailsDialog(args.item);
+		                },
+		                controller: {
+		                    loadData: function() {
+		                        return clients;
+		                    }
 		                },
 						data: clients,
 						fields: [
-				            { title: "序号", name: "squence", width: 40, type: "number"},
 				            { title: "门楼牌号", name: "mlph", width: 50 },
-				            { title: "房屋名称", name: "housename", width: 100 },
-				            { title: "房主姓名", name: "householdname", width: 80},
-				            { title: "房主身份证号码", name: "IDCard", width: 180 },
-				            { title: "房屋单位名称", name: "buildingsname", width: 100 },
-				            { title: "居住类型", name: "type_of_residence", width: 80},
-				            { title: "居住房屋类型", name: "type_of_buildings", width: 80 },
-				            { title: "派出所名称", name: "policeno", width: 100 }
+				            { title: "房屋名称", name: "sh", width: 100 },
+				            { title: "房主姓名", name: "fzxm", width: 80},
+				            { title: "房主身份证号码", name: "fzzjhm", width: 180 },
+				            { title: "房屋单位名称", name: "fwdwmc", width: 100 },
+				            { title: "居住类型", name: "jzlx", width: 80},
+				            { title: "居住房屋类型", name: "jzfwlx", width: 80 },
+				            { title: "派出所名称", name: "pcsmc", width: 100 }
 				        ]
 					});
 				});
-				var showDetailsDialog = function(client){
-					floatWebview();
+				var showDetailsDialog = function(info){
+					floatWebview(info);
 				}
 				window.addEventListener('closeMaskEvent', function(event){
 					closeMask();
 				});
 				
-		        var floatWebview = function () {
+		        var floatWebview = function (info) {
 		        	ws = plus.webview.currentWebview();
 		            if(floatw) { // 避免快速多次点击创建多个窗口
 		                floatw.show("fade-in");
@@ -119,7 +185,7 @@
 		                    width : "90%",
 		                    left : "40px"
 		                }, {
-							shareInfo:{"pageSourceId": ws.id}
+							shareInfo:{"pageSourceId": ws.id, "house_info" : info}
 						});
 						floatw.addEventListener("loading", function() {
 		                	plus.nativeUI.showWaiting();

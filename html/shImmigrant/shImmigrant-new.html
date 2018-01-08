@@ -9,13 +9,15 @@
 		<link href="../../css/style.css" rel="stylesheet" />
 		<style type="text/css">
 			
-			.img_div{margin-left: 0px;}
+			.img_div{margin-left: 0px;margin-top: 6%;width: 190px;}
+			.img_div div img {width: 140px; height: 178px;background-image: url(../../img/drawable/icpersonico.png);background-size: contain;}
 			.baseinfo_div{float: right;width: calc(100% - 231px);}
 			.baseinfo_div > div label{width: 100px;margin-left: 0px;}
 			.baseinfo_div > div input{margin-top: 14px;}
-			.baseinfo_div > div .input_short{width: 90px !important;}
-			.baseinfo_div > div .input_medium{width: 190px !important;}
-			.baseinfo_div > div .input_long{width: 366px !important;}
+			.baseinfo_div > div .input_short{width: 100px !important;}
+			.baseinfo_div > div .input_medium{width: 200px !important;}
+			.baseinfo_div > div .input_long{width: 400px !important;}
+			.button_div input{margin-left: 20%;margin-top: 0px; background-color:#1ea3de;border: 0;}
 
 		</style>
 	</head>
@@ -27,43 +29,43 @@
 		<div class="mui-content">
 			<div class="content_div" >
 				<div id="img_div" class="img_div">
-					<div><img src="../../img/drawable/icpersonico.png"/></div>
+					<div><img id="person_photo"/></div>
 					<input type="button" name="collection_photo" id="collection_photo" value="采集照片" />
 				</div>
 				<div id="baseinfo_div" class="baseinfo_div">
 					<div>
 						<label>姓名</label>
-						<input type="text" name="username" class="input_short" value="" />
+						<input type="text" name="username" id="username" class="input_short" value="" />
 						<label>身份证号</label>
 						<input type="text" name="IDCard" id="IDCard" class="input_medium" value="" />
 					</div>
 					<div id="">
 						<label>民族</label>
-						<input type="text" name="username" class="input_short" class="mui-input" value="" />
+						<input type="text" name="folk" id="folk" class="input_short" class="mui-input" value="" />
 						<label>移动电话</label>
-						<input type="text" name="IDCard" id="IDCard" class="input_medium" value="" />
+						<input type="text" name="mobile" id="mobile" class="input_medium" value="" />
 					</div>
 					<div id="">
 						<label>居住事由</label>
-						<input type="text" name="username" class="input_short" value="" />
+						<input type="text" name="live_reason" id="live_reason" class="input_short" value="" />
 						<label>固定电话</label>
-						<input type="text" name="IDCard" id="IDCard" class="input_medium" value="" />
+						<input type="text" name="houseownertel" id="houseownertel" class="input_medium" value="" />
 					</div>
 					<div id="">
 						<label>户籍所在地</label>
-						<input type="text" name="fe" id="fe" class="input_long" value="" />						
+						<input type="text" name="hhr_place" id="hhr_place" class="input_long" value="" />						
 					</div>
 					<div id="">
 						<label>户籍详址</label>
-						<input type="text" name="fe" id="fe" class="input_long" value="" />						
+						<input type="text" name="hhr_detail_address" id="hhr_detail_address" class="input_long" value="" />						
 					</div>
 					<div id="">
 						<label>居住地址</label>
-						<input type="text" name="fe" id="fe" class="input_long" value="" />						
+						<input type="text" name="address" id="address" class="input_long" value="" />						
 					</div>
 					<div id="">
 						<label>房屋编码</label>
-						<input type="text" name="fe" id="fe" class="input_long" value="" />						
+						<input type="text" name="houseid" id="houseid" class="input_long" value="" />						
 					</div>
 				</div>
 			</div>
@@ -73,15 +75,62 @@
 		</div>
 		<script src="../../js/mui.js"></script>
 		<script src="../../js/mui.enterfocus.js"></script>
+		<script src="../../js/Utils.js"></script>
 		<script src="../../js/app.js"></script>
 		<script>
 			(function($, doc) {
 				$.init({
 					statusBarBackground: '#f7f7f7'
 				});
+				var ws = null, info, user;
 				$.plusReady(function() {
 					plus.screen.lockOrientation("landscape-primary");
+					ws = plus.webview.currentWebview();
+					user = Utils.getUser();
+					info = ws.info;
+					if(info.id=="edit_btn" || info.id=="show_btn"){
+						displayInfo();
+					}
+					if(info.id=="show_btn"){
+						document.getElementById("submit").style.display = 'none';
+						document.getElementById("collection_photo").style.display = 'none';
+					}
+					if(info.id=="add_btn"){
+						document.getElementById("username").value = info.persioninfo.username;
+						document.getElementById("IDCard").value = info.persioninfo.IDCard;
+					}
 				});
+				var displayInfo = function(){
+					var q = {
+						"BasePersonInfoQueryVo" : {
+							"regcode" : info.personinfo.regcode,
+							"chidcard" : info.personinfo.chidcard,
+							"houseseq" : info.houseinfo.fwbm
+						},
+						"BaseOperator" : {
+		            		"countyid" : user.countyid,
+			            	"policeid" : user.policeid,
+			            	"jcwdm" : info.houseinfo.jcwdm,
+			            	"applattice" : user.latticepoint,
+			            	"terminalNo" : user.sysimei,
+			            	"oprNo" : user.xgyid,
+			            	"key" : user.key
+		            	}
+					};
+					app.queryBasePersonInfo(q, function(d){
+						document.getElementById("username").value = d.datas.chname;
+						document.getElementById("IDCard").value = d.datas.chidcard;
+						document.getElementById("folk").value = d.datas.chfolk;
+						document.getElementById("mobile").value = d.datas.mobile;
+						document.getElementById("live_reason").value = d.datas.chreasonnew;
+						document.getElementById("houseownertel").value = d.datas.houseownertel;
+						document.getElementById("hhr_place").value = d.datas.hjcode;
+						document.getElementById("hhr_detail_address").value = d.datas.hjaddr;
+						document.getElementById("address").value = d.datas.chshlivearea + " " + d.datas.chshlivestreet + " " + d.datas.chshliveroad + " " + d.datas.chshliveaddr;
+						document.getElementById("houseid").value = d.datas.houseseq;
+						document.getElementById("person_photo").src = Utils.getPicturePath(d.datas.chidcard + ".png");
+					});
+				}
 			}(mui, document));
 		</script>
 	</body>
