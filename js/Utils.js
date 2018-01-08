@@ -1,6 +1,3 @@
-
-
-
 (function(Utils){
 	/**
 	 * 从后开始截取字符串、数字长度，不足前面补0
@@ -8,6 +5,7 @@
 	 * @param {Object} length
 	 */
 	Utils.preFixInteger = function(num, length){
+		num = num==""? 0 : num;
 		return ( Array(length).join('0') + num ).slice(-length);
 	},
 	/**
@@ -60,7 +58,9 @@
 			xgypid: state.IDCard,
 			yhlx: state.personType,
 			usertype: state.userType,
-			sysimei: state.deviceImei
+			sysimei: state.deviceImei,
+			key : state.key,
+			countyid : state.countyid
 		}
 		return User;
 	},
@@ -122,4 +122,5 @@
 			};
 		}
 	}
+	
 })(window.Utils = {})

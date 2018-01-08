@@ -83,7 +83,6 @@
 						if( subname==null || subname=="") {
 							return;
 						}
-						Utils.startsWith();
 						if ( subname.startsWith("img_") ) {
 				        	subname = subname.substr(4);
 				        }
@@ -91,7 +90,7 @@
 				        switch (subname){
 				        	case "shImmigrant": 
 				        		tips = "来沪人员"; 
-				        		id = "shImmigrant-query-selector.html"
+				        		id = "shImmigrant-query-detail.html"
 				        		uri = "../shImmigrant/";
 				        		break;
 				        	case "psfthr": 
