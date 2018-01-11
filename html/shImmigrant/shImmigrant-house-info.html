@@ -107,26 +107,26 @@
 					            	}
 					            };
 		                        app.queryJzrByFwbm(q, function(data){
-		                        	console.log(data.datas);
+		                        	var query= {
+						            	"JzzPhotoQueryVo" : {
+							            	"houseseq" : house_info.fwbm
+						            	},
+						            	"BaseOperator" : q.BaseOperator
+						            };
+		                        	for (var i = 0; i< data.datas.length; i++) {
+		                        		query.JzzPhotoQueryVo.regcode = data.datas[i].regcode;
+				                		queryphoto(query, query.JzzPhotoQueryVo.regcode);
+		                        	}
 		                        	deferred.resolve(data.datas);
 		                        });
 		                        return deferred.promise();
 		                    }
 		                },
-		                rowRenderer: function(item) {
-		                   	var $photo = $("<div>").addClass("client-photo").append($("<img>").attr("src", Utils.getPicturePath(item.chidcard + ".png")));
-		                    var $info = $("<div>").addClass("client-info")
-		                        .append($("<p>").append($("<strong>").text(item.chname )))
-		                        .append($("<p>").text("身份证号: " + item.chidcard))
-		                        .append($("<p>").text("登记号: " + item.regcode));
-		                    var $btn = $("<div>").addClass("client-btn")
-		                    	.append($("<input>").attr("type", "button").attr("value", "编辑").attr("id", "edit_btn"))
-		                    	.append($("<input>").attr("type", "button").attr("value", "注销").attr("id", "delete_btn"))
-		                    	.append($("<input>").attr("type", "button").attr("value", "查看").attr("id", "show_btn"));
-		                    return $("<tr>").append($("<td>").append($photo).append($info).append($btn));
+		                rowRenderer: function(item, itemIndex) {
+		                	var w = loadSingleData(item, true);
+							return w ;
 		                },
 		                rowClick: function(item) {
-		                	
 		                	if(item.event.target.id == "delete_btn" ){
 		                		mui.confirm('确认注销居住人吗？', '', ['是', '否'], function(index){
 		                			if(index.index == '0'){
@@ -143,9 +143,44 @@
 		                		};
 		                		createNewPage(info);
 		                	}
-		                	
 		                }
 		            });
+				};
+				
+				/**
+				 * 多次调用方法时，传入的非字符串对象会被覆盖，所以需要regcode识别
+				 * @param {Object} query
+				 * @param {Object} regcode
+				 */
+				var queryphoto = function(query, regcode){
+					var path = "_doc/img/" + regcode + ".png";
+					plus.io.resolveLocalFileSystemURL( path, function( entry ) {
+						entry.file( function(file){
+							console.log("获取本地图片" + file.name);
+						} );
+					}, function ( e ) {
+						query.JzzPhotoQueryVo.regcode = regcode;	//query 当查询多张照片时，query会变为一样的，regcode不变，  不知道什么原因
+						getPhotoFromNetwork(query, regcode);
+					} );
+				};
+				var getPhotoFromNetwork = function(query, regcode){
+					app.queryPhotosByRegcode(query, function(d){
+	        			document.getElementById(regcode).src = "data:image/jpg;base64," + d.img;
+	                	Utils.saveBase64AsPicture(regcode + ".png", d.img);
+	                });
+				};
+				
+				var loadSingleData = function(item, hasPicture){
+					var $photo = $("<div>").addClass("client-photo").append($("<img>").attr("name", "client-photo").attr("id", item.regcode).attr("src", hasPicture ? Utils.getPicturePath(item.regcode + ".png") : ""));
+                    var $info = $("<div>").addClass("client-info")
+                        .append($("<p>").append($("<strong>").text(item.chname )))
+                        .append($("<p>").text("身份证号: " + item.chidcard))
+                        .append($("<p>").text("登记号: " + item.regcode));
+                    var $btn = $("<div>").addClass("client-btn")
+                    	.append($("<input>").attr("type", "button").attr("value", "编辑").attr("id", "edit_btn"))
+                    	.append($("<input>").attr("type", "button").attr("value", "注销").attr("id", "delete_btn"))
+                    	.append($("<input>").attr("type", "button").attr("value", "查看").attr("id", "show_btn"));
+					return $("<tr>").append($("<td>").append($photo).append($info).append($btn));
 				};
 	
 	            String.prototype.capitalize = function() {

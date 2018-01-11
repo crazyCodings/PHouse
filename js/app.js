@@ -25,8 +25,10 @@
 			path: "/rfcj/services/rfcjService",
 			namespace: "http://webService.bsfj.gaj.sh",
 			projectfilter: "rfcj", // 兼容不同项目
-			appid: "ssgaj.ydjw.test", //公安网路径 
-			imei : plus.device.imei*/
+			appid: "ssgaj.ydjw.78", //公安网路径 
+			imei : plus.device.imei,
+			key : "1a100d2c0dcb19c4430e7d73762b34c3",
+			countyid : "13"*/
 		};
 		var url = "http://" + serviceinfo.app_ip + ":" + serviceinfo.app_port + serviceinfo.path;
 		serviceinfo.url = url;
@@ -206,6 +208,18 @@
 		invokeBackEndInterface(SoapAction, sendData, success, null, asyn);
 	};
 	
+	owner.queryPhotosByRegcode = function(data, callback, errCallback, asyn) {
+		var userInfo = Utils.getUser();
+		var SoapAction = "queryPhotosByRegcode";
+		var sendData = {
+			"JzzPhotoQueryVo" : data.JzzPhotoQueryVo,
+			"BaseOperator" : data.BaseOperator,
+			"ICLoginInfo" : userInfo
+		};
+		var success = callback, fail = errCallback;
+		invokeBackEndInterface(SoapAction, sendData, success, fail, asyn);
+	}
+	
 	/**
 	 * 
 	 * @param {Object} x 纬度
@@ -338,7 +352,10 @@
 				}
 			},
 			error: function( xhr, type, errorThrown) {
-				failInfo(soapAction, xhr, type, errorThrown);
+				if(failInfo(soapAction, xhr, type, errorThrown)){
+					jsonData.sendData = sendData;
+					failCallback(jsonData);
+				};
 			}
 		});
 	}
@@ -380,5 +397,6 @@
 		} else if(type == "timeout") {
 			mui.toast('服务器连接超时！');
 		}
+		return true;
 	}
 }(mui, window.app = {}));
