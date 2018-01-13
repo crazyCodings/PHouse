@@ -28,7 +28,7 @@
 	        .client-info p { line-height: 25px; }
 	        .client-info input{ height: 35px; width: 80px !important;float: right;margin: 0 100px 10px 0;}
 	        
-	        #register { margin-left: 300px; }
+	        #register { margin-left: 300px;background-color: cadetblue; }
 		</style>
 	</head>
 
@@ -111,14 +111,8 @@
 		                controller: {
 		                    loadData: function() {
 		                        var deferred = $.Deferred();
+								loadAllPhoto(housrInfo.fwryxx);
 								deferred.resolve(housrInfo.fwryxx);
-		                        /*$.ajax({
-		                            url: 'http://api.randomuser.me/?results=3',
-		                            dataType: 'jsonp',
-		                            success: function(data){
-		                                deferred.resolve(data.results);
-		                            }
-		                        });*/
 		                        return deferred.promise();
 		                    }
 		                },
@@ -137,11 +131,12 @@
 		                    } //户在人不在   if( txnum = 0) 在住  else 显示待核实（非按钮）
 		                    else if(user.rylx=="07"){ user.status_btn = "在住"; } //居在人不在  显示在住
 		                    
-		                    var $photo = $("<div>").addClass("client-photo").append($("<img>").attr("src", Utils.getPicturePath(user.rid + ".png")));
+		                    var $photo = $("<div>").addClass("client-photo").append($("<img>").attr("id", user.rid).attr("src", Utils.getPicturePath(user.rid + ".png")));
 		                    var $info = $("<div>").addClass("client-info")
 		                        .append($("<p>").append($("<strong>").text(user.xm )))
 		                        .append($("<p>").text("人员类型: " + user.rylxmc))
-		                        .append($("<p>").text("证件号码: " + user.zjhm));
+		                        .append($("<p>").text("证件号码: " + user.zjhm))
+		                        .append($("<p>").text("居住地址: " + (user.jzdz==undefined?"":user.jzdz)));
 		                    if(user.rylx=="01" || user.rylx=="04" || user.rylx=="05" || user.rylx=="06" || user.rylx=="07"){
 		                    	$info.append($("<input>").attr("type", "button").attr("name", "status_btn").attr("value", user.status_btn).attr("data-type", user.rylx));
 		                    }
@@ -174,13 +169,48 @@
 		                			mui.confirm('在住确认', '', ['在住', '不在住'], function(e){
 		                				mui.toast("此为测试，禁止操作数据");
 		                			});
-		                			
 		                		}
-		                		
 		                	}
 		                }
 		            });
+				};
+				
+				var loadAllPhoto =  function(fwryxxArr){
+					var query= {
+		            	"rid" : "",
+		            	"syrklbdm" : ""
+		            };
+		            console.log(JSON.stringify(fwryxxArr));
+					for (var i= 0; i< fwryxxArr.length; i++ ) {
+						var filename = fwryxxArr[i].rid + ".png";
+						var rid = fwryxxArr[i].rid,
+							syrklbdm = fwryxxArr[i].syrklbdm;
+						queryphoto({}, rid, syrklbdm);
+					}
 				}
+				
+				var queryphoto = function(query, rid, syrklbdm){
+					var path = "_doc/img/" + rid + ".png";
+					plus.io.resolveLocalFileSystemURL( path, function( entry ) {
+						entry.file( function(file){
+							console.log("获取本地图片" + file.name);
+						} );
+					}, function ( e ) {
+						query.rid = rid;	//query 当查询多张照片时，query会变为一样的，regcode不变，  不知道什么原因
+						query.syrklbdm = syrklbdm;
+						console.log(JSON.stringify(query));
+						getPhotoFromNetwork(query, rid);
+					} );
+				};
+				
+				var getPhotoFromNetwork = function(query, regcode){
+					app.queryRhflPhoto(query, function(d){
+						if(d.result=='0'){
+							document.getElementById(regcode).src = "data:image/jpg;base64," + d.img;
+	                		Utils.saveBase64AsPicture(regcode + ".png", d.img);
+						}
+	                });
+				};
 	
 	            String.prototype.capitalize = function() {
 	                return this.charAt(0).toUpperCase() + this.slice(1);

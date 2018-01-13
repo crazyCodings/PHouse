@@ -10,7 +10,7 @@
 		<style type="text/css">
 			
 			.img_div{margin-left: 0px;margin-top: 6%;width: 190px;}
-			.img_div div img {width: 140px; height: 178px;background-image: url(../../img/drawable/icpersonico.png);background-size: contain;}
+			.img_div div img {width: 140px; height: 178px; border-radius: 5%; background-image: url(../../img/drawable/icpersonico.png);background-size: contain;}
 			.baseinfo_div{float: right;width: calc(100% - 231px);}
 			.baseinfo_div > div label{width: 100px;margin-left: 0px;}
 			.baseinfo_div > div input{margin-top: 14px;}
@@ -128,7 +128,7 @@
 						document.getElementById("hhr_detail_address").value = d.datas.hjaddr;
 						document.getElementById("address").value = d.datas.chshlivearea + " " + d.datas.chshlivestreet + " " + d.datas.chshliveroad + " " + d.datas.chshliveaddr;
 						document.getElementById("houseid").value = d.datas.houseseq;
-						document.getElementById("person_photo").src = Utils.getPicturePath(d.datas.chidcard + ".png");
+						document.getElementById("person_photo").src = Utils.getPicturePath(d.datas.regcode + ".png");
 					});
 				}
 			}(mui, document));

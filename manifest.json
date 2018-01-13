@@ -219,7 +219,8 @@
 					"html/statistics/statistics.html",
 					"html/shImmigrant/shImmigrant-query-selector.html",
 					"html/psfthr/psfthr-query-selector.html",
-					"html/shImmigrant/shImmigrant-query-detail.html"
+					"html/shImmigrant/shImmigrant-query-detail.html",
+					"html/notice/notice-list.html"
 				],
 				"priority": 0
 			},

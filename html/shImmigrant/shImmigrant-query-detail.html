@@ -155,8 +155,23 @@
 				            { title: "房主姓名", name: "fzxm", width: 80},
 				            { title: "房主身份证号码", name: "fzzjhm", width: 180 },
 				            { title: "房屋单位名称", name: "fwdwmc", width: 100 },
-				            { title: "居住类型", name: "jzlx", width: 80},
-				            { title: "居住房屋类型", name: "jzfwlx", width: 80 },
+				            { title: "居住类型", name: "jzlx", width: 80,
+				            	itemTemplate : function(value){
+				            		if(value=="01"){ return '个人房';}
+				            		else if(value=="02"){ return "单位房"; }
+				            		else{ return "其他"; }
+				            	}
+				            },
+				            { title: "居住房屋类型", name: "jzfwlx", width: 80,
+				            	itemTemplate : function(value){
+				            		if(value=="01"){ return '出租房屋';}
+				            		else if(value=="02"){ return "闲置空房"; }
+				            		else if(value=="03"){ return "自住房屋"; }
+				            		else if(value=="04"){ return "单位内部集体宿舍"; }
+				            		else if(value=="05"){ return "工地工棚"; }
+				            		else{ return "其他"; }
+				            	}
+				            },
 				            { title: "派出所名称", name: "pcsmc", width: 100 }
 				        ]
 					});

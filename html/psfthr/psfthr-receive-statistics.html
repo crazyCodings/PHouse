@@ -14,9 +14,10 @@
 			.query_div{float: right;width: calc(100% - 231px);margin: 10px 0 0 120px;}
 			.query_div > div label{margin-top: 20px;margin-left: 0px;color: black;}
 			.query_div > div input{margin-top: 12px;margin-left: 10px;width: 180px !important;height: 25px;}
-			.query_div > div .search_btn{width: 100px !important;}
-			
+			.query_div > div .search_btn{ background-color: cadetblue;margin-bottom: 20px;}
 			#result_list{width: 100%;margin-top: 10px;}
+			
+			#ensure, #read { background-color: cadetblue; }
 
 		</style>
 	</head>
@@ -34,19 +35,20 @@
 						<label><span style="color: red;">*</span>信息状态</label>
 						<input type="text" name="msgStatue" id="msgStatue" value="" />
 					</div>
-					<div id="">
+					<div>
 						<label>姓名</label>
 						<input type="text" name="username" id="username" value="" />
 						<label>证件号码</label>
 						<input type="text" name="IDCard" id="IDCard" value="" />
 					</div>
-					<div id="">
+					<div>
 						<label>接收派出所</label>
 						<input type="text" name="receiveStation" id="receiveStation" value="" placeholder=""/>
 					</div>
-					<div id="">
+					<div>
 						<label>接收居村委</label>
 						<input type="text" name="receiveVillage" id="receiveVillage" value="" placeholder=""/>
+						<label></label>
 						<input type="button" class="search_btn" id="search_btn" value="查询" />				
 					</div>
 				</div>
@@ -139,8 +141,8 @@
 				            },
 				            { title: "操作", name: "MSG_STATUS", width: 50 , 
 				            	itemTemplate : function(value, item){
-				            		if(value=="01") return "<button>核实</button>";
-				            		else return "<button>查看</button>";
+				            		if(value=="01") return "<button id='ensure'>核实</button>";
+				            		else return "<button id='read'>查看</button>";
 				            	}
 				            }
 				        ]

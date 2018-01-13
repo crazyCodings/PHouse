@@ -17,14 +17,11 @@
 			.baseinfo_div > div label{width: 100px;margin-left: 0px;margin-top: 40px;}
 			.baseinfo_div > div input{margin-top: 24px;height: 50px;margin-left: 10px;width: 350px !important; }
 
-			#btn_div input { width: 230px !important; }
+			#btn_div input { width: 230px !important; margin-left: 70%;}
 		</style>
 	</head>
 
 	<body>
-		<!--<header class="mui-bar mui-bar-nav navigate_div">
-			<h1 class="mui-title">居住地址核实</h1>
-		</header>-->
 		<header class="mui-bar mui-bar-nav navigate_div">
 			<h1 class="mui-title" style="font-size: large">
 				居住地址核实
@@ -49,7 +46,6 @@
 						<input type="text" name="detailAddress" id="detailAddress" value="24号102室" />
 					</div>
 					<div id="btn_div">
-						<input type="reset" name="btn_input_div" id="reset_btn" value="重置" />
 						<input type="button" name="btn_input_div" id="query_village" value="查询" />
 					</div>
 				</div>
@@ -98,35 +94,6 @@
 								var uri = "psfthr-address-people-info.html";
 								openNewPageByURI(uri, data.datas);
 								console.log(JSON.stringify(data.datas.fwryxx));
-								var fwryxxArr = data.datas.fwryxx;
-								for (var i = 0; i < fwryxxArr.length; i++) {
-									var filename = data.sendData.rid + ".png";
-									var rid = fwryxxArr[i].rid,
-										syrklbdm = fwryxxArr[i].syrklbdm;
-									//var de = new plus.io.DirectoryEntry();
-									app.queryRhflPhoto(
-										{
-											"rid" : rid, 
-											"syrklbdm" : syrklbdm,
-										}, function(data){
-										if(data.result=='0'){
-											Utils.saveBase64AsPicture(data.sendData.rid + ".png", data.img);
-										}
-									});
-									/*plus.io.resolveLocalFileSystemURL("_doc/img/" + filename, function(entry) {
-										//已存在
-									},function(e) {	//本地不存在，从服务器获取
-										app.queryRhflPhoto(
-											{
-												"rid" : rid, 
-												"syrklbdm" : syrklbdm,
-											}, function(data){
-											if(data.result=='0'){
-												Utils.saveBase64AsPicture(filename, data.img);
-											}
-										});
-									});*/
-								}
 							}else{
 								mui.toast(data.msg);
 							}

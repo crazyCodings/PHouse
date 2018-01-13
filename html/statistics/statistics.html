@@ -16,7 +16,7 @@
 			#radio_div { height: 80px; margin-left: 50px; }
 			.mui-radio label { color: #000000;width: 200px !important;padding: 10px 50px 0 20px;text-align: left;}
 			#radio_div > div {width: 200px;float: left;}
-			#search {width: 100px !important;}
+			#search {width: 100px !important; background-color: cadetblue;}
 		</style>
 	</head>
 
@@ -25,34 +25,18 @@
 			<h1 class="mui-title">工作量统计</h1>
 		</header>
 		<div class="mui-content">
-			<div id="radio_div1" class="mui-hidden">
-				<form class="mui-input-group" style="margin-left: 200px;">
-					<div class="mui-radio" style="float: left;">
-						<label>2122232</label>
-						<input name="radio1" type="radio">
-					</div>
-					<div class="mui-radio mui-left" style="float: left;">
-						<label>2223呃企鹅请</label>
-						<input name="radio1" type="radio" checked>
-					</div>
-					<div class="mui-radio mui-left" style="float: left;">
-						<label>disabled radio</label>
-						<input name="radio1" type="radio">
-					</div>
-				</form>
-			</div>
 			<div id="radio_div" >
 				<div class="mui-radio mui-left">
 					<label>按月份统计</label>
-					<input name="radio1" type="radio">
+					<input name="radio" type="radio" value="01" checked>
 				</div>
 				<div class="mui-radio mui-left">
 					<label>按季度统计</label>
-					<input name="radio1" type="radio" checked>
+					<input name="radio" type="radio" value="02">
 				</div>
 				<div class="mui-radio mui-left">
 					<label>按年份统计</label>
-					<input name="radio1" type="radio">
+					<input name="radio" type="radio" value="03">
 				</div>
 				<div class="mui-radio mui-left">
 					<input type="button" name="search" id="search" value="查询" />
@@ -64,6 +48,7 @@
 		<script src="../../js/mui.js"></script>
 		<script src="../../js/mui.enterfocus.js"></script>
 		<script src="../../js/app.js"></script>
+		<script src="../../js/Utils.js"></script>
 		<script type="text/javascript" src="../../js/jquery/jquery-1.8.3.js"></script>
 		<script type="text/javascript" src="../../js/jsgrid/jsgrid.min.js"></script>
 		<script src="../../js/datasource/db.js"></script>
@@ -74,38 +59,52 @@
 				});
 				$$.plusReady(function() {
 					plus.screen.lockOrientation("landscape-primary");
-			        defaultDisplay();
+					defaultDisplay([]);
+					document.getElementById('search').addEventListener('tap',function () {
+					    [].forEach.call(document.querySelectorAll('input[name="radio"]'),function(e){
+							if(e.checked){
+								var query = {
+									"tjlb" : e.value
+								};
+								app.queryGzl(query, function(d){
+									console.log(JSON.stringify(d));
+									if(d.result=="0"){
+										defaultDisplay(d.datas);
+									}
+								});
+							}
+						});
+					})
 				});
 				
-				var defaultDisplay = function() {
-					var clients = [
-				       	{ "squence": 1, "mlph": "1号", "housename": "101", "householdname": "22", "IDCard": "310", "buildingsname": "132", "type_of_residence": "231", "type_of_buildings": "2", "policeno": "21", "policeno1": "21", "policeno2": "21", "policeno3": "21", "policeno4": "21","policeno5": "21"},
-				       	{ "squence": 2, "mlph": "1号", "housename": "101", "householdname": "33", "IDCard": "310", "buildingsname": "32", "type_of_residence": "21", "type_of_buildings": "2", "policeno": "1","policeno6": "21"},
-				        { "squence": 101, "mlph": "1号", "housename": "101", "householdname": "22", "IDCard": "310", "buildingsname": "34", "type_of_residence": "32", "type_of_buildings": "444", "policeno": "4","policeno4": "21"}
-				    ];
-		
+				var defaultDisplay = function(d) {
+					var clients = d;
+					if(d.length > 0){
+						var total = { "MC" : "统计"};
+						clients.push(total);
+					}
 				    $("#jsGrid").jsGrid({
 						width: "100%",
 						height: "380px",
 						sorting: true,
-						paging: true,
+						paging: false,
 						data: clients,
 						fields: [
-				            { title: "单位/姓名", name: "squence", width: 100, type: "number"},
-				            { title: "新增", name: "mlph", width: 45 },
-				            { title: "注销", name: "housename", width: 45 },
-				            { title: "项目变更", name: "householdname", width: 45},
-				            { title: "移入", name: "IDCard", width: 45 },
-				            { title: "扩展信息", name: "buildingsname", width: 45 },
-				            { title: "车辆信息", name: "type_of_residence", width: 45},
-				            { title: "新增", name: "type_of_buildings", width: 45 },
-				            { title: "注销", name: "policeno", width: 45 },
-				            { title: "新增", name: "policeno1", width: 45 },
-				            { title: "人员照片", name: "policeno2", width: 45 },
-				            { title: "拓展信息", name: "policeno3", width: 45 },
-				            { title: "车辆信息", name: "policeno4", width: 45 },
-				            { title: "新增", name: "policeno5", width: 45 },
-				            { title: "照片信息", name: "policeno6", width: 45 }
+				            { title: "单位/姓名", name: "MC", width: 100, align:"center"},
+				            { title: "新增", name: "LHRY_XZ", width: 45 },
+				            { title: "注销", name: "LHRY_ZX", width: 45 },
+				            { title: "项目变更", name: "LHRY_BG", width: 45},
+				            { title: "移入", name: "LHRY_QY", width: 45 },
+				            { title: "扩展信息", name: "LHRY_KZ", width: 45 },
+				            { title: "车辆信息", name: "LHRY_CL", width: 45},
+				            { title: "新增", name: "RHFL_XZ", width: 45 },
+				            { title: "注销", name: "RHFL_ZX", width: 45 },
+				            { title: "新增", name: "WYB_XZ", width: 45 },
+				            { title: "人员照片", name: "WYB_ZP", width: 45 },
+				            { title: "拓展信息", name: "WYB_KZ", width: 45 },
+				            { title: "车辆信息", name: "WYB_CL", width: 45 },
+				            { title: "新增", name: "CGD_XZ", width: 45 },
+				            { title: "照片信息", name: "CGD_ZP", width: 45 }
 				        ]
 					});
 					var header = $(".jsgrid-grid-header .jsgrid-table");
@@ -116,34 +115,6 @@
 						.append($("<th>").addClass("jsgrid-header-cell jsgrid-align-right").attr("style", "width: 208px").text("万用表").attr("colspan","4"))
 						.append($("<th>").addClass("jsgrid-header-cell jsgrid-align-right").attr("style", "width: 106px").text("抄告单").attr("colspan","2"));
 					header.prepend($header_);
-				}
-				
-				var displayEchart = function() {
-					var myChart = echarts.init(document.getElementById('main'));
-					myChart.width = "100%";
-					myChart.Height = "480px";
-			        // 指定图表的配置项和数据
-			        var option = {
-			            title: {
-			                text: 'ECharts 入门示例'
-			            },
-			            tooltip: {},
-			            legend: {
-			                data:['销量']
-			            },
-			            xAxis: {
-			                data: ["来沪","人户分离","万用表","抄告单","项目","移入","来沪","人户分离","万用表","抄告单","项目","移入"]
-			            },
-			            yAxis: {},
-			            series: [{
-			                name: '销量',
-			                type: 'bar',
-			                data: [5, 20, 36, 10, 10, 20,5, 20, 36, 10, 10, 20]
-			            }]
-			        };
-
-			        // 使用刚指定的配置项和数据显示图表。
-			        myChart.setOption(option);
 				}
 			}(mui, document));
 		</script>

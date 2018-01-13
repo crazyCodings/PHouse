@@ -1,0 +1,148 @@
+<!doctype html>
+<html class="mui-fullscreen">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>通知通告</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.css" rel="stylesheet" />
+		<link href="../../css/style.css" rel="stylesheet" />
+		<link type="text/css" rel="stylesheet" href="../../css/jsgrid/jsgrid.css" />
+		<link type="text/css" rel="stylesheet" href="../../css/jsgrid/theme.css" />
+		<style type="text/css">
+			
+			#back_btn { height: 30px;border-radius: 15px; float:right;width: 60px;float: right;margin: 5px 10px 0 0;background-color: cadetblue; }
+			.content_div{float:none; width: 90%;margin: 2% 5% 0 5%;border-radius:10px;height: 250px;overflow:scroll;background-color: #1ea3de;}
+			.content_div > div { margin: 2% 10% 0 10%;width: 80%;}
+			.content_div  p{ margin-left: 10%; color: white;}
+			.title_span { margin-left: 200px; }
+			.attach_div > div { margin-left: 20px; }
+			.attach_div label { color: black;margin: 5px 0 0 20px;}
+			.attach_div > div label:nth-child(2n) { color: red;margin: 5px 0 0 20px;}
+			.attach_div .sign_in {background-color: cadetblue;margin-left: 150px; margin-bottom: 20px;}
+
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav navigate_div">
+			<h1 class="mui-title" style="font-size: large">
+				<span style="float: left;margin-left: 50%; align-content: center;">通知信息</span>
+				<input type="button" id="back_btn" value="返回"/>
+			</h1>
+		</header>
+		<div class="mui-content">
+			<!--<div class="content_div">
+				<div><span>标题:</span><span class="title_span">cs</span></div>
+				<br />
+				<div><span>内容:</span><p></p></div>
+				<div class="attach_div">
+					<div>
+						<label>下发人：</label><label>432143</label>
+						<label>下发时间：</label><label>fdsafd</label>
+					</div>
+					<div class="clear_float"></div>
+					<div>
+						<label>是否签收：</label><label>fdasfd</label>
+						<label>签收时间：</label><label>ffewfe</label>
+					</div>
+					<input type="button" name="sign_in" class="sign_in" value="签收" />
+				</div>
+			</div>-->
+			<div id="jsGrid"></div>
+		</div>
+		<script src="../../js/mui.js"></script>
+		<script src="../../js/mui.enterfocus.js"></script>
+		<script src="../../js/app.js"></script>
+		<script src="../../js/Utils.js"></script>
+		<script src="../../js/jquery/jquery-1.8.3.js"></script>
+		<script src="../../js/jsgrid/jsgrid.min.js"></script>
+		<script>
+			(function($$, doc) {
+				$$.init({
+					statusBarBackground: '#f7f7f7'
+				});
+				var pageSourceId, house_info , user ;
+				$$.plusReady(function() {
+					plus.screen.lockOrientation("landscape-primary");
+					var shareInfo = plus.webview.currentWebview().shareInfo;
+					pageSourceId = shareInfo.pageSourceId,
+					user = Utils.getUser();
+					document.getElementById('back_btn').addEventListener('tap',function () {
+						backfunction();
+					});
+					var q = {};
+					app.queryTztg(q, function(d){
+						if(d.result=='0'){
+							showGrid(d.datas);
+						}
+					});
+				});
+				mui.back = function() {
+					backfunction();
+				}
+				var backfunction = function() {
+					var sourcePage = plus.webview.getWebviewById(pageSourceId);
+					if (sourcePage) {
+						mui.fire(sourcePage, 'closeMaskEvent');
+					}
+				}
+				var newPage = null;
+				var createNewPage = function (info) {
+					var uri = "shImmigrant-new.html";
+					if(info.id=="add_btn"){
+						uri = "shImmigrant-add.html";
+					}
+					newPage = plus.webview.create(uri, uri, null, {info: info});
+					newPage.addEventListener("loaded", function() {
+						newPage.show('fade-in', 300);
+					}, false);
+				};
+				var showGrid = function(db){
+					$("#jsGrid").jsGrid({
+		                height: "100%",
+		                width: "100%",
+		                autoload: true,
+		                paging: false,
+		                noDataContent: "无信息",
+		                controller: {
+		                	loadData: function() {
+		                		return db;
+		                    }
+		                },
+		                rowRenderer: function(item){
+		                	return loadSingleData(item);
+		                },
+		                rowClick: function(item) {
+		                	
+		                }
+		            });
+				};
+				var loadSingleData = function(item){
+					var $btn = $("<input>").addClass("client-btn").attr('type', 'button').attr('name', 'sign_in').attr('class', 'sign_in').attr('value', '签收');
+					if(item.SFQS=='1'){
+						$btn.addClass("mui-hidden");
+					}
+                    var $info = $("<div>").addClass("content_div")
+                        .append($("<div>").append($("<span>").text("标题:").append($("<span>").attr('class', 'title_span').text(item.BT))))
+                        .append($("<br>"))
+                        .append($("<div>").append($("<span>").text("内容:").append($("<p>").text(item.NR))))
+                        .append($("<div>").attr('class', 'attach_div')
+                        		.append($("<div>").append($("<label>").text("下发人："))
+                        						.append($("<label>").text(item.XFRXM))
+                        						.append($("<label>").text("下发时间："))
+                        						.append($("<label>").text(item.XFSJ.substr(0, 4) + "-" + item.XFSJ.substr(4, 2) + "-" + item.XFSJ.substr(6, 2))))
+                        		.append($("<div>").attr('class', 'clear_float'))
+                        		.append($("<div>").append($("<label>").text("是否签收："))
+                        						.append($("<label>").text((item.SFQS=='1')?"已签收":"未签收"))
+                        						.append($("<label>").text("签收时间："))
+                        						.append($("<label>").text(item.QSSJ.substr(0, 4) + "-" + item.QSSJ.substr(4, 2) + "-" + item.QSSJ.substr(6, 2))))
+                        		.append($btn)
+                        );
+					return $("<tr>").append($("<td>").append($info));
+				};
+			}(mui, document));
+		</script>
+	</body>
+
+</html>

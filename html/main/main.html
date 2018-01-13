@@ -72,6 +72,7 @@
 				$.init({
 					statusBarBackground: '#f7f7f7'
 				});
+				var ws , floatw;
 				$.plusReady(function() {
 					plus.screen.lockOrientation("landscape-primary");
 					document.getElementById("userinfo").text = Utils.getUser().xgyname;
@@ -116,12 +117,14 @@
 					        	break;
 				        	case "notice": 
 					        	tips = "通知";
+					        	id = "notice-list.html";
+					        	uri = "../notice/";
 					        	break;
 				        	default:
 				        		break;
 				        }
 				        uri = uri + id;
-				        if( uri != ""){
+				        if( uri != "" && id != "notice-list.html"){
 				        	var currentWebView = plus.webview.getWebviewById(id);	
 				        	if (currentWebView!=null){
 				        		
@@ -140,6 +143,10 @@
 				        		currentWebView = plus.webview.create(uri , id);
 				        	}
 				        	currentWebView.show("zoom-out");
+				        } else {
+				        	if(uri != ""){
+				        		floatWebview(uri, id);
+				        	}
 				        }
 					});
 					mui.init({
@@ -147,6 +154,52 @@
 							backbutton: false  //关闭back按键监听
 						}
 					});
+				});
+				
+				var floatWebview = function (uri, id ) {
+		        	ws = plus.webview.currentWebview();
+		            if(floatw) { // 避免快速多次点击创建多个窗口
+		                floatw.show("fade-in");
+		            } else {
+		            	var top = plus.display.resolutionHeight * 0.1;// - 10%;
+		                floatw = plus.webview.create(uri,  id, {
+		                    background: "transparent",
+		                    bounce : "all",
+		                    height : "80%",
+		                    scalable : false,
+		                    scrollIndicator : "none",
+		                    top : top,
+		                    width : "90%",
+		                    left : "40px"
+		                }, {
+							shareInfo:{"pageSourceId": ws.id }
+						});
+						floatw.addEventListener("loading", function() {
+		                	plus.nativeUI.showWaiting();
+						}, false);
+		                floatw.addEventListener("loaded", function() {
+		                	plus.nativeUI.closeWaiting();
+							floatw.show('fade-in', 300);
+						}, false);
+		                ws.setStyle({mask:'rgba(0,0,0,0.5)'});
+		                ws.addEventListener("maskClick", closeMask, false);
+		            }
+		        };
+				
+				var closeMask = function () {
+					ws.setStyle({
+						mask: "none"
+					});
+					if (!floatw) {
+						floatw = plus.webview.getWebviewById("main.html");
+					}
+					if (floatw) {
+						floatw.close();
+						floatw = null;
+					}
+				};
+				window.addEventListener('closeMaskEvent', function(event){
+					closeMask();
 				});
 			}(mui, document));
 		</script>

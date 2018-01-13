@@ -3,11 +3,12 @@
  **/
 (function($, owner) {
 	/**
-	 * @param {Object} loginInfo -- user information
-	 * @param {requestCallback} callback -- The callback that handles the response
+	 * 登录、初始化信息
+	 * @param {Object} data
+	 * @param {Object} callback
+	 * @param {Object} asyn
 	 */
-	owner.login = function(loginInfo, callback) {
-
+	owner.login = function(data , callback, asyn) {
 		var serviceinfo = {
 			//宝山地址
 			app_ip: "101.230.193.58",
@@ -33,59 +34,15 @@
 		var url = "http://" + serviceinfo.app_ip + ":" + serviceinfo.app_port + serviceinfo.path;
 		serviceinfo.url = url;
 		localStorage.setItem('$serviceinfo', JSON.stringify(serviceinfo));
+		var userInfo = Utils.getUser();
 		var SoapAction = "loginUser";
-		//服务器地址存储本地
-		callback = callback || $.noop;
-		loginInfo = loginInfo || {};
 		var sendData = {
-			accountname: loginInfo.account,
-			password: loginInfo.password,
-			imei: serviceinfo.imei
+			"accountname": data.account,
+			"password": data.password,
+			"imei": serviceinfo.imei
 		};
-		var soapdata = soapxml(sendData, SoapAction);
-		var timestamp = new Date();
-		var milliseconds = timestamp.getMilliseconds();
-		mui.ajax(url, {
-			data: soapdata,
-			dataType: 'xml',
-			type: 'POST',
-			catche: false,
-			ifModified: true,
-			timeout: 30000, // 超时时间设置为3秒；
-			headers: {
-				'appId': serviceinfo.appid,
-				'timestamp': milliseconds,
-				'SoapAction': SoapAction,
-				'Content-Type': 'text/xml'
-			},
-			success: function(data) {
-				if(!data) {
-					console.error('return data is ' + data + ', please checked!');
-					mui.toast('哎呀，通讯异常了呢！');
-					return;
-				}
-				console.log(data.childNodes[0].textContent);
-				var jsonData ;
-				try{
-					jsonData = JSON.parse(data.childNodes[0].textContent);
-				}catch(e){
-					//TODO handle the exception
-					jsonData = {"result" : "1", "msg" : "解析错误", "datas" : []};
-					return callback(jsonData);
-				}
-				if(jsonData.result=="0"){ // 登录成功
-					return owner.createState(jsonData, callback);
-				} else {
-					return callback(jsonData);
-				}
-				
-			},
-			error: function(xhr, type, errorThrown) {
-				console.error('type:' + type + '\t\terrorThrown:' + errorThrown);
-				var jsonData = {"result" : "1", "msg" : (type), "datas" : []};
-				return callback(jsonData);
-			}
-		});
+		var success = callback;
+		invokeBackEndInterface(SoapAction, sendData, success, null, asyn);
 	}
 
 	/**
@@ -160,6 +117,7 @@
 		invokeBackEndInterface(SoapAction, sendData, success, null, asyn);
 	};
 	
+	//来沪人员--房屋精确查询
 	owner.queryHouseInfoListPrecise = function(data, callback, asyn) {
 		var userInfo = Utils.getUser();
 		var SoapAction = "queryHouseInfoListPrecise";
@@ -172,6 +130,7 @@
 		invokeBackEndInterface(SoapAction, sendData, success, null, asyn);
 	};
 	
+	//来沪人员--房屋模糊查询
 	owner.queryHouseInfoListFuzzy = function(data, callback, asyn) {
 		var userInfo = Utils.getUser();
 		var SoapAction = "queryHouseInfoListFuzzy";
@@ -184,6 +143,7 @@
 		invokeBackEndInterface(SoapAction, sendData, success, null, asyn);
 	};
 	
+	//来沪人员--查询房屋内人信息
 	owner.queryJzrByFwbm = function(data, callback, asyn) {
 		var userInfo = Utils.getUser();
 		var SoapAction = "queryJzrByFwbm";
@@ -196,6 +156,7 @@
 		invokeBackEndInterface(SoapAction, sendData, success, null, asyn);
 	};
 	
+	//来沪人员--查询个人信息
 	owner.queryBasePersonInfo = function(data, callback, asyn) {
 		var userInfo = Utils.getUser();
 		var SoapAction = "queryBasePersonInfo";
@@ -208,6 +169,7 @@
 		invokeBackEndInterface(SoapAction, sendData, success, null, asyn);
 	};
 	
+	//来沪人员--查询照片
 	owner.queryPhotosByRegcode = function(data, callback, errCallback, asyn) {
 		var userInfo = Utils.getUser();
 		var SoapAction = "queryPhotosByRegcode";
@@ -218,7 +180,33 @@
 		};
 		var success = callback, fail = errCallback;
 		invokeBackEndInterface(SoapAction, sendData, success, fail, asyn);
-	}
+	};
+	
+	//工作量统计
+	owner.queryGzl = function(data, callback, errCallback, asyn) {
+		var userInfo = Utils.getUser();
+		var SoapAction = "queryGzl";
+		var sendData = {
+			"tjlb" : data.tjlb,
+			"ICLoginInfo" : userInfo
+		};
+		var success = callback, fail = errCallback;
+		invokeBackEndInterface(SoapAction, sendData, success, fail, asyn);
+	};
+	
+	//通知通告
+	owner.queryTztg = function(data, callback, errCallback, asyn) {
+		var userInfo = Utils.getUser();
+		var SoapAction = "queryTztg";
+		var sendData = {
+			"kssj" : (data.kssj==undefined||data.kssj=="")? "" : data.kssj,
+			"jssj" : (data.jssj==undefined||data.jssj=="")? "" : data.jssj,
+			"status" : (data.status==undefined||data.status=="")? "" : data.status,
+			"ICLoginInfo" : userInfo
+		};
+		var success = callback, fail = errCallback;
+		invokeBackEndInterface(SoapAction, sendData, success, fail, asyn);
+	};
 	
 	/**
 	 * 
@@ -353,8 +341,7 @@
 			},
 			error: function( xhr, type, errorThrown) {
 				if(failInfo(soapAction, xhr, type, errorThrown)){
-					jsonData.sendData = sendData;
-					failCallback(jsonData);
+					failCallback();
 				};
 			}
 		});
