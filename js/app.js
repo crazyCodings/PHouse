@@ -244,6 +244,22 @@
 		invokeBackEndInterface(SoapAction, sendData, success, null, asyn);
 	};
 
+	owner.queryVersion = function(data, callback, errCallback, asyn) {
+		var SoapAction = "queryVersion";
+		var sendData = {
+			"version" : data.version
+		};
+		var success = function(data) {
+			if(data.result == "0"){
+				//Done nothing
+			}else if( data.result == "1"){
+				mui.toast(data.msg);
+			}
+		}
+		var success = callback, fail = errCallback;
+		invokeBackEndInterface(SoapAction, sendData, success, null, asyn);
+	};
+
 	owner.createState = function(data, callback) {
 		var state = owner.getState();
 		var localServiceInfo = JSON.parse(localStorage.getItem('$serviceinfo'));
