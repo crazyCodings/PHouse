@@ -67,6 +67,7 @@
 						id : 'main'
 					});
 					var toMain = function() {
+						page.reload();
 						page.show("pop-in");
 					};
 					var loginButton = doc.getElementById('loginButton');
@@ -89,17 +90,21 @@
 						
 						if(Base.userInfoVerification(loginInfo)){
 							app.login(loginInfo, function(data){
+								mui("#loginButton").button('reset');
 								if(data.result=="1"){
 									plus.nativeUI.toast(data.msg);
 									return;
+								}else if(data.result=="0"){
+									app.createState(data, function(d){
+										toMain();
+									});	//登录成功，记录数据
+									plus.geolocation.getCurrentPosition( function(p){
+										console.log('-->Send Geolocation\nLatitude:' + p.coords.latitude + '\nLongitude:' + p.coords.longitude + '\nAltitude:' + p.coords.altitude);
+										app.sendGPS(p.coords.longitude, p.coords.latitude, "GPS");
+									}, function(e){
+										mui.toast("获取位置信息失败");
+									});
 								}
-								plus.geolocation.getCurrentPosition( function(p){
-									console.log('-->Send Geolocation\nLatitude:' + p.coords.latitude + '\nLongitude:' + p.coords.longitude + '\nAltitude:' + p.coords.altitude);
-									app.sendGPS(p.coords.longitude, p.coords.latitude, "GPS");
-								}, function(e){
-									mui.toast("获取位置信息失败");
-								});
-								toMain();
 							});
 						}
 					});

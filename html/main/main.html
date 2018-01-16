@@ -67,6 +67,8 @@
 		<script src="../../js/mui.enterfocus.js"></script>
 		<script src="../../js/app.js"></script>
 		<script src="../../js/Utils.js"></script>
+		<script src="../../js/plugin.js"></script>
+		<script src="../../js/test.js"></script>
 		<script>
 			(function($, doc) {
 				$.init({
@@ -77,7 +79,8 @@
 					plus.screen.lockOrientation("landscape-primary");
 					document.getElementById("userinfo").text = Utils.getUser().xgyname;
 					document.getElementById('menubtn').addEventListener('tap',function () {
-					    mui.back();
+					    //mui.back();
+					    pluginShow();
 					})
 					mui(".img_div, .img_div_small").on('tap','.img_div div, .img_div_small div', function(){
 						var subname = this.firstElementChild.id;
@@ -201,6 +204,25 @@
 				window.addEventListener('closeMaskEvent', function(event){
 					closeMask();
 				});
+				function pluginShow() {
+					var query = {
+						"a" : "1",
+						"b" : "2"
+ 					}
+					plus.plugin.IDRecognitionFunctionArrayArgu(query, function(d){
+						console.log(JSON.stringify(d.idcardinfo));
+					}, function(e){
+						mui.toast(e);
+					});
+					/*plus.plugin.IDRecognitionFunction("Html5","Plus","AsyncFunction","MultiArgument!",
+						function(result) {
+							mui.alert( result);
+						},
+						function(result){
+							mui.alert(result);
+						});
+					*/
+				}
 			}(mui, document));
 		</script>
 	</body>
