@@ -17,6 +17,8 @@
 			.query_div > div input{margin-top: 12px;margin-left: 10px;width: 300px !important;height: 25px;}
 			.query_div > div .search_btn{width: 100px !important;float: right;background-color: cadetblue;}
 			.query_div .road {width: 100px !important;}
+			.mui-content .readonly { background-color: darkgray;}
+			.mui-content .dictionary {background-color: dodgerblue;}
 			#query_div > div:first-child input{ width: 150px !important;}
 			#result_list{width: 100%;margin-top: 10px;}
 
@@ -32,13 +34,13 @@
 				<div id="query_div" class="query_div">
 					<div>
 						<label>派出所</label>
-						<input type="text" name="policeStation" id="policeStation" value="" />
+						<input type="text" id="policeStation" readonly="readonly" class="readonly" value="" />
 						<label>居村委</label>
-						<input type="text" name="village" id="village" value="" />
+						<input type="text" id="village" class="readonly" dicname="d_jcw" readonly="readonly" value="" />
 					</div>
 					<div>
 						<label><span style="color: red;">*</span>道路查询</label>
-						<input type="text" class="roadname" id="roadname" value="003892" placeholder=""/>
+						<input type="text" id="roadname" name="dictionary" class="dictionary" dicname="d_jcw"  value="" placeholder=""/>
 					</div>
 					<div>
 						<label>精确查找</label>
@@ -78,9 +80,21 @@
 					ws = plus.webview.currentWebview();
 					
 					document.getElementById("policeStation").value = user.pcsmc;
-					document.getElementById("policeStation").textContent = "310113360000";
-					document.getElementById("village").value = user.jcwdm.split(',')[0];
-					document.getElementById("village").textContent = "13007003";
+					document.getElementById("policeStation").textContent = user.pcsdm;
+					document.getElementById("village").value = user.jcwmc.split(',')[0];
+					document.getElementById("village").textContent = user.jcwdm;
+					
+					document.getElementById('roadname').addEventListener('focus',function () {
+					    //打开搜索页面
+					    Utils.dicWewview('d_jcw', ws, floatw);
+					});
+					window.addEventListener('closeMask',function(e){
+						//通过event.detail可获得传递过来的参数内容
+						document.getElementById("roadname").value = e.detail.value;
+						document.getElementById("roadname").textContent = e.detail.code;
+						closeMask();
+					});
+					
 					var clients = [],q = {};
 				    document.getElementById('detail_search').addEventListener('tap',function () {
 			            q= {

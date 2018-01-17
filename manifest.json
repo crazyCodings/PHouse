@@ -250,7 +250,8 @@
 				"resources": [],
 				"refer": [
 					"html/shImmigrant/shImmigrant.html",
-					"html/shImmigrant/shImmigrant-house-info.html"
+					"html/shImmigrant/shImmigrant-house-info.html",
+					"html/main/dictionaryWebview.html"
 				],
 				"priority": 0
 			},

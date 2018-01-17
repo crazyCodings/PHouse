@@ -1,0 +1,119 @@
+<!doctype html>
+<html class="mui-fullscreen">
+
+	<head>
+		<meta charset="UTF-8">
+		<title>字典</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../../css/mui.css" rel="stylesheet" />
+		<link href="../../css/style.css" rel="stylesheet" />
+		<link type="text/css" rel="stylesheet" href="../../css/jsgrid/jsgrid.css" />
+		<link type="text/css" rel="stylesheet" href="../../css/jsgrid/theme.css" />
+		<link type="text/css" rel="stylesheet" href="../../css/mui.indexedlist.css" />
+		<style type="text/css">
+			
+			/*body header input*/ #back_btn, #new_btn { height: 30px;border-radius: 15px; float:left;margin: 15px 0 0 0;width: 60px; }
+			.content_div{width: 100%;height: 200px;overflow:scroll;background-color: #1ea3de;margin: 0;margin-bottom:0px;border-radius:10px;}
+			html,
+			body {
+				height: 100%;
+				overflow: hidden;
+			}
+			.mui-bar {
+				-webkit-box-shadow: none;
+				box-shadow: none;
+			}
+
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+			<h1 class="mui-title"></h1>
+		</header>
+		<div class="mui-content">
+			<div id='list' class="mui-indexed-list">
+				<div class="mui-indexed-list-search mui-input-row mui-search">
+					<input type="search" id="search" class="mui-input-clear mui-indexed-list-search-input" placeholder="搜索">
+				</div>
+				<div class="mui-indexed-list-bar">
+				</div>
+				<div class="mui-indexed-list-alert"></div>
+				<div class="mui-indexed-list-inner">
+					<div class="mui-indexed-list-empty-alert">没有数据</div>
+					<ul class="mui-table-view" id="ullist">
+						<!--<li data-value="ZUH" data-tags="ZhuHaiSanZao" class="mui-table-view-cell mui-indexed-list-item">珠海三灶机场</li>-->						
+					</ul>
+				</div>
+			</div>
+		</div>
+		<script src="../../js/mui.js"></script>
+		<script src="../../js/mui.enterfocus.js"></script>
+		<script src="../../js/app.js"></script>
+		<script src="../../js/Utils.js"></script>
+		<script src="../../js/jquery/jquery-1.8.3.js"></script>
+		<script src="../../js/jsgrid/jsgrid.min.js"></script>
+		<script src="../../js/mui.indexedlist.js"></script>
+		<script>
+			(function($$, doc) {
+				$$.init({
+					statusBarBackground: '#f7f7f7'
+				});
+				var pageSourceId , user , pwv , dictname ;
+				$$.plusReady(function() {
+					plus.screen.lockOrientation("landscape-primary");
+					pwv = plus.webview.currentWebview();
+					dictname = pwv.dictname;
+					pageSourceId = pwv.pageSourceId;
+					user = Utils.getUser();
+					document.getElementById('search').focus();
+					initDict(dictname);
+					mui('.mui-indexed-list-inner').on('tap', 'li', function(e) {
+						document.getElementById("search").value = e.target.textContent;
+						document.getElementById("search").textContent = e.target.dataset.value;
+						//window.indexedList.search(document.getElementById("search").value);
+						mui.fire(plus.webview.getWebviewById(pageSourceId), 'closeMask', {
+							value : e.target.textContent,
+							code : e.target.dataset.value
+						});
+						pwv.close();
+					});
+					var header = document.querySelector('header.mui-bar');
+					var list = document.getElementById('list');
+					//calc hieght
+					list.style.height = (document.body.offsetHeight - header.offsetHeight) + 'px';
+					//create
+					window.indexedList = new mui.IndexedList(list);
+					
+				});
+				
+				var initDict = function(dictname, filter){
+					var db = JSON.parse(localStorage[dictname]);
+					var ullist = document.getElementById("ullist");
+					for(var i in db){
+						var datavalue = db[i].dm,
+						datatags = db[i].py,
+						livalue = db[i].mc;
+						var li = document.createElement("li")
+						li.setAttribute("data-value", datavalue);
+						li.setAttribute("data-tags", datatags);
+						li.setAttribute("class", 'mui-table-view-cell mui-indexed-list-item');
+						li.textContent = livalue;
+						ullist.appendChild(li);
+					}
+				}
+				
+				mui.back = function() {
+					backfunction();
+				}
+				var backfunction = function() {
+					var sourcePage = plus.webview.getWebviewById(pageSourceId);
+					if (sourcePage) {
+						mui.fire(sourcePage, 'closeMaskEvent');
+					}
+				}
+			}(mui, document));
+		</script>
+	</body>
+
+</html>
