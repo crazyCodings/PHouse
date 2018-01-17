@@ -32,6 +32,7 @@
 	 * 创建升级文件保存目录
 	 */
 	function initUpdate() {
+		app.initInfo();
 		// 在流应用模式下不需要检测升级操作
 		if(navigator.userAgent.indexOf('StreamApp') >= 0) {
 			return;
@@ -99,12 +100,13 @@
 	/**
 	 * 检查升级数据
 	 */
+	var curVer = "0"; 
 	function checkUpdateData(j) {
 		plus.runtime.getProperty(plus.runtime.appid,function(inf){
 	        wgtVer=inf.version;
 	        console.log("当前应用版本："+wgtVer);
 	        //var curVer = plus.runtime.version,
-	        var curVer = wgtVer,
+	        curVer = wgtVer,
 			inf = j[plus.os.name];
 			if(inf) {
 				var srvVer = inf.version;
@@ -133,22 +135,10 @@
 	    });
 	}
 	
-	// 下载wgt文件
-	//var wgtUrl="http://demo.dcloud.net.cn/test/update/H5EF3C469.wgt";
 	function downWgt(wgtUrl){
 	    var w=plus.nativeUI.showWaiting("　　 开始下载...　　 ");
 		var options = {"method":"GET", "filename" : "_doc/update/"};
-		//plus.downloader.createDownload( inf.url, options );
-	    var dtask = plus.downloader.createDownload( wgtUrl, options/*, function(d,status){
-	        if ( status == 200 && d.state ==4) { 
-	            console.log("下载wgt成功："+d.filename);	
-	            installWgt(d.filename); // 安装wgt包
-	        } else {
-	            console.log("下载wgt失败！");
-	            plus.nativeUI.alert("下载wgt失败！");
-	        }
-	        plus.nativeUI.closeWaiting();
-	    }*/);
+	    var dtask = plus.downloader.createDownload( wgtUrl, options);
 	    dtask.start();
 	    dtask.addEventListener( "statechanged", function(task,status){
             switch(task.state) {
@@ -195,7 +185,7 @@
 	function getUpdateData() {
 		plus.nativeUI.showWaiting("检测更新...");
 		app.queryVersion({
-			"version": "4"
+			"version": curVer
 		}, function(d) {
 			plus.nativeUI.closeWaiting();
 			dir.getFile(localFile, {

@@ -2,13 +2,8 @@
  * 
  **/
 (function($, owner) {
-	/**
-	 * 登录、初始化信息
-	 * @param {Object} data
-	 * @param {Object} callback
-	 * @param {Object} asyn
-	 */
-	owner.login = function(data , callback, asyn) {
+	
+	owner.initInfo = function(){
 		var serviceinfo = {
 			//宝山地址
 			app_ip: "101.230.193.58",
@@ -34,12 +29,21 @@
 		var url = "http://" + serviceinfo.app_ip + ":" + serviceinfo.app_port + serviceinfo.path;
 		serviceinfo.url = url;
 		localStorage.setItem('$serviceinfo', JSON.stringify(serviceinfo));
+	}
+	
+	/**
+	 * 登录、初始化信息
+	 * @param {Object} data
+	 * @param {Object} callback
+	 * @param {Object} asyn
+	 */
+	owner.login = function(data , callback, asyn) {
 		var userInfo = Utils.getUser();
 		var SoapAction = "loginUser";
 		var sendData = {
 			"accountname": data.account,
 			"password": data.password,
-			"imei": serviceinfo.imei
+			"imei": plus.device.imei
 		};
 		var success = callback;
 		invokeBackEndInterface(SoapAction, sendData, success, null, asyn);
@@ -258,6 +262,19 @@
 		}
 		var success = callback, fail = errCallback;
 		invokeBackEndInterface(SoapAction, sendData, success, null, asyn);
+	};
+	
+	owner.queryDict = function(data, callback, errCallback, asyn) {
+		var SoapAction = "queryDict";
+		var success = function(data) {
+			if(data.result == "0"){
+				//Done nothing
+			}else if( data.result == "1"){
+				mui.toast(data.msg);
+			}
+		}
+		var success = callback, fail = errCallback;
+		invokeBackEndInterface(SoapAction, data, success, null, asyn);
 	};
 
 	owner.createState = function(data, callback) {
