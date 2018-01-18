@@ -6,7 +6,7 @@
 	owner.initInfo = function(){
 		var serviceinfo = {
 			//宝山地址
-			app_ip: "101.230.193.58",
+			/*app_ip: "101.230.193.58",
 			app_port: "5112",
 			path: "/rfcj_bs/services/rfcjService",
 			namespace: "http://webService.bsfj.gaj.sh",
@@ -14,9 +14,9 @@
 			appid: "ssgaj.ydjw.78", //公安网路径 
 			imei : plus.device.imei,
 			key : "1a100d2c0dcb19c4430e7d73762b34c3",
-			countyid : "13"
+			countyid : "13"*/
 			//崇明地址
-			/*app_ip: "10.244.12.152",
+			app_ip: "10.244.12.152",
 			app_port: "5113",
 			path: "/rfcj/services/rfcjService",
 			namespace: "http://webService.bsfj.gaj.sh",
@@ -24,7 +24,7 @@
 			appid: "ssgaj.ydjw.78", //公安网路径 
 			imei : plus.device.imei,
 			key : "1a100d2c0dcb19c4430e7d73762b34c3",
-			countyid : "13"*/
+			countyid : "13"
 		};
 		var url = "http://" + serviceinfo.app_ip + ":" + serviceinfo.app_port + serviceinfo.path;
 		serviceinfo.url = url;
@@ -266,6 +266,19 @@
 	
 	owner.queryDict = function(data, callback, errCallback, asyn) {
 		var SoapAction = "queryDict";
+		var success = function(data) {
+			if(data.result == "0"){
+				//Done nothing
+			}else if( data.result == "1"){
+				mui.toast(data.msg);
+			}
+		}
+		var success = callback, fail = errCallback;
+		invokeBackEndInterface(SoapAction, data, success, null, asyn);
+	};
+	
+	owner.register = function(data, callback, errCallback, asyn) {
+		var SoapAction = "register";
 		var success = function(data) {
 			if(data.result == "0"){
 				//Done nothing

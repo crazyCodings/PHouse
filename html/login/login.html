@@ -85,8 +85,10 @@
 			            }.bind(this), 60000);
 			            
 						var loginInfo = {
-							account: accountBox.value,
-							password: window.btoa(passwordBox.value) // 加密密码
+							"account": accountBox.value,
+							"password": window.btoa(passwordBox.value), // 加密密码
+							"imei" : plus.device.imei,
+							"iccard" : plus.device.imsi
 						};
 						
 						if(Base.userInfoVerification(loginInfo)){

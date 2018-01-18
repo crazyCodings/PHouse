@@ -81,9 +81,7 @@
             "description": "文件压缩与解压缩"
         },
         "Barcode": {},
-        "Maps": {
-            "description": "管理地图插件"
-        },
+        
         
         "Webview":{
         	"description": "窗口管理"
@@ -97,7 +95,7 @@
         "NativeObj":{
         	"description": "原生对象"
         },
-        "OAuth":{},
+        
         "plugin" : {
         	"description": "身份证识别"
         },
@@ -108,7 +106,7 @@
 	"plus": {
 		"splashscreen": {
 			"autoclose": true,/*是否自动关闭程序启动界面，true表示应用加载应用入口页面后自动关闭；false则需调plus.navigator.closeSplashscreen()关闭*/
-			"waiting": true,"delay":"0"
+			"waiting": false,"delay":"0"
 		},
 		"runmode": "liberate",/*应用的首次启动运行模式，可取liberate或normal，liberate模式在第一次启动时将解压应用资源（Android平台File API才可正常访问_www目录）*/
 		"signature": "Sk9JTiBVUyBtYWlsdG86aHIyMDEzQGRjbG91ZC5pbw==",/*可选，保留给应用签名，暂不使用*/
@@ -146,22 +144,22 @@
 					"ipad": {
 						"normal": "", /*iPad普通屏幕程序图标，分辨率：72x72*/
 						"retina": "", /*iPad高分屏程序图标，分辨率：144x144*/
-						"normal7": "", /*iPad iOS7程序图标，分辨率：76x76*/
-						"retina7": "", /*iPad iOS7高分屏程序图标，分辨率：152x152*/
+						 /*iPad iOS7程序图标，分辨率：76x76*/
+						 /*iPad iOS7高分屏程序图标，分辨率：152x152*/
 						"spotlight-normal": "", /*iPad Spotlight搜索程序图标，分辨率：50x50*/
 						"spotlight-retina": "", /*iPad高分屏Spotlight搜索程序图标，分辨率：100x100*/
-						"spotlight-normal7": "",/*iPad iOS7 Spotlight搜索程序图标，分辨率：40x40*/
-						"spotlight-retina7": "",/*iPad iOS7高分屏Spotlight搜索程序图标，分辨率：80x80*/
-						"settings-normal": "",/*iPad设置页面程序图标，分辨率：29x29*/
-						"settings-retina": ""
+						/*iPad iOS7 Spotlight搜索程序图标，分辨率：40x40*/
+						/*iPad iOS7高分屏Spotlight搜索程序图标，分辨率：80x80*/
+						/*iPad设置页面程序图标，分辨率：29x29*/
+						"app":"img/drawable/iclogo.png","app@2x":"img/drawable/iclogo.png","settings":"img/drawable/iclogo.png","spotlight":"img/drawable/iclogo.png","proapp@2x":"img/drawable/iclogo.png","settings@2x":"img/drawable/iclogo.png","spotlight@2x":"img/drawable/iclogo.png","notification":"img/drawable/iclogo.png","notification@2x":"img/drawable/iclogo.png"
 					}
 				},
 				"android": {
-					"mdpi": "", /*普通屏程序图标，分辨率：48x48*/
-					"ldpi": "", /*大屏程序图标，分辨率：48x48*/
-					"hdpi": "", /*高分屏程序图标，分辨率：72x72*/
-					"xhdpi": "",/*720P高分屏程序图标，分辨率：96x96*/
-					"xxhdpi": ""
+					"mdpi": "img/drawable/iclogo.png", /*普通屏程序图标，分辨率：48x48*/
+					"ldpi": "img/drawable/iclogo.png", /*大屏程序图标，分辨率：48x48*/
+					"hdpi": "img/drawable/iclogo.png", /*高分屏程序图标，分辨率：72x72*/
+					"xhdpi": "img/drawable/iclogo.png",/*720P高分屏程序图标，分辨率：96x96*/
+					"xxhdpi": "img/drawable/iclogo.png","xxxhdpi":"img/drawable/iclogo.png"
 				}
 			},
 			"splashscreen": {
