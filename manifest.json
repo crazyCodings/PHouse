@@ -310,12 +310,24 @@
 					"html/shImmigrant/shImmigrant-new.html"
 				],
 				"priority": 0
+			},
+			"html/main/dictionaryWebview.html": {
+				"resources": [
+					"js/jquery/jquery-1.8.3.js",
+					"js/app.js",
+					"js/jsgrid/jsgrid.min.js",
+					"js/mui.js",
+					"js/mui.enterfocus.js",
+					"js/mui.indexedlist.js",
+					"js/Utils.js"
+				],
+				"refer": [],
+				"priority": 0
 			}
 		},
 		"idle": {
 			"resources": [
 				"fonts/mui.ttf",
-				"js/mui.js",
 				"css/mui.css"
 			]
 		}
