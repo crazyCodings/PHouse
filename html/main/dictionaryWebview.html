@@ -66,13 +66,12 @@
 					dictname = pwv.dictname;
 					pageSourceId = pwv.pageSourceId;
 					user = Utils.getUser();
-					//document.getElementById('search').focus();
+					document.getElementById('search').focus();
 					initDict(dictname);
 					
 					mui('.mui-indexed-list-inner').on('tap', 'li', function(e) {
 						document.getElementById("search").value = e.target.textContent;
 						document.getElementById("search").textContent = e.target.dataset.value;
-						//window.indexedList.search(document.getElementById("search").value);
 						mui.fire(plus.webview.getWebviewById(pageSourceId), 'closeMask', {
 							value : e.target.textContent,
 							code : e.target.dataset.value
@@ -83,10 +82,7 @@
 					var list = document.getElementById('list');
 					//calc hieght
 					list.style.height = (document.body.offsetHeight - header.offsetHeight) + 'px';
-					//create
-					//window.indexedList = new mui.IndexedList(list);
 					waiting.close();
-					
 					document.getElementById('search').addEventListener('input',function () {
 					    searchInput(dictname, this.value);
 					})
@@ -104,7 +100,7 @@
 						var dm = (db[i].dm || '').toLowerCase(),
 							py = (db[i].py || '').toLowerCase(),
 							mc = (db[i].mc || '').toLowerCase();
-						if(filter!=null && (dm.indexOf(filter) > 0 || py.indexOf(filter) > 0 || mc.indexOf(filter) > 0 )){
+						if(filter!=null && (dm.indexOf(filter) >= 0 || py.indexOf(filter) >= 0 || mc.indexOf(filter) >= 0 )){
 							arr.push("<li data-value='" + dm + "' data-tags='" + py + "' class='mui-table-view-cell mui-indexed-list-item'>" + mc +"</li>");
 						}
 					}
