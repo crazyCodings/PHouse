@@ -194,6 +194,15 @@
 		});
 	},
 	
+	Utils.fileDict = function(dictName, filter){
+		var dicts = JSON.parse(localStorage[dictName]);
+		var returnList = {};
+		for (var i in dicts) {
+			console.log(dicts[i].dm + "\t" + dicts[i].mc + "\t" + dicts[i].py);
+		}
+		return returnList;
+	},
+	
 	Utils.dicWewview = function (dictname, ws, floatw) {
     	ws = plus.webview.currentWebview();
         if(floatw) { // 避免快速多次点击创建多个窗口

@@ -40,7 +40,7 @@
 					</div>
 					<div>
 						<label><span style="color: red;">*</span>道路查询</label>
-						<input type="text" id="roadname" name="dictionary" class="dictionary" dicname="d_jcw"  value="" placeholder=""/>
+						<input type="text" id="roadname" name="dictionary" class="dictionary" dicname="d_lm"  value="" placeholder=""/>
 					</div>
 					<div>
 						<label>精确查找</label>
@@ -86,7 +86,7 @@
 					
 					document.getElementById('roadname').addEventListener('focus',function () {
 					    //打开搜索页面
-					    Utils.dicWewview('d_jcw', ws, floatw);
+					    Utils.dicWewview(document.getElementById("roadname").getAttribute("dicname"), ws, floatw);
 					});
 					window.addEventListener('closeMask',function(e){
 						//通过event.detail可获得传递过来的参数内容

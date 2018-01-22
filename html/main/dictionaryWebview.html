@@ -53,21 +53,22 @@
 		<script src="../../js/Utils.js"></script>
 		<script src="../../js/jquery/jquery-1.8.3.js"></script>
 		<script src="../../js/jsgrid/jsgrid.min.js"></script>
-		<script src="../../js/mui.indexedlist.js"></script>
 		<script>
 			(function($$, doc) {
 				$$.init({
 					statusBarBackground: '#f7f7f7'
 				});
-				var pageSourceId , user , pwv , dictname ;
+				var pageSourceId , user , pwv , dictname, waiting ;
 				$$.plusReady(function() {
 					plus.screen.lockOrientation("landscape-primary");
+					waiting = plus.nativeUI.showWaiting("加载中...");
 					pwv = plus.webview.currentWebview();
 					dictname = pwv.dictname;
 					pageSourceId = pwv.pageSourceId;
 					user = Utils.getUser();
-					document.getElementById('search').focus();
+					//document.getElementById('search').focus();
 					initDict(dictname);
+					
 					mui('.mui-indexed-list-inner').on('tap', 'li', function(e) {
 						document.getElementById("search").value = e.target.textContent;
 						document.getElementById("search").textContent = e.target.dataset.value;
@@ -83,24 +84,45 @@
 					//calc hieght
 					list.style.height = (document.body.offsetHeight - header.offsetHeight) + 'px';
 					//create
-					window.indexedList = new mui.IndexedList(list);
+					//window.indexedList = new mui.IndexedList(list);
+					waiting.close();
 					
+					document.getElementById('search').addEventListener('input',function () {
+					    searchInput(dictname, this.value);
+					})
 				});
 				
-				var initDict = function(dictname, filter){
+				var searchInput = function(dictname, filter){
+					if(filter==""){
+						initDict(dictname);
+						return;
+					}
 					var db = JSON.parse(localStorage[dictname]);
 					var ullist = document.getElementById("ullist");
-					for(var i in db){
-						var datavalue = db[i].dm,
-						datatags = db[i].py,
-						livalue = db[i].mc;
-						var li = document.createElement("li")
-						li.setAttribute("data-value", datavalue);
-						li.setAttribute("data-tags", datatags);
-						li.setAttribute("class", 'mui-table-view-cell mui-indexed-list-item');
-						li.textContent = livalue;
-						ullist.appendChild(li);
+					var arr = [];
+					for( var i in db){
+						var dm = (db[i].dm || '').toLowerCase(),
+							py = (db[i].py || '').toLowerCase(),
+							mc = (db[i].mc || '').toLowerCase();
+						if(filter!=null && (dm.indexOf(filter) > 0 || py.indexOf(filter) > 0 || mc.indexOf(filter) > 0 )){
+							arr.push("<li data-value='" + dm + "' data-tags='" + py + "' class='mui-table-view-cell mui-indexed-list-item'>" + mc +"</li>");
+						}
 					}
+					ullist.innerHTML = arr.join("");
+				}
+				
+				var initDict = function(dictname){
+					var db = JSON.parse(localStorage[dictname]);
+					var ullist = document.getElementById("ullist");
+					var arr = [];
+					var length = (db.length > 500 ) ? 500 : db.length;
+					for(var i = 0;i< length ; i ++){
+						var dm = db[i].dm,
+							py = db[i].py,
+							mc = db[i].mc;
+						arr.push("<li data-value='" + dm + "' data-tags='" + py + "' class='mui-table-view-cell mui-indexed-list-item'>" + mc +"</li>");
+					}
+					ullist.innerHTML = arr.join("");
 				}
 				
 				mui.back = function() {
