@@ -9,6 +9,9 @@
 .mui-content input{height: 40px;border-radius: 15px; float:left;margin: 15px 0 0 0;width: 250px !important;}
 .mui-content label{float:left;margin: 15px 0 0 20px;text-align: right;padding-right: 5px; width: 100px;color: white;}
 
+.mui-content .readonly { background-color: darkgray;}
+.mui-content .dictionary {background-color: dodgerblue;}
+
 .content_div{width: 90%;height: 380px;overflow:scroll;background-color: #1ea3de;margin: 5%;margin-bottom:0px;border-radius:10px;}
 .content_div div{float: left;}
 
@@ -20,6 +23,6 @@
 .img_div {margin-left:18px;margin-bottom: 0px;padding: 2% 2% ; width: 30%;}
 .img_div div{width: 100%;}
 .img_div img{width: 70%;margin-left: 30px;}
-.img_div input{margin:20px 0 0 18px;color: #fff;background-color: #007aff;width: 150px !important;}
+.img_div input{margin:20px 0 0 30px;color: #fff;background-color: #007aff;width: 150px !important;}
 
 .clear_float { clear: both;}

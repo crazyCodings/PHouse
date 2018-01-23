@@ -249,7 +249,8 @@
 				"refer": [
 					"html/shImmigrant/shImmigrant.html",
 					"html/shImmigrant/shImmigrant-house-info.html",
-					"html/main/dictionaryWebview.html"
+					"html/main/dictionaryWebview.html",
+					"html/common/dictionaryWebview.html"
 				],
 				"priority": 0
 			},

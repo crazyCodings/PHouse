@@ -110,7 +110,7 @@
 	 * @param {Object} callback
 	 * @param {Object} asyn
 	 */
-	owner.queryRhflMsgList = function(data, callback, asyn) {
+	owner.queryRhflMsgList = function(data, callback, failcallback, asyn) {
 		var userInfo = Utils.getUser();
 		var SoapAction = "queryRhflMsgList";
 		var sendData = {
@@ -118,11 +118,11 @@
 			"ICLoginInfo" : userInfo
 		};
 		var success = callback;
-		invokeBackEndInterface(SoapAction, sendData, success, null, asyn);
+		invokeBackEndInterface(SoapAction, sendData, success, failcallback, asyn);
 	};
 	
 	//来沪人员--房屋精确查询
-	owner.queryHouseInfoListPrecise = function(data, callback, asyn) {
+	owner.queryHouseInfoListPrecise = function(data, callback, failcallback, asyn) {
 		var userInfo = Utils.getUser();
 		var SoapAction = "queryHouseInfoListPrecise";
 		var sendData = {
@@ -131,7 +131,7 @@
 			"ICLoginInfo" : userInfo
 		};
 		var success = callback;
-		invokeBackEndInterface(SoapAction, sendData, success, null, asyn);
+		invokeBackEndInterface(SoapAction, sendData, success, failcallback, asyn);
 	};
 	
 	//来沪人员--房屋模糊查询
@@ -387,7 +387,7 @@
 			},
 			error: function( xhr, type, errorThrown) {
 				if(failInfo(soapAction, xhr, type, errorThrown)){
-					failCallback();
+					failCallback(type);
 				};
 			}
 		});

@@ -11,7 +11,7 @@
 		<link type="text/css" rel="stylesheet" href="../../css/jsgrid/theme.css" />
 		<style type="text/css">
 			
-			/*body header input*/ #back_btn, #new_btn { height: 30px;border-radius: 15px; float:left;margin: 15px 0 0 0;width: 60px; }
+			/*body header input*/ #back_btn, #new_btn,#add_btn { height: 30px;border-radius: 15px; float:left;margin: 15px 0 0 0;width: 60px; }
 			.content_div{width: 100%;height: 200px;overflow:scroll;background-color: #1ea3de;margin: 0;margin-bottom:0px;border-radius:10px;}
 
 			.client-photo { float: left; margin: 0 20px 0 10px; }
@@ -178,7 +178,7 @@
                         .append($("<p>").text("身份证号: " + item.chidcard))
                         .append($("<p>").text("登记号: " + item.regcode));
                     var $btn = $("<div>").addClass("client-btn")
-                    	.append($("<input>").attr("type", "button").attr("value", "编辑").attr("id", "edit_btn"))
+                    	//.append($("<input>").attr("type", "button").attr("value", "编辑").attr("id", "edit_btn"))
                     	.append($("<input>").attr("type", "button").attr("value", "注销").attr("id", "delete_btn"))
                     	.append($("<input>").attr("type", "button").attr("value", "查看").attr("id", "show_btn"));
 					return $("<tr>").append($("<td>").append($photo).append($info).append($btn));

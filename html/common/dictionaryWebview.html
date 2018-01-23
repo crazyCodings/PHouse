@@ -34,7 +34,7 @@
 		<div class="mui-content">
 			<div id='list' class="mui-indexed-list">
 				<div class="mui-indexed-list-search mui-input-row mui-search">
-					<input type="search" id="search" class="mui-input-clear mui-indexed-list-search-input" placeholder="搜索">
+					<input type="search" id="search" class="mui-input-clear mui-indexed-list-search-input" placeholder="点击这里搜索">
 				</div>
 				<div class="mui-indexed-list-bar">
 				</div>
@@ -66,7 +66,7 @@
 					dictname = pwv.dictname;
 					pageSourceId = pwv.pageSourceId;
 					user = Utils.getUser();
-					document.getElementById('search').focus();
+					//document.getElementById('search').focus();
 					initDict(dictname);
 					
 					mui('.mui-indexed-list-inner').on('tap', 'li', function(e) {
@@ -95,12 +95,15 @@
 					}
 					var db = JSON.parse(localStorage[dictname]);
 					var ullist = document.getElementById("ullist");
-					var arr = [];
-					for( var i in db){
+					var arr = [], length = (db.length > 100 ? 100 :  db.length);
+					for( var i = 0 ;i < db.length ; i++ ){
 						var dm = (db[i].dm || '').toLowerCase(),
 							py = (db[i].py || '').toLowerCase(),
 							mc = (db[i].mc || '').toLowerCase();
 						if(filter!=null && (dm.indexOf(filter) >= 0 || py.indexOf(filter) >= 0 || mc.indexOf(filter) >= 0 )){
+							if(arr.length > length){
+								break;
+							}
 							arr.push("<li data-value='" + dm + "' data-tags='" + py + "' class='mui-table-view-cell mui-indexed-list-item'>" + mc +"</li>");
 						}
 					}
@@ -111,7 +114,7 @@
 					var db = JSON.parse(localStorage[dictname]);
 					var ullist = document.getElementById("ullist");
 					var arr = [];
-					var length = (db.length > 500 ) ? 500 : db.length;
+					var length = (db.length > 100 ) ? 100 : db.length;
 					for(var i = 0;i< length ; i ++){
 						var dm = db[i].dm,
 							py = db[i].py,

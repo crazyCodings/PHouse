@@ -14,9 +14,9 @@
 			.baseinfo_div{float: right;width: calc(100% - 231px);}
 			.baseinfo_div > div label{width: 100px;margin-left: 0px;}
 			.baseinfo_div > div input{margin-top: 14px;}
-			.baseinfo_div > div .input_short{width: 100px !important;}
-			.baseinfo_div > div .input_medium{width: 200px !important;}
-			.baseinfo_div > div .input_long{width: 400px !important;}
+			.baseinfo_div > div .input_short{width: 150px !important;}
+			.baseinfo_div > div .input_medium{width: 250px !important;}
+			.baseinfo_div > div .input_long{width: 500px !important;}
 			.button_div input{margin-left: 20%;margin-top: 0px; background-color:#1ea3de;border: 0;}
 
 		</style>
@@ -76,14 +76,15 @@
 		<script src="../../js/mui.js"></script>
 		<script src="../../js/mui.enterfocus.js"></script>
 		<script src="../../js/Utils.js"></script>
+		<script src="../../js/jquery/jquery-1.8.3.js"></script>
 		<script src="../../js/app.js"></script>
 		<script>
-			(function($, doc) {
-				$.init({
+			(function($$, doc) {
+				$$.init({
 					statusBarBackground: '#f7f7f7'
 				});
 				var ws = null, info, user;
-				$.plusReady(function() {
+				$$.plusReady(function() {
 					plus.screen.lockOrientation("landscape-primary");
 					ws = plus.webview.currentWebview();
 					user = Utils.getUser();
@@ -125,16 +126,21 @@
 					app.queryBasePersonInfo(q, function(d){
 						document.getElementById("username").value = d.datas.chname;
 						document.getElementById("IDCard").value = d.datas.chidcard;
-						document.getElementById("folk").value = d.datas.chfolk;
+						document.getElementById("folk").value = Utils.getValueByCodeDict('d_mz', d.datas.chfolk);
 						document.getElementById("mobile").value = d.datas.mobile;
-						document.getElementById("live_reason").value = d.datas.chreasonnew;
+						document.getElementById("live_reason").value = Utils.getValueByCodeDict('d_lhry_lhsy',d.datas.chreasonnew);
 						document.getElementById("houseownertel").value = d.datas.houseownertel;
-						document.getElementById("hhr_place").value = d.datas.hjcode;
+						document.getElementById("hhr_place").value =  Utils.getValueByCodeDict('d_lhry_xzqh',d.datas.hjcode);
 						document.getElementById("hhr_detail_address").value = d.datas.hjaddr;
-						document.getElementById("address").value = d.datas.chshlivearea + " " + d.datas.chshlivestreet + " " + d.datas.chshliveroad + " " + d.datas.chshliveaddr;
+						document.getElementById("address").value =  "" + ((d.datas.chshlivearea=="51")? "上海市崇明区": "上海市")  /*Utils.getValueByCodeDict('',d.datas.chshlivearea)*/ 
+							+ " " + Utils.getValueByCodeDict('d_lhry_jd',d.datas.chshlivestreet) + " " 
+							+ Utils.getValueByCodeDict('d_lhry_lm',d.datas.chshliveroad) + " " + d.datas.chshliveaddr;
 						document.getElementById("houseid").value = d.datas.houseseq;
 						document.getElementById("person_photo").src = Utils.getPicturePath(d.datas.regcode + ".png");
 					});
+					
+					$("#username").addClass('readonly').attr('readonly','readonly');
+					$("#IDCard").addClass('readonly').attr('readonly','readonly');
 				}
 			}(mui, document));
 		</script>

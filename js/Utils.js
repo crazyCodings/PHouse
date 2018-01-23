@@ -129,7 +129,7 @@
 			{ "dictName" : "d_zxyy", "dictDes" : "注销原因"},
 			{ "dictName" : "d_jd_sh", "dictDes" : "接收街道"},
 			//来沪人员字典
-			{ "dictName" : "d_lhry_lhsyd", "dictDes" : "来沪事由"},
+			{ "dictName" : "d_lhry_lhsy", "dictDes" : "来沪事由"},
 			{ "dictName" : "d_lhry_xzqh", "dictDes" : "行政区域（户籍所在）"},
 			{ "dictName" : "d_lhry_mz", "dictDes" : "民族"},
 			{ "dictName" : "d_lhry_jd", "dictDes" : "街道（乡镇）"},
@@ -203,12 +203,27 @@
 		return returnList;
 	},
 	
+	Utils.getValueByCodeDict = function(dictname, code){
+		var dictStr = localStorage[dictname];
+		if(dictStr==null){
+			mui.toast("字典" +  dictname + "不存在");
+			return "";
+		}
+		var dicts = JSON.parse(localStorage[dictname]);
+		for(var i in dicts){
+			if(dicts[i].dm == code){
+				return dicts[i].mc;
+			}
+		}
+		return "";
+	},
+	
 	Utils.dicWewview = function (dictname, ws, floatw) {
     	ws = plus.webview.currentWebview();
         if(floatw) { // 避免快速多次点击创建多个窗口
             floatw.show("fade-in");
         } else {
-            floatw = plus.webview.create("../main/dictionaryWebview.html", "dictionaryWebview", {
+            floatw = plus.webview.create("../common/dictionaryWebview.html", "dictionaryWebview", {
                 background: "transparent",
                 bounce : "all",
                 height : "100%",
