@@ -324,6 +324,13 @@
 				],
 				"refer": [],
 				"priority": 0
+			},
+			"html/shImmigrant/shImmigrant-new.html": {
+				"resources": [],
+				"refer": [
+					"html/common/dictionaryWebview.html"
+				],
+				"priority": 0
 			}
 		},
 		"idle": {

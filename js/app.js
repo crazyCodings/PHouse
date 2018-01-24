@@ -173,6 +173,45 @@
 		invokeBackEndInterface(SoapAction, sendData, success, null, asyn);
 	};
 	
+	//来沪人员--可受理业务查询
+	owner.queryBasePersonInfoAll = function(data, callback, asyn) {
+		var userInfo = Utils.getUser();
+		var SoapAction = "queryBasePersonInfoAll";
+		var sendData = {
+			"BasePersonInfoAllQueryVo" : data.BasePersonInfoAllQueryVo,
+			"BaseOperator" : data.BaseOperator,
+			"ICLoginInfo" : userInfo
+		};
+		var success = callback;
+		invokeBackEndInterface(SoapAction, sendData, success, null, asyn);
+	};
+	
+	//来沪人员--新增
+	owner.addPerson = function(data, callback, asyn) {
+		var userInfo = Utils.getUser();
+		var SoapAction = "addPerson";
+		var sendData = {
+			"PersonVo" : data.PersonVo,
+			"BaseOperator" : data.BaseOperator,
+			"ICLoginInfo" : userInfo
+		};
+		var success = callback;
+		invokeBackEndInterface(SoapAction, sendData, success, null, asyn);
+	};
+	
+	//来沪人员--注销
+	owner.cancelPerson = function(data, callback, asyn) {
+		var userInfo = Utils.getUser();
+		var SoapAction = "cancelPerson";
+		var sendData = {
+			"CancelPersonVo" : data.CancelPersonVo,
+			"BaseOperator" : data.BaseOperator,
+			"ICLoginInfo" : userInfo
+		};
+		var success = callback;
+		invokeBackEndInterface(SoapAction, sendData, success, null, asyn);
+	};
+	
 	//来沪人员--查询照片
 	owner.queryPhotosByRegcode = function(data, callback, errCallback, asyn) {
 		var userInfo = Utils.getUser();

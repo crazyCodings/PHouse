@@ -112,6 +112,16 @@
 		return plus.io.convertLocalFileSystemURL(relativePath);
 	},
 	
+	Utils.getBase64Image = function(img){
+		var canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        var ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, img.width, img.height);
+        var dataURL = canvas.toDataURL("image/png");
+        return dataURL
+	},
+	
 	Utils.updateDictAll = function(){
 		var dict = [
 			{ "dictName" : "d_lm", "dictDes" : "路名"},
@@ -213,6 +223,21 @@
 		for(var i in dicts){
 			if(dicts[i].dm == code){
 				return dicts[i].mc;
+			}
+		}
+		return "";
+	},
+	
+	Utils.getCodeByValueDict = function(dictname, value){
+		var dictStr = localStorage[dictname];
+		if(dictStr==null){
+			mui.toast("字典" +  dictname + "不存在");
+			return "";
+		}
+		var dicts = JSON.parse(localStorage[dictname]);
+		for(var i in dicts){
+			if(dicts[i].mc == value){
+				return dicts[i].dm;
 			}
 		}
 		return "";
