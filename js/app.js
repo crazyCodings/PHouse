@@ -121,6 +121,32 @@
 		invokeBackEndInterface(SoapAction, sendData, success, failcallback, asyn);
 	};
 	
+	//人户分离 保存人员信息
+	//saveStatus 	saveStatus=0，查询当前人是否做过人户分离，当返回结果result = 2 时，再次调用调用改接口 saveStatus=1，确认保存
+	//result:0  成功 result:1 失败 msg result:2 此人已经做过人户分离采集是否继续
+	owner.saveRhflRyxx = function(data, callback, failcallback, asyn) {
+		var userInfo = Utils.getUser();
+		var SoapAction = "saveRhflRyxx";
+		var sendData = {
+			"RhflSavePersonVo" : data.RhflSavePersonVo,
+			"saveStatus" : data.saveStatus,
+			"ICLoginInfo" : userInfo
+		};
+		var success = callback;
+		invokeBackEndInterface(SoapAction, sendData, success, failcallback, asyn);
+	};
+	
+	owner.leaveRhflRyxx = function(data, callback, failcallback, asyn) {
+		var userInfo = Utils.getUser();
+		var SoapAction = "leaveRhflRyxx";
+		var sendData = {
+			"RhflCancelPersonVo" : data.RhflCancelPersonVo,
+			"ICLoginInfo" : userInfo
+		};
+		var success = callback;
+		invokeBackEndInterface(SoapAction, sendData, success, failcallback, asyn);
+	};
+	
 	//来沪人员--房屋精确查询
 	owner.queryHouseInfoListPrecise = function(data, callback, failcallback, asyn) {
 		var userInfo = Utils.getUser();

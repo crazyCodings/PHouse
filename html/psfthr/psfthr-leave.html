@@ -9,18 +9,19 @@
 		<link href="../../css/style.css" rel="stylesheet" />
 		<style type="text/css">
 			
-			.content_div {height: 310px;}
+			.content_div {height: 350px;}
 			.img_div{margin-left: 0px;}
 			.img_div img { border-radius: 5%; width: 100%;margin-left: 0px;}
-			.baseinfo_div{float: right;width: calc(100% - 231px);}
+			.baseinfo_div{float: right;width: calc(100% - 331px);}
 			.baseinfo_div > div label{width: 100px;margin-left: 0px;}
 			.baseinfo_div  div input{margin-top: 10px; background-color: #777777; }
 			.baseinfo_div > div:nth-last-child(1) > input{margin-top: 10px; background-color: darkseagreen; }
 			.baseinfo_div > div .input_short{width: 100px !important;}
-			.baseinfo_div > div .input_medium{width: 160px !important;}
-			.baseinfo_div > div .input_long{width: 366px !important;}
-			
-			.button_div{margin-left:270px;}
+			.baseinfo_div > div .input_medium{width: 210px !important;}
+			.baseinfo_div > div .input_long{width: 416px !important;}
+			.select {float: left; width: 250px !important;margin-top: 20px;}
+			.select select {height: 40px; border-radius: 15px; float: left; font-family: arial; background-color: darkseagreen;}
+			.button_div{margin-left:350px;}
 		</style>
 	</head>
 
@@ -58,7 +59,10 @@
 					</div>
 					<div>
 						<label>注销原因</label>
-						<input type="text" name="logoff" id="logoff" class="input_long" value="" />						
+						<input type="text" name="logoff" id="logoff" class="input_long mui-hidden" value="" />
+						<span class='mui-select select'>
+							<select id="logoff_select" class="input_long "></select>
+                        </span>
 					</div>
 				</div>
 			</div>
@@ -69,18 +73,28 @@
 		<script src="../../js/mui.js"></script>
 		<script src="../../js/mui.enterfocus.js"></script>
 		<script src="../../js/app.js"></script>
+		<script src="../../js/jquery/jquery-1.8.3.js"></script>
 		<script src="../../js/Utils.js"></script>
 		<script>
-			(function($, doc) {
-				$.init({
+			(function($$, doc) {
+				$$.init({
 					statusBarBackground: '#f7f7f7'
 				});
 				var ws = null;
-				$.plusReady(function() {
+				$$.plusReady(function() {
 					plus.screen.lockOrientation("landscape-primary");
 					/*[].forEach(document.querySelectorAll("#baseinfo_div input"), function(p){
 						p.attr("readonly", "readonly");
 					});*/
+					var d_zxyy = JSON.parse(localStorage['d_zxyy']);
+					$("#logoff_select").append("<option value=''></option");
+					for(var i in d_zxyy){
+						$("#logoff_select").append("<option value='" + d_zxyy[i].dm + "'>" + d_zxyy[i].mc + "</option>");
+					}
+					document.getElementById('logoff_select').addEventListener('change',function () {
+					    document.getElementById("logoff").textContent = this.value;
+					})
+					
 					var arr = document.querySelectorAll("#baseinfo_div input");
 					for (var i=0; i < arr.length - 1; i++) {
 						arr[i].setAttribute("readonly", "readonly");
@@ -98,13 +112,29 @@
 					document.getElementById('submit').addEventListener('tap',function () {
 						console.log(parentInfo.rylx);
 
-						if(document.getElementById("logoff").value == ""){
+						if(document.getElementById("logoff").textContent == ""){
 					    	mui.alert("注销原因不能为空！");
 					    	return;
 					    }
 					    //
-					    mui.toast("开始注销：此为测试，禁止操作数据");
-					})
+					    //mui.toast("开始注销：此为测试，禁止操作数据");
+					    var q = {
+					    	"RhflCancelPersonVo" : {
+					    		"fwid" : "",
+					    		"rid" : "",
+					    		"czrid" : "",
+					    		"czrxm" : "",
+					    		"czrzjhm" : "",
+					    		"zxyy" : "",
+					    		"zxyymc" : ""
+					    	}
+					    };
+					    /*app.leaveRhflRyxx(q, function(d){
+					    	
+					    },function(e){
+					    	
+					    })*/
+					});
 				});
 			}(mui, document));
 		</script>

@@ -4,7 +4,7 @@
 	"id": "H580D6F0E",/*应用的标识，创建应用时自动生成，勿手动修改*/
 	"name": "PHouse",/*应用名称，程序桌面图标名称*/
 	"version": {
-		"name": "1.0.0",/*应用版本名称*/
+		"name": "1.0.1",/*应用版本名称*/
 		"code": "83"
 	},
 	"description": "",/*应用描述信息*/
@@ -264,12 +264,18 @@
 				"priority": 0
 			},
 			"html/psfthr/psfthr-query-selector.html": {
-				"resources": [],
+				"resources": [
+					"js/app.js",
+					"js/mui.js",
+					"js/mui.enterfocus.js",
+					"js/Utils.js"
+				],
 				"refer": [
 					"html/psfthr/psfthr-address-people-info.html",
 					"html/psfthr/statistics.html",
 					"html/psfthr/psfthr-receive-statistics.html",
-					"html/psfthr/psfthr-send-statistics.html"
+					"html/psfthr/psfthr-send-statistics.html",
+					"html/common/dictionaryWebview.html"
 				],
 				"priority": 0
 			},

@@ -105,9 +105,11 @@
 								break;
 							}
 							arr.push("<li data-value='" + dm + "' data-tags='" + py + "' class='mui-table-view-cell mui-indexed-list-item'>" + mc +"</li>");
+							//arr.push("<option value='" + dm + "'>" + mc + "</option>");
 						}
 					}
 					ullist.innerHTML = arr.join("");
+					//ullist.innerHTML = "<select autofocus>" + arr.join("") + "</select>";
 				}
 				
 				var initDict = function(dictname){
