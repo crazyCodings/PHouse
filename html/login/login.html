@@ -45,7 +45,7 @@
 					</div>
 					<div class="mui-input-row">
 						<button id="loginButton" type="button" class="mui-btn mui-btn-primary mui-btn-block">登录</button>
-						<label>版本：v1.0.0</label>
+						<label id="version">版本：</label>
 					</div>
 				</div>
 			</div>
@@ -63,6 +63,9 @@
 				});
 				$.plusReady(function() {
 					plus.screen.lockOrientation("landscape-primary");
+					plus.runtime.getProperty(plus.runtime.appid,function(inf){
+						document.getElementById("version").textContent = "版本：" + inf.version;
+					});
 					var page = mui.preload({
 						url : '../main/main.html',
 						id : 'main'
