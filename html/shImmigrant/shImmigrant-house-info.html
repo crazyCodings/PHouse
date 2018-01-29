@@ -11,7 +11,7 @@
 		<link type="text/css" rel="stylesheet" href="../../css/jsgrid/theme.css" />
 		<style type="text/css">
 			
-			/*body header input*/ #back_btn, #new_btn { height: 30px;border-radius: 15px; float:left;margin: 15px 0 0 0;width: 60px; }
+			/*body header input*/ #back_btn, #new_btn,#add_btn { height: 30px;border-radius: 15px; float:left;margin: 15px 0 0 0;width: 60px; }
 			.content_div{width: 100%;height: 200px;overflow:scroll;background-color: #1ea3de;margin: 0;margin-bottom:0px;border-radius:10px;}
 
 			.client-photo { float: left; margin: 0 20px 0 10px; }
@@ -46,10 +46,11 @@
 				$$.init({
 					statusBarBackground: '#f7f7f7'
 				});
-				var pageSourceId, house_info , user ;
+				var ws,shareInfo, pageSourceId, house_info , user;
 				$$.plusReady(function() {
 					plus.screen.lockOrientation("landscape-primary");
-					var shareInfo = plus.webview.currentWebview().shareInfo;
+					ws = plus.webview.currentWebview();
+					shareInfo = ws.shareInfo;
 					pageSourceId = shareInfo.pageSourceId,
 					house_info = shareInfo.house_info;
 					document.getElementById("houser_hold_name").textContent = house_info.fzxm;
@@ -59,7 +60,7 @@
 						backfunction();
 					});
 					document.getElementById('add_btn').addEventListener('tap',function () {
-					    createNewPage({ id : 'add_btn'});
+					    createNewPage({ id : 'add_btn' , "house_info" : house_info});
 					});
 					showGrid();
 				});
@@ -129,9 +130,40 @@
 		                },
 		                rowClick: function(item) {
 		                	if(item.event.target.id == "delete_btn" ){
-		                		mui.confirm('确认注销居住人吗？', '', ['是', '否'], function(index){
+		                		mui.confirm("确认注销居住人吗？", "" , ['是','否'], function(index){
 		                			if(index.index == '0'){
-		                				mui.toast('当前为测试，不能操作数据');
+		                				plus.nativeUI.showWaiting("等待中...");
+		                				var q = {
+											"BasePersonInfoAllQueryVo" : {
+												"chname" : item.item.chname,
+												"chidcard" : item.item.chidcard,
+												"houseseq" : house_info.fwbm
+											},
+											"BaseOperator" : {
+							            		"countyid" : user.countyid,
+								            	"policeid" : user.policeid,
+								            	"jcwdm" : house_info.jcwdm,
+								            	"applattice" : user.latticepoint,
+								            	"terminalNo" : user.sysimei,
+								            	"oprNo" : user.xgyid,
+								            	"key" : user.key
+							            	}
+										};
+		                				app.queryBasePersonInfoAll(q, function(d){
+		                					plus.nativeUI.closeWaiting();
+									    	if(d.result=="0"){
+									    		var status = d.datas.status;
+									    		console.log(status)
+									    		if(status.indexOf("0400") < 0 && status.indexOf("0040") < 0 && status.indexOf("0404") < 0){
+									    			mui.toast("当前用户没有权限！");
+									    			return;
+									    		}
+												deleteItem(item.item);
+									    	}
+									    }, function(e){
+									    	plus.nativeUI.closeWaiting();
+									    	console.log(e);
+									    });
 		                			}		                			
 		                		}, 'div');
 		                		return;
@@ -147,6 +179,38 @@
 		                }
 		            });
 				};
+				
+				var deleteItem = function(item){
+					if(ws==null)
+						ws = plus.webview.currentWebview();
+					house_info = ws.shareInfo.house_info;
+					var q = {
+    					"BaseOperator" : {
+		            		"countyid" : user.countyid,
+			            	"policeid" : user.policeid,
+			            	"jcwdm" : house_info.jcwdm,
+			            	"applattice" : user.latticepoint,
+			            	"terminalNo" : user.sysimei,
+			            	"oprNo" :  "",//user.xgyid,
+			            	"key" : user.key
+			            },
+			            "CancelPersonVo" : {
+			            	"chidcard": item.chidcard,
+							"chname": item.chname,
+							"houseseq": house_info.fwbm,
+							"regcode": item .regcode,
+							"xgyid": user.xgyid
+			            }
+    				}
+					app.cancelPerson(q,function(d){
+						if(d.ReturnCode.result=="0"){
+			    			mui.toast("注销成功");
+			    			ws.reload();
+			    		}else{
+			    			mui.toast(d.ReturnCode.errormsg);
+			    		}
+					});
+				}
 				
 				/**
 				 * 多次调用方法时，传入的非字符串对象会被覆盖，所以需要regcode识别
@@ -178,7 +242,7 @@
                         .append($("<p>").text("身份证号: " + item.chidcard))
                         .append($("<p>").text("登记号: " + item.regcode));
                     var $btn = $("<div>").addClass("client-btn")
-                    	.append($("<input>").attr("type", "button").attr("value", "编辑").attr("id", "edit_btn"))
+                    	//.append($("<input>").attr("type", "button").attr("value", "编辑").attr("id", "edit_btn"))
                     	.append($("<input>").attr("type", "button").attr("value", "注销").attr("id", "delete_btn"))
                     	.append($("<input>").attr("type", "button").attr("value", "查看").attr("id", "show_btn"));
 					return $("<tr>").append($("<td>").append($photo).append($info).append($btn));

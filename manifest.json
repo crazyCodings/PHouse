@@ -203,14 +203,18 @@
 				"priority": 0
 			},
 			"html/login/login.html": {
-				"resources": [],
+				"resources": [
+					"js/update.js"
+				],
 				"refer": [
 					"html/main/main.html"
 				],
 				"priority": 0
 			},
 			"html/main/main.html": {
-				"resources": [],
+				"resources": [
+					"js/plugin.js"
+				],
 				"refer": [
 					"html/shImmigrant/shImmigrant.html",
 					"html/psfthr/psfthr.html",

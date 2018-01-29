@@ -3,14 +3,14 @@
 
 	<head>
 		<meta charset="UTF-8">
-		<title>添加成员</title>
+		<title>扫描身份证</title>
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 		<link href="../../css/mui.css" rel="stylesheet" />
 		<link href="../../css/style.css" rel="stylesheet" />
 		<style type="text/css">
 			
 			.img_div{margin-left: 0px;}
-			.baseinfo_div{float: right;width: calc(100% - 231px);}
+			.baseinfo_div{float: right;width: calc(100% - 331px);}
 			.baseinfo_div > div label{width: 100px;margin-left: 0px;margin-top: 54px;}
 			.baseinfo_div > div input{margin-top: 54px;}
 			.baseinfo_div > div .input_short{width: 90px !important;}
@@ -24,12 +24,12 @@
 
 	<body>
 		<header class="mui-bar mui-bar-nav navigate_div">
-			<h1 class="mui-title">基本信息</h1>
+			<h1 class="mui-title">扫描身份证</h1>
 		</header>
 		<div class="mui-content">
 			<div class="content_div" >
 				<div id="img_div" class="img_div">
-					<div><img src="../../img/drawable/icpersonico.png"/></div>
+					<div><img id="person_photo" src="../../img/drawable/icpersonico.png"/></div>
 					<input type="button" name="collection_photo" id="collection_photo" value="点击扫描身份证" />
 				</div>
 				<div id="baseinfo_div" class="baseinfo_div">
@@ -41,6 +41,14 @@
 						<label>身份证号</label>
 						<input type="text" name="IDCard" id="IDCard" class="input_long" value="" />
 					</div>
+					<div class="mui-hidden">
+						<input type="text" name="Sex" id="Sex" class="input_long" value="" />
+						<input type="text" name="Folk" id="Folk" class="input_long" value="" />
+						<input type="text" name="Birt" id="Birt" class="input_long" value="" />
+						<input type="text" name="Addr" id="Addr" class="input_long" value="" />
+						<input type="text" name="Valid" id="Valid" class="input_long" value="" />
+						<input type="text" name="Issue" id="Issue" class="input_long" value="" />
+					</div>
 					<div>
 						<input type="button" id="confirm_btn" value="确认" />
 					</div>
@@ -50,18 +58,26 @@
 		<script src="../../js/mui.js"></script>
 		<script src="../../js/mui.enterfocus.js"></script>
 		<script src="../../js/app.js"></script>
+		<script src="../../js/plugin.js"></script>
 		<script>
 			(function($, doc) {
 				$.init({
 					statusBarBackground: '#f7f7f7'
 				});
-				var ws = null;
+				var ws = null, house_info;
 				$.plusReady(function() {
 					plus.screen.lockOrientation("landscape-primary");
 					ws = plus.webview.currentWebview();
+					house_info = ws.info.house_info;
 					document.getElementById('confirm_btn').addEventListener('tap',function () {
 						var name = document.getElementById("username").value,
-							IDCard = document.getElementById("IDCard").value;
+							IDCard = document.getElementById("IDCard").value,
+							Sex = document.getElementById("Sex").value,
+							Folk = document.getElementById("Folk").value,
+							Birt = document.getElementById("Birt").value,
+							Addr = document.getElementById("Addr").value,
+							Valid = document.getElementById("Valid").value,
+							Issue = document.getElementById("Issue").value;
 						if(name =="" || IDCard == ""){
 							mui.toast("信息不能为空");
 							return;
@@ -70,11 +86,34 @@
 							"id" : 'add_btn',
 							"persioninfo" : {
 								"username" : name,
-								"IDCard" : IDCard
-							}
+								"IDCard" : IDCard,
+								"Sex" : Sex,
+								"Folk" : Folk,
+								"Birt" : Birt,
+								"Addr" : Addr,
+								"Valid" : Valid,
+								"Issue" : Issue
+							},
+							"house_info" : house_info
 						};
 						createNewPage(info);
-					})
+					});
+					
+					document.getElementById('collection_photo').addEventListener('tap',function () {
+				        plus.plugin.IDRecognitionFunctionArrayArgu({}, function(d){
+							var info = JSON.parse(d.idcardinfo);
+							document.getElementById("username").value = info.Name.value;
+							document.getElementById("IDCard").value = info.Num.value;
+							document.getElementById("Sex").value = info.Sex.value;
+							document.getElementById("Folk").value = info.Folk.value;
+							document.getElementById("Birt").value = info.Birt.value;
+							document.getElementById("Addr").value = info.Addr.value;
+							document.getElementById("Valid").value = info.Valid.value;
+							document.getElementById("Issue").value = info.Issue.value;
+						}, function(e){
+							mui.toast(e);
+						});
+					});
 				});
 				
 				var newPage = null;

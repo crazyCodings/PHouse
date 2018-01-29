@@ -112,6 +112,178 @@
 		return plus.io.convertLocalFileSystemURL(relativePath);
 	},
 	
+	Utils.getBase64Image = function(img){
+		var canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        var ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, img.width, img.height);
+        var dataURL = canvas.toDataURL("image/png");
+        return dataURL
+	},
+	
+	Utils.updateDictAll = function(){
+		var dict = [
+			{ "dictName" : "d_lm", "dictDes" : "路名"},
+			{ "dictName" : "d_jcw", "dictDes" : "居委会（居村委）"},
+			{ "dictName" : "d_pcs_wrkb", "dictDes" : "接收地派出所"},
+			{ "dictName" : "d_xb", "dictDes" : "性别"},
+			{ "dictName" : "d_xzqh", "dictDes" : "籍贯"},
+			{ "dictName" : "d_mz", "dictDes" : "民族"},
+			{ "dictName" : "d_wybxx_rylb", "dictDes" : "人员类别"},
+			{ "dictName" : "d_wybxx_xxly", "dictDes" : "信息来源"},
+			{ "dictName" : "d_ssqx", "dictDes" : "所属区县"},
+			{ "dictName" : "d_rk_flyy", "dictDes" : "居住原因"},
+			{ "dictName" : "d_yfzgx", "dictDes" : "与房主关系"},
+			{ "dictName" : "d_jzsy", "dictDes" : "居住事由"},
+			{ "dictName" : "d_zxyy", "dictDes" : "注销原因"},
+			{ "dictName" : "d_jd_sh", "dictDes" : "接收街道"},
+			//来沪人员字典
+			{ "dictName" : "d_lhry_lhsy", "dictDes" : "来沪事由"},
+			{ "dictName" : "d_lhry_xzqh", "dictDes" : "行政区域（户籍所在）"},
+			{ "dictName" : "d_lhry_mz", "dictDes" : "民族"},
+			{ "dictName" : "d_lhry_jd", "dictDes" : "街道（乡镇）"},
+			{ "dictName" : "d_lhry_lm", "dictDes" : "道路"},
+			{ "dictName" : "d_lhry_jwh", "dictDes" : "居委会"},
+			//抄告单
+			{ "dictName" : "d_cgd_pcs", "dictDes" : "派出所"},
+			{ "dictName" : "d_cgd_jd", "dictDes" : "抄告街镇"},
+			{ "dictName" : "d_syrk_jcw", "dictDes" : "抄告居村委"},
+			{ "dictName" : "d_cgd_shzal", "dictDes" : "社会治安类"},
+			{ "dictName" : "d_cgd_aqscl", "dictDes" : "安全生产类"},
+			{ "dictName" : "d_cgd_spwsl", "dictDes" : "食药品、卫生类"},
+			{ "dictName" : "d_cgd_csgll", "dictDes" : "城市管理类"},
+			{ "dictName" : "d_cgd_whjsl", "dictDes" : "文化、计生类"},
+			{ "dictName" : "d_cgd_xfl", "dictDes" : "消防类"},
+			//人户分离
+			{ "dictName" : "d_pcs_rhfl", "dictDes" : "人户分离接收信息查询派出所字典"}
+		];
+		plus.io.requestFileSystem(plus.io.PRIVATE_DOC, function(fs) {
+			fs.root.getDirectory("dict", {
+				create: true
+			}, function(entry) {
+				var dictname = "";
+				for(var i in dict){
+					dictname = dict[i].dictName;
+					if(localStorage[dictname]==undefined){
+						Utils.updateDict(dictname, entry);
+					}
+				}
+			}, function(e) {
+				console.log("字典更新，打开dict目录失败：" + e.message);
+			});
+		}, function(e) {
+			console.log("字典更新，打开doc目录失败：" + e.message);
+		});
+		
+	},
+	Utils.updateDict = function(dictName, entry){
+		var localFile = dictName + ".json";
+		//打开本地文件成功，把本地文件内容读取到localStorage中，打开失败，向服务器查询
+		var q = {
+			"dictname" : dictName
+		};
+		app.queryDict(q, function(d){
+			entry.getFile(localFile,{
+				create : true
+			}, function(fentry){
+				fentry.createWriter(function(writer) {
+					writer.onerror = function() {
+						console.log("字典保存本地失败！");
+					}
+					writer.write(JSON.stringify(d.datas));
+					localStorage.setItem(dictName, JSON.stringify(d.datas));
+					console.log("字典【" + dictName + "保存成功】！");
+				}, function(e) {
+					console.log("保存字典，获取本地文件对象失败：" + e.message);
+				});
+			})
+		},function(e){
+			mui.toast("查询字典【" + dictName + "】失败！" );
+			console.log(JSON.stringify(e));
+		});
+	},
+	
+	Utils.fileDict = function(dictName, filter){
+		var dicts = JSON.parse(localStorage[dictName]);
+		var returnList = {};
+		for (var i in dicts) {
+			console.log(dicts[i].dm + "\t" + dicts[i].mc + "\t" + dicts[i].py);
+		}
+		return returnList;
+	},
+	
+	Utils.getValueByCodeDict = function(dictname, code){
+		var dictStr = localStorage[dictname];
+		if(dictStr==null){
+			mui.toast("字典" +  dictname + "不存在");
+			return "";
+		}
+		var dicts = JSON.parse(localStorage[dictname]);
+		for(var i in dicts){
+			if(dicts[i].dm == code){
+				return dicts[i].mc;
+			}
+		}
+		return "";
+	},
+	
+	Utils.getCodeByValueDict = function(dictname, value){
+		var dictStr = localStorage[dictname];
+		if(dictStr==null){
+			mui.toast("字典" +  dictname + "不存在");
+			return "";
+		}
+		var dicts = JSON.parse(localStorage[dictname]);
+		for(var i in dicts){
+			if(dicts[i].mc == value){
+				return dicts[i].dm;
+			}
+		}
+		return "";
+	},
+	
+	Utils.dicWewview = function (dictname, ws, floatw) {
+    	ws = plus.webview.currentWebview();
+        if(floatw) { // 避免快速多次点击创建多个窗口
+            floatw.show("fade-in");
+        } else {
+            floatw = plus.webview.create("../common/dictionaryWebview.html", "dictionaryWebview", {
+                background: "transparent",
+                bounce : "all",
+                height : "100%",
+                scalable : false,
+                scrollIndicator : "none",
+                width : "50%",
+                left : "25%"
+            }, {
+            	"pageSourceId": ws.id ,
+            	"dictname" : dictname 
+            });
+			floatw.addEventListener("loading", function() {
+            	plus.nativeUI.showWaiting();
+			}, false);
+            floatw.addEventListener("loaded", function() {
+            	plus.nativeUI.closeWaiting();
+				floatw.show('fade-in', 300);
+			}, false);
+            ws.setStyle({mask:'rgba(0,0,0,0.5)'});
+            ws.addEventListener("maskClick", function(){
+            	ws.setStyle({
+					mask: "none"
+				});
+				if (!floatw) {
+					floatw = plus.webview.getWebviewById("dictionaryWebview");
+				}
+				if (floatw) {
+					floatw.close();
+					floatw = null;
+				}
+            }, false);
+        }
+   },
+	
+	
 	/**
 	 * 兼容startswith
 	 */

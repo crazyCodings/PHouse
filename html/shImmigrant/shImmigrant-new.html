@@ -14,10 +14,11 @@
 			.baseinfo_div{float: right;width: calc(100% - 231px);}
 			.baseinfo_div > div label{width: 100px;margin-left: 0px;}
 			.baseinfo_div > div input{margin-top: 14px;}
-			.baseinfo_div > div .input_short{width: 100px !important;}
-			.baseinfo_div > div .input_medium{width: 200px !important;}
-			.baseinfo_div > div .input_long{width: 400px !important;}
+			.baseinfo_div > div .input_short{width: 150px !important;}
+			.baseinfo_div > div .input_medium{width: 250px !important;}
+			.baseinfo_div > div .input_long{width: 500px !important;}
 			.button_div input{margin-left: 20%;margin-top: 0px; background-color:#1ea3de;border: 0;}
+			#national,#live_reason_select,#hhr_place_select { height: 40px; border-radius: 15px; float: left; margin: 15px 0 0 0; font-family: arial; background-color: dodgerblue;}
 
 		</style>
 	</head>
@@ -38,29 +39,36 @@
 						<input type="text" name="username" id="username" class="input_short" value="" />
 						<label>身份证号</label>
 						<input type="text" name="IDCard" id="IDCard" class="input_medium" value="" />
+						<input type="text" name="sex" id="sex" class="input_medium mui-hidden" value="" />
 					</div>
 					<div id="">
-						<label>民族</label>
-						<input type="text" name="folk" id="folk" class="input_short" class="mui-input" value="" />
+						<label><span style="color: red;">*</span>民族</label>
+						<input type="text" name="folk" id="folk" class="input_short mui-hidden" class="mui-input" value="" />
+						<span class='mui-select'>
+							<select id="national" class="input_short "></select>
+                        </span>
 						<label>移动电话</label>
 						<input type="text" name="mobile" id="mobile" class="input_medium" value="" />
 					</div>
 					<div id="">
-						<label>居住事由</label>
-						<input type="text" name="live_reason" id="live_reason" class="input_short" value="" />
+						<label><span style="color: red;">*</span>居住事由</label>
+						<input type="text" name="live_reason" id="live_reason" class="input_short mui-hidden" value="" />
+						<span class='mui-select'>
+							<select id="live_reason_select" class="input_short "></select>
+                        </span>
 						<label>固定电话</label>
 						<input type="text" name="houseownertel" id="houseownertel" class="input_medium" value="" />
 					</div>
 					<div id="">
-						<label>户籍所在地</label>
-						<input type="text" name="hhr_place" id="hhr_place" class="input_long" value="" />						
+						<label><span style="color: red;">*</span>户籍所在地</label>
+						<input type="text" name="hhr_place" id="hhr_place" class="input_long dictionary" dicname="d_lhry_xzqh" value="" />
 					</div>
 					<div id="">
-						<label>户籍详址</label>
+						<label><span style="color: red;">*</span>户籍详址</label>
 						<input type="text" name="hhr_detail_address" id="hhr_detail_address" class="input_long" value="" />						
 					</div>
 					<div id="">
-						<label>居住地址</label>
+						<label><span style="color: red;">*</span>居住地址</label>
 						<input type="text" name="address" id="address" class="input_long" value="" />						
 					</div>
 					<div id="">
@@ -76,18 +84,50 @@
 		<script src="../../js/mui.js"></script>
 		<script src="../../js/mui.enterfocus.js"></script>
 		<script src="../../js/Utils.js"></script>
+		<script src="../../js/jquery/jquery-1.8.3.js"></script>
 		<script src="../../js/app.js"></script>
 		<script>
-			(function($, doc) {
-				$.init({
+			(function($$, doc) {
+				$$.init({
 					statusBarBackground: '#f7f7f7'
 				});
-				var ws = null, info, user;
-				$.plusReady(function() {
+				var ws = null, info, user, floatw;
+				$$.plusReady(function() {
 					plus.screen.lockOrientation("landscape-primary");
 					ws = plus.webview.currentWebview();
 					user = Utils.getUser();
 					info = ws.info;
+					var d_lhry_mz = JSON.parse(localStorage['d_lhry_mz']),
+						d_lhry_lhsy = JSON.parse(localStorage['d_lhry_lhsy']),
+						db = JSON.parse(localStorage['d_lhry_xzqh']);
+						
+					for(var i in d_lhry_mz){
+						$("#national").append("<option value='" + d_lhry_mz[i].dm + "'>" + d_lhry_mz[i].mc + "</option");
+					}
+					document.getElementById('national').addEventListener('change',function (e) {
+					    //mui.toast(this.value + $("#national").find("option:selected").text());
+					    document.getElementById('folk').textContent = this.value;
+					})
+					$("#live_reason_select").append("<option value=''></option");
+					for(var i in d_lhry_lhsy){
+						$("#live_reason_select").append("<option value='" + d_lhry_lhsy[i].dm + "'>" + d_lhry_lhsy[i].mc + "</option");
+					}
+					document.getElementById('live_reason_select').addEventListener('change',function (e) {
+					    document.getElementById('live_reason').textContent = this.value;
+					})
+					document.getElementById('hhr_place').addEventListener('focus',function (e) {
+					    //打开搜索页面
+					    if(e.sourceCapabilities==null){
+					    	return;
+					    }
+					    Utils.dicWewview(document.getElementById("hhr_place").getAttribute("dicname"), ws, floatw);
+					});
+					window.addEventListener('closeMask',function(e){
+						//通过event.detail可获得传递过来的参数内容
+						document.getElementById("hhr_place").value = e.detail.value;
+						document.getElementById("hhr_place").textContent = e.detail.code;
+						closeMask();
+					});
 					if(info.id=="edit_btn" || info.id=="show_btn"){
 						displayInfo();
 					}
@@ -98,7 +138,171 @@
 					if(info.id=="add_btn"){
 						document.getElementById("username").value = info.persioninfo.username;
 						document.getElementById("IDCard").value = info.persioninfo.IDCard;
+						document.getElementById("folk").value = info.persioninfo.Folk;
+						document.getElementById("folk").textContent = Utils.getCodeByValueDict('d_lhry_mz', info.persioninfo.Folk);
+						document.getElementById("sex").textContent = Utils.getCodeByValueDict('d_xb', info.persioninfo.Sex);
+						var address = info.persioninfo.Addr, address1 = address,address2 = address;
+						var dictname = 'd_lhry_xzqh';
+						var dictStr = localStorage[dictname];
+						if(dictStr==null){
+							mui.toast("字典" +  dictname + "不存在");
+							return "";
+						}
+						var dicts = JSON.parse(localStorage[dictname]);
+						for(var i in dicts){
+							if(address.indexOf(dicts[i].mc)>=0){
+								address1 = dicts[i].mc;
+								address2 = address.substr(dicts[i].mc.length);
+							}
+						}
+						document.getElementById("hhr_place").value = address1;
+						document.getElementById("hhr_place").textContent = Utils.getCodeByValueDict('d_lhry_xzqh', address1);
+						document.getElementById("hhr_detail_address").value = address2;
+						document.getElementById("address").value = info.house_info.mlphxx + info.house_info.sh;
+						document.getElementById("houseid").value = info.house_info.fwbm;
+						$("#username").addClass('readonly').attr('readonly','readonly');
+						$("#IDCard").addClass('readonly').attr('readonly','readonly');
+						$("#address").addClass('readonly').attr('readonly','readonly');
+						$("#houseid").addClass('readonly').attr('readonly','readonly');
 					}
+					document.getElementById('collection_photo').addEventListener('tap',function () {
+				        plus.camera.getCamera().captureImage(function(path){
+				        	plus.io.resolveLocalFileSystemURL( path, function ( entry ) {    
+					            //var localurl = entry.toLocalURL();//
+					            var localurl = plus.io.convertLocalFileSystemURL(entry.__PURL__);
+					            var person = $("#person_photo")[0];
+					            person.src = localurl;
+					            person.onload =function() { 
+					                var data = Utils.getBase64Image(person); 
+					                person.src = data;
+					            } 
+					        });
+				        },function(e){
+				        	console.log(e.code);
+				        	mui.toast(e.message);
+				        },{
+				        	"filename" : "_doc/camera/a.png",
+				        	"format" : this.supportedImageFormats,
+				        	"popover" : {top:"10px",left:"10px",width:"200px",height:"200px"}
+				        })
+					});
+					document.getElementById('submit').addEventListener('tap',function () {
+						mui.confirm("是否要提交信息？", "" , ['是','否'], function(e){
+							//校验信息
+							var photo = $("#person_photo")[0];
+							if(photo.src == ""){
+								mui.toast("请采集照片!");
+								return;
+							}
+							var username = document.getElementById("username").value,
+								IDCard = document.getElementById("IDCard").value,
+								folk = document.getElementById("folk").textContent,
+								mobile = document.getElementById("mobile").value,
+								live_reason = document.getElementById("live_reason").textContent,
+								houseownertel = document.getElementById("houseownertel").value,
+								hhr_place = document.getElementById("hhr_place").textContent,
+								hhr_detail_address = document.getElementById("hhr_detail_address").value,
+								address = document.getElementById("address").value,
+								houseid = document.getElementById("houseid").value;
+							var sex = document.getElementById("sex").textContent;
+							if(folk=="" || live_reason=="" || hhr_place==""|| hhr_detail_address =="" || address==""){
+								mui.toast("个人信息不完整，请完善！");
+								return;
+							}
+							if(e.index=="0"){
+								//信息采集提交
+								var q = {
+									"BasePersonInfoAllQueryVo" : {
+										"chname" : username,
+										"chidcard" : IDCard,
+										"houseseq" : info.house_info.fwbm
+									},
+									"BaseOperator" : {
+					            		"countyid" : user.countyid,
+						            	"policeid" : user.policeid,
+						            	"jcwdm" : info.house_info.jcwdm,
+						            	"applattice" : user.latticepoint,
+						            	"terminalNo" : user.sysimei,
+						            	"oprNo" : user.xgyid,
+						            	"key" : user.key
+					            	}
+								};
+							    app.queryBasePersonInfoAll(q, function(d){
+							    	if(d.result=="0"){
+							    		var status = d.datas.status;
+							    		console.log(status)
+							    		if(status.indexOf("0400") < 0 && status.indexOf("0040") < 0){
+							    			mui.toast("当前用户没有新增权限！");
+							    			return;
+							    		}
+							    		var q = {
+											"BaseOperator" : {
+							            		"countyid" : user.countyid,
+								            	"policeid" : user.policeid,
+								            	"jcwdm" : info.house_info.jcwdm,
+								            	"applattice" : user.latticepoint,
+								            	"terminalNo" : user.sysimei,
+								            	"oprNo" :  "",//user.xgyid,
+								            	"key" : user.key
+								            },
+								            "PersonVo" : {
+								           		"regcode" : d.datas.regcode,
+									    		"regcertcode" : d.datas.regcode + Utils.getCurrentDate("yyMMdd"),
+									    		"chidcard" : IDCard,
+									    		"chname" : username,
+									    		"chsex" : sex,
+									    		"chfolk" : folk,
+									    		"dtbirthday" : IDCard.substr(6, 8),
+									    		"jgcode" : hhr_place, 
+									    		"oprtype" : "1",	//1新办，2续办，3补办，4变更
+									    		"hjcode" : hhr_place,
+									    		"hjaddr" : hhr_detail_address,
+									    		"chshlivearea" : "51",  //崇明
+								           		"chshlivestreet" : info.house_info.jddm,
+								           		"chshliveroad" : info.house_info.jlxdm,
+									    		"chshliveaddr" : (info.house_info.mlph + info.house_info.fwshms),
+									    		"chshhandphone" : houseownertel,
+									    		"mobile" : mobile,
+									    		"chhouseorgname" : info.house_info.fzxm,
+									    		"houseownertel" : info.house_info.fzlxdh,
+									    		"chhouseownerid" : info.house_info.fzzjhm,
+									    		"policeid" : user.policeid,
+									    		"applattice" : user.latticepoint,
+									    		"fillernmae" : user.xgyname,
+									    		"dtfilldate" : Utils.getCurrentDate("yyyyMMdd"),
+									    		"dtsavedate" : Utils.getCurrentDate("yyyyMMdd"),
+									    		"houseseq" : info.house_info.fwbm,
+									    		"chshlivejuwei" : info.house_info.jcwdm,
+									    		"xgyid" : user.xgyid,
+									    		"photoseq" : d.datas.regcode + Utils.getCurrentDate("yyMMdd"),
+									    		"chreasonnew" : live_reason,
+									    		"djfirstdate": "",
+									    		"reserved1": "",
+												"reserved2": ""
+								           }
+										};
+										app.addPerson(q, function(d){
+								    		console.log(d);
+								    		if(d.ReturnCode.result=="0"){
+								    			mui.toast("新增成功");
+								    			ws.close();
+								    		}else{
+								    			mui.toast(d.ReturnCode.errormsg);
+								    		}
+								    	},function(e){
+								    		mui.toast("新增失败" + e.message);
+								    	});
+							    	}
+							    }, function(e){
+							    	console.log(e);
+							    });
+							}else if(e.index=="1"){
+								return;
+							}
+						});
+					    
+					    
+					})
 				});
 				var displayInfo = function(){
 					var q = {
@@ -120,16 +324,33 @@
 					app.queryBasePersonInfo(q, function(d){
 						document.getElementById("username").value = d.datas.chname;
 						document.getElementById("IDCard").value = d.datas.chidcard;
-						document.getElementById("folk").value = d.datas.chfolk;
+						document.getElementById("folk").value = Utils.getValueByCodeDict('d_lhry_mz', d.datas.chfolk);
 						document.getElementById("mobile").value = d.datas.mobile;
-						document.getElementById("live_reason").value = d.datas.chreasonnew;
+						document.getElementById("live_reason").value = Utils.getValueByCodeDict('d_lhry_lhsy',d.datas.chreasonnew);
 						document.getElementById("houseownertel").value = d.datas.houseownertel;
-						document.getElementById("hhr_place").value = d.datas.hjcode;
+						document.getElementById("hhr_place").value =  Utils.getValueByCodeDict('d_lhry_xzqh',d.datas.hjcode);
 						document.getElementById("hhr_detail_address").value = d.datas.hjaddr;
-						document.getElementById("address").value = d.datas.chshlivearea + " " + d.datas.chshlivestreet + " " + d.datas.chshliveroad + " " + d.datas.chshliveaddr;
+						document.getElementById("address").value =  "" + ((d.datas.chshlivearea=="51")? "上海市崇明区": "上海市")  /*Utils.getValueByCodeDict('',d.datas.chshlivearea)*/ 
+							+ " " + Utils.getValueByCodeDict('d_lhry_jd',d.datas.chshlivestreet) + " " 
+							+ Utils.getValueByCodeDict('d_lhry_lm',d.datas.chshliveroad) + " " + d.datas.chshliveaddr;
 						document.getElementById("houseid").value = d.datas.houseseq;
 						document.getElementById("person_photo").src = Utils.getPicturePath(d.datas.regcode + ".png");
 					});
+					
+					$("#username").addClass('readonly').attr('readonly','readonly');
+					$("#IDCard").addClass('readonly').attr('readonly','readonly');
+				}
+				var closeMask = function (d) {
+					ws.setStyle({
+						mask: "none"
+					});
+					if (!floatw) {
+						floatw = plus.webview.getWebviewById("dictionaryWebview.html");
+					}
+					if (floatw) {
+						floatw.close();
+						floatw = null;
+					}
 				}
 			}(mui, document));
 		</script>

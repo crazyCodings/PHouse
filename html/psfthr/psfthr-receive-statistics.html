@@ -14,7 +14,10 @@
 			.query_div{float: right;width: calc(100% - 231px);margin: 10px 0 0 120px;}
 			.query_div > div label{margin-top: 20px;margin-left: 0px;color: black;}
 			.query_div > div input{margin-top: 12px;margin-left: 10px;width: 180px !important;height: 25px;}
-			.query_div > div .search_btn{ background-color: cadetblue;margin-bottom: 20px;}
+			.query_div > div .search_btn{ background-color: cadetblue;margin-bottom: 20px; height: 40px;}
+			.select {float: left; width: 250px !important;margin-top: 20px;}
+			.select select {height: 40px; border-radius: 15px; float: left; background-color: dodgerblue;}
+			.input_short {width: 200px !important;}
 			#result_list{width: 100%;margin-top: 10px;}
 			
 			#ensure, #read { background-color: cadetblue; }
@@ -33,7 +36,16 @@
 						<label>发送日期</label>
 						<input type="text" name="sDate" id="sDate" value="" />
 						<label><span style="color: red;">*</span>信息状态</label>
-						<input type="text" name="msgStatue" id="msgStatue" value="" />
+						<input type="text" name="msgStatue" id="msgStatue" class="mui-hidden" value="" />
+						<span class='mui-select select'>
+							<select id="msgStatue_select" class="input_short" >
+								<option value="00">全部</option>
+								<option value="01" selected="selected">待核实</option>
+								<option value="02">已核实信息</option>
+								<option value="03">未查看提醒信息</option>
+								<option value="04">已查看提醒信息</option>
+							</select>
+                        </span>
 					</div>
 					<div>
 						<label>姓名</label>
@@ -43,11 +55,17 @@
 					</div>
 					<div>
 						<label>接收派出所</label>
-						<input type="text" name="receiveStation" id="receiveStation" value="" placeholder=""/>
+						<input type="text" name="receiveStation" id="receiveStation" class="mui-hidden" value="" placeholder=""/>
+						<span class='mui-select select'>
+							<select id="receiveStation_select" class="input_short" ></select>
+                        </span>
 					</div>
 					<div>
 						<label>接收居村委</label>
-						<input type="text" name="receiveVillage" id="receiveVillage" value="" placeholder=""/>
+						<input type="text" name="receiveVillage" id="receiveVillage" class="mui-hidden" value="" placeholder=""/>
+						<span class='mui-select select'>
+							<select id="receiveVillage_select" class="input_short" ></select>
+                        </span>
 						<label></label>
 						<input type="button" class="search_btn" id="search_btn" value="查询" />				
 					</div>
@@ -69,20 +87,44 @@
 				});
 				// 创建悬浮窗口
 				var floatw = null;
-				var ws = null;
+				var ws = null , waiting;
 				$$.plusReady(function() {
 					plus.screen.lockOrientation("landscape-primary");
 					ws = plus.webview.currentWebview();
 					var user = Utils.getUser();
 					var clients = [];
+					
+					var msgStatue_select = document.getElementById("msgStatue_select");
+					document.getElementById('msgStatue').textContent = msgStatue_select[msgStatue_select.selectedIndex].value;
+					document.getElementById('msgStatue_select').addEventListener('change',function () {
+					    document.getElementById('msgStatue').textContent = this.value;
+					});
+					
+					var d_pcs_wrkb = JSON.parse(localStorage['d_pcs_wrkb']),
+						d_jcw = JSON.parse(localStorage['d_jcw']);
+					$("#receiveStation_select").append("<option value=''></option");
+					for(var i in d_pcs_wrkb){
+						$("#receiveStation_select").append("<option value='" + d_pcs_wrkb[i].dm + "'>" + d_pcs_wrkb[i].mc + "</option>");
+					}
+					$("#receiveVillage_select").append("<option value=''></option");
+					for(var i in d_jcw){
+						$("#receiveVillage_select").append("<option value='" + d_jcw[i].dm + "'>" + d_jcw[i].mc + "</option>");
+					}
+					document.getElementById('receiveStation_select').addEventListener('change',function (e) {
+					        document.getElementById("receiveStation").textContent = this.value;
+					});
+					document.getElementById('receiveVillage_select').addEventListener('change',function (e) {
+					        document.getElementById("receiveVillage").textContent = this.value;
+					});
 					document.getElementById('search_btn').addEventListener('tap',function () {
-					     var q = {
+					    waiting = plus.nativeUI.showWaiting("加载中...");
+					    var q = {
 					     	"startTime" : document.getElementById("sDate").value,
 					     	"xm" : document.getElementById("username").value,
 					     	"zjhm"  : document.getElementById("IDCard").value,
-					     	"option" : document.getElementById("msgStatue").value,
-					     	"receiveOrg" : document.getElementById("receiveVillage").value,
-					     	"receiveStreet" : document.getElementById("receiveStation").value,
+					     	"option" : document.getElementById("msgStatue").textContent,
+					     	"receiveOrg" : document.getElementById("receiveVillage").textContent,
+					     	"receiveStreet" : document.getElementById("receiveStation").textContent,
 					     	"optype" : "02",
 					     	"usertype" : user.usertype,
 					     	"pcsdm" : user.pcsdm,
@@ -92,6 +134,10 @@
 						    var $grid = $("#jsGrid");
 						    clients = d.datas;
 						    $grid.jsGrid("loadData");
+						    waiting.close();
+					     },function(e){
+					     	console.log(e.message);
+					     	waiting.close();
 					     });
 					});
 		

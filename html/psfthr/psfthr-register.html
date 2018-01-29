@@ -9,12 +9,18 @@
 		<link href="../../css/style.css" rel="stylesheet" />
 		<style type="text/css">
 			
-			.content_div{height: 250px;}
+			.content_div{height: 300px;}
 			
+			.baseinfo_div{float: right;}
 			.baseinfo_div div{margin: 20px 20px 0 20px;width: 95%;}
-			.baseinfo_div label{margin-top: 30px;width: 90px;}
+			.baseinfo_div label{margin-top: 30px;width: 100px;}
 			.baseinfo_div input{margin: 20px 0 0 0;}
+			.baseinfo_div > div .input_short{width: 250px !important;}
+			.select {float: left; width: 250px !important;margin-top: 20px;}
+			.select select {height: 40px; border-radius: 15px; float: left; font-family: arial; background-color: dodgerblue;}
 			
+			#submit { margin-left: 170px;}
+			#scanIDCard { background-color: cadetblue;}
 		</style>
 	</head>
 
@@ -26,39 +32,141 @@
 			<div class="content_div" >
 				<div id="baseinfo_div" class="baseinfo_div">
 					<div>
-						<label>姓名</label>
-						<input type="text" name="username" value="" />
-						<label>身份证号</label>
+						<label><span style="color: red;">*</span>姓名</label>
+						<input type="text" name="username" id="username" value="" />
+						<label><span style="color: red;">*</span>身份证号</label>
 						<input type="text" name="IDCard" id="IDCard" value="" />
 					</div>
-					<div id="">
-						<label>居住原因</label>
-						<input type="text" name="username"value="" />
-						<label>与房主关系</label>
-						<input type="text" name="IDCard" id="IDCard" value="" />
+					<div>
+						<label><span style="color: red;">*</span>居住原因</label>
+                        <input type="text" name="live_reason" id="live_reason" class="input_short mui-hidden" value="" />
+						<span class='mui-select select'>
+							<select id="live_reason_select" class="input_short "></select>
+                        </span>
+						<label><span style="color: red;">*</span>与房主关系</label>
+						<input type="text" name="relationship" id="relationship" class="mui-hidden" value="" />
+						<span class='mui-select select'>
+							<select id="relationship_select" class="input_short "></select>
+                        </span>
 					</div>
-					<div id="">
-						<label>联系方式</label>
-						<input type="text" name="username"value="" />
+					<div>
+						<label><span style="color: red;">*</span>联系方式</label>
+						<input type="text" name="contact" id="contact" value="" />
+						<label></label>
+						<input type="button" name="scanIDCard" id="scanIDCard" value="点击扫描身份证" />
 					</div>
 				</div>
 			</div>
 			<div class="button_div">
 				<input type="submit" name="submit" id="submit" value="提交" />
-				<input type="reset" name="reset" id="reset" value="重置" />
 			</div>
 		</div>
 		<script src="../../js/mui.js"></script>
 		<script src="../../js/mui.enterfocus.js"></script>
 		<script src="../../js/app.js"></script>
+		<script src="../../js/jquery/jquery-1.8.3.js"></script>
+		<script src="../../js/Utils.js"></script>
+		<script src="../../js/plugin.js"></script>
 		<script>
-			(function($, doc) {
-				$.init({
+			(function($$, doc) {
+				$$.init({
 					statusBarBackground: '#f7f7f7'
 				});
-				$.plusReady(function() {
+				var ws , houseinfo, user;
+				$$.plusReady(function() {
 					plus.screen.lockOrientation("landscape-primary");
+					var d_rk_flyy = JSON.parse(localStorage['d_rk_flyy']),
+						d_yfzgx = JSON.parse(localStorage['d_yfzgx']);
+					ws =  plus.webview.currentWebview();
+					user = Utils.getUser();
+					houseinfo = ws.item.fwjbxx;
+					console.log(houseinfo);
+					$("#live_reason_select").append("<option value=''></option");
+					for(var i in d_rk_flyy){
+						$("#live_reason_select").append("<option value='" + d_rk_flyy[i].dm + "'>" + d_rk_flyy[i].mc + "</option>");
+					}
+					$("#relationship_select").append("<option value=''></option");
+					for(var i in d_yfzgx){
+						$("#relationship_select").append("<option value='" + d_yfzgx[i].dm + "'>" + d_yfzgx[i].mc + "</option>");
+					}
+					
+					document.getElementById('live_reason_select').addEventListener('change',function (e) {
+					    document.getElementById('live_reason').textContent = this.value;
+					});
+					document.getElementById('relationship_select').addEventListener('change',function (e) {
+					    document.getElementById('relationship').textContent = this.value;
+					});
+					
+					document.getElementById('scanIDCard').addEventListener('tap',function () {
+				        plus.plugin.IDRecognitionFunctionArrayArgu({}, function(d){
+							var info = JSON.parse(d.idcardinfo);
+							document.getElementById("username").value = info.Name.value;
+							document.getElementById("IDCard").value = info.Num.value;
+						}, function(e){
+							mui.toast(e);
+						});
+					});
+					
+					document.getElementById('submit').addEventListener('tap',function () {
+						var username = document.getElementById("username").value,
+							IDCard = document.getElementById("IDCard").value,
+							livereason = document.getElementById("live_reason").textContent,
+							relationship = document.getElementById("relationship").textContent,
+							contact = document.getElementById("contact").value;
+						if(username==""){ mui.toast("用户名不能为空!");return; }
+						if(IDCard==""){ mui.toast("身份证号不能为空!");return; }
+						if(livereason==""){ mui.toast("居住原因不能为空!");return; }
+						if(relationship==""){ mui.toast("与房主关系不能为空!");return; }
+						if(contact==""){ mui.toast("联系电话不能为空!");return; }
+				        mui.confirm('确认提交？', '', ['是', '否'], function(e){
+				        	if(e.index=="0"){
+				        		mui.toast("确认提交");
+				        		var q = {
+				        			"RhflSavePersonVo" : {
+				        				"fwid": houseinfo.fwid,
+										"zjhm": IDCard,
+										"xm": username,
+										"rid": "",
+										"jzyy": livereason,
+										"jzyymc": Utils.getValueByCodeDict('d_rk_flyy', livereason),
+										"yfzgx": relationship,
+										"yfzgxmc": Utils.getValueByCodeDict('d_yfzgx', relationship),
+										"lxfs": contact,
+										"czrid": user.xgyid,
+										"czrxm": user.xgyname,
+										"czrzjhm": user.xgypid
+				        			},
+				        			"saveStatus" : "0"
+				        		};
+				        		console.log(q);
+				        		app.saveRhflRyxx(q ,function(d){
+				        			if(d.result=="1"){
+				        				mui.toast(d.msg);
+				        				return;
+				        			}else if(d.result=="2"){
+				        				mui.confirm(d.msg, null,['是', '否'], function(e){
+				        					if(e.index=="0"){
+				        						q.saveStatus = "1";
+				        						app.saveRhflRyxx(q ,function(d){
+				        							if(d.result=="0"){
+				        								mui.toast("操作成功！");
+				        							}else {
+				        								mui.toast("操作失败！");
+				        							}
+				        						});
+				        					}
+				        				});
+				        			}
+				        		});
+				        	}else if(e.index == '1'){
+				        		mui.toast("取消提交");
+				        	}
+				        });
+					})
 				});
+				var verificatFile = function(){
+					
+				};
 			}(mui, document));
 		</script>
 	</body>

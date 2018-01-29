@@ -13,8 +13,10 @@
 			.content_div{width:95%;margin: 10px 0 0 20px;background-color: white;height: 95%;overflow: scroll}
 			.query_div{float: right;width: calc(100% - 231px);margin: 10px 0 0 120px;}
 			.query_div > div label{margin-top: 20px;margin-left: 0px;color: black;}
-			.query_div > div input{margin-top: 12px;margin-left: 10px;width: 180px !important;height: 25px;}
+			.query_div > div input{margin-top: 12px;margin-left: 10px;width: 220px !important;height: 30px;}
 			.query_div > div .search_btn{width: 100px !important;margin-left: 250px; margin-bottom: 20px;background-color: cadetblue;}
+			.select {float: left; width: 250px !important;margin-top: 20px;}
+			.select select {height: 40px; border-radius: 15px; float: left; background-color: dodgerblue;}
 			
 			#result_list{width: 100%;margin-top: 10px;}
 
@@ -29,10 +31,19 @@
 			<div class="content_div" >
 				<div id="query_div" class="query_div">
 					<div>
-						<label>发送日期</label>
-						<input type="text" name="sDate" id="sDate" value="" />
+						<label class="mui-hidden">发送日期</label>
+						<input type="text" name="sDate" id="sDate" class="mui-hidden" value="" />
 						<label><span style="color: red;">*</span>信息状态</label>
-						<input type="text" name="msgStatue" id="msgStatue" value="" />
+						<input type="text" name="msgStatue" id="msgStatue" class="mui-hidden" value="" />
+						<span class='mui-select select'>
+							<select id="msgStatue_select" class="input_short ">
+								<option value="00">全部</option>
+								<option value="01" selected="selected">待核实</option>
+								<option value="02">已核实信息</option>
+								<option value="03">未查看提醒信息</option>
+								<option value="04">已查看提醒信息</option>
+							</select>
+                        </span>
 					</div>
 					<div>
 						<label>姓名</label>
@@ -61,16 +72,22 @@
 				});
 				// 创建悬浮窗口
 				var floatw = null;
-				var ws = null;
+				var ws = null, waiting ;
 				$$.plusReady(function() {
 					plus.screen.lockOrientation("landscape-primary");
 					var user = Utils.getUser();
+					var msgStatue_select = document.getElementById("msgStatue_select");
+					document.getElementById('msgStatue').textContent = msgStatue_select[msgStatue_select.selectedIndex].value;
+					document.getElementById('msgStatue_select').addEventListener('tap',function () {
+					    document.getElementById('msgStatue').textContent = this.value;
+					})
 					document.getElementById('search_btn').addEventListener('tap',function () {
+						waiting = plus.nativeUI.showWaiting("加载中...");
 					     var q = {
 					     	"startTime" : document.getElementById("sDate").value,
 					     	"xm" : document.getElementById("username").value,
 					     	"zjhm"  : document.getElementById("IDCard").value,
-					     	"option" : document.getElementById("msgStatue").value,
+					     	"option" : document.getElementById("msgStatue").textContent,
 					     	"optype" : "01",
 					     	"usertype" : user.usertype,
 					     	"pcsdm" : user.pcsdm,
@@ -80,6 +97,10 @@
 						    var $grid = $("#jsGrid");
 						    clients = d.datas;
 						    $grid.jsGrid("loadData");
+						    waiting.close();
+					     },function(e){
+					     	console.log(e.message);
+					     	waiting.close();
 					     });
 					});
 					ws = plus.webview.currentWebview();

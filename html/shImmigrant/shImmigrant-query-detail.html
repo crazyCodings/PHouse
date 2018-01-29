@@ -14,10 +14,12 @@
 			.query_div{float: right;width: calc(100% - 231px);margin: 10px 0 0 120px;}
 			.query_div div { width: 100%; }
 			.query_div > div label{margin-top: 20px;margin-left: 0px;color: black;}
-			.query_div > div input{margin-top: 12px;margin-left: 10px;width: 300px !important;height: 25px;}
+			.query_div > div input{margin-top: 12px;margin-left: 10px;width: 410px !important;height: 25px;}
 			.query_div > div .search_btn{width: 100px !important;float: right;background-color: cadetblue;}
 			.query_div .road {width: 100px !important;}
-			#query_div > div:first-child input{ width: 150px !important;}
+			.mui-content .readonly { background-color: darkgray;}
+			.mui-content .dictionary {background-color: dodgerblue;}
+			#query_div > div:first-child input{ width: 215px !important;}
 			#result_list{width: 100%;margin-top: 10px;}
 
 		</style>
@@ -31,14 +33,15 @@
 			<div class="content_div" >
 				<div id="query_div" class="query_div">
 					<div>
-						<label>派出所</label>
-						<input type="text" name="policeStation" id="policeStation" value="" />
+						<!--<label>派出所</label>
+						<input type="text" id="policeStation" readonly="readonly" class="readonly" value="" />-->
 						<label>居村委</label>
-						<input type="text" name="village" id="village" value="" />
+						<input type="text" id="village" class="readonly" dicname="d_jcw" readonly="readonly" value="" />
+						<label><span style="color: red;">*</span>道路查询</label>
+						<input type="text" id="roadname" name="dictionary" class="dictionary" dicname="d_lm"  value="" placeholder=""/>
 					</div>
 					<div>
-						<label><span style="color: red;">*</span>道路查询</label>
-						<input type="text" class="roadname" id="roadname" value="003892" placeholder=""/>
+						
 					</div>
 					<div>
 						<label>精确查找</label>
@@ -71,73 +74,128 @@
 					statusBarBackground: '#f7f7f7'
 				});
 				// 创建悬浮窗口
-				var floatw = null, ws = null, user = {};
+				var floatw = null, ws = null, user = {} , waiting ;
 				$$.plusReady(function() {
 					plus.screen.lockOrientation("landscape-primary");
 					user = Utils.getUser();
 					ws = plus.webview.currentWebview();
+					/*document.getElementById("policeStation").value = user.pcsmc;
+					document.getElementById("policeStation").textContent = user.pcsdm;*/
+					document.getElementById("village").value = user.jcwmc.split(',')[0];
+					document.getElementById("village").textContent = user.jcwdm;
 					
-					document.getElementById("policeStation").value = user.pcsmc;
-					document.getElementById("policeStation").textContent = "310113360000";
-					document.getElementById("village").value = user.jcwdm.split(',')[0];
-					document.getElementById("village").textContent = "13007003";
+					document.getElementById('roadname').addEventListener('focus',function (e) {
+					    //打开搜索页面
+					    if(e.sourceCapabilities==null){
+					    	return;
+					    }
+					    Utils.dicWewview(document.getElementById("roadname").getAttribute("dicname"), ws, floatw);
+					});
+					window.addEventListener('closeMask',function(e){
+						//通过event.detail可获得传递过来的参数内容
+						document.getElementById("roadname").value = e.detail.value;
+						document.getElementById("roadname").textContent = e.detail.code;
+						closeMask(1);
+					});
+					
 					var clients = [],q = {};
 				    document.getElementById('detail_search').addEventListener('tap',function () {
+				    	var lane1 = document.getElementById("lane1").value,
+				    		lane2 = document.getElementById("lane2").value,
+				    		lane3 = document.getElementById("lane3").value,
+				    		sh = document.getElementById("house_no").value,
+				    		fwms = document.getElementById("house_name").value,
+				    		jlxdm = document.getElementById("roadname").textContent;
+				    	if(jlxdm == ""){
+				    		mui.toast("请选择需要查询的路名！");
+				    		return;
+				    	}
+				    	if(lane1=="" && lane2=="" && lane3== "" && sh =="" && fwms == ""){
+				    		mui.toast("精确查询信息不能为空！");
+				    		return;
+				    	}
 			            q= {
 			            	"JzzHousePreciseQueryVo" : {
-				            	"jlxdm" : document.getElementById("roadname").value,
-				            	"yjmlph" : Utils.preFixInteger(document.getElementById("lane1").value, 6),
-				            	"ejmlph" : Utils.preFixInteger(document.getElementById("lane2").value, 6),
-				            	"sjmlph" : Utils.preFixInteger(document.getElementById("lane3").value, 6),
-				            	"sh" : document.getElementById("house_no").value,
-				            	"fwms" : document.getElementById("house_name").value,
+				            	"jlxdm" : jlxdm,
+				            	"yjmlph" : Utils.preFixInteger(lane1, 6),
+				            	"ejmlph" : Utils.preFixInteger(lane2, 6),
+				            	"sjmlph" : Utils.preFixInteger(lane3, 6),
+				            	"sh" : sh,
+				            	"fwms" : fwms,
 				            	"latticepoint" : "",
 				            	"txm" : ""
 			            	},
 			            	"BaseOperator" : {
 			            		"countyid" : user.countyid,	//宝山代码 13
 				            	"policeid" : user.policeid,
-				            	"jcwdm" : document.getElementById("village").value,
+				            	"jcwdm" : document.getElementById("village").textContent,
 				            	"applattice" : user.latticepoint,
 				            	"terminalNo" : user.sysimei,
 				            	"oprNo" : user.xgyid,
 				            	"key" : user.key
 			            	}
 			            }
+			            waiting = plus.nativeUI.showWaiting("加载中...");
 			            app.queryHouseInfoListPrecise(q, function(d){
+			            	waiting.close();
+			            	if(d.datas==null || d.datas.length <=0){
+			            		mui.toast("没有查询到结果！");
+			            		return;
+			            	}
 			            	var $grid = $("#jsGrid");
 						    clients = d.datas;
 						    $grid.jsGrid("loadData");
+			            },function(e){
+			            	console.log(e);
+			            	waiting.close();
 			            });
 				    });
 				    document.getElementById('fuzzy_search').addEventListener('tap',function () {
+				    	var jlxdm = document.getElementById("roadname").textContent,
+				    		mlphxx = document.getElementById("fuzzy_info").value;
+				    	if(jlxdm == ""){
+				    		mui.toast("请选择需要查询的路名！");
+				    		return;
+				    	}
+				    	if(mlphxx==""){
+				    		mui.toast("查询条件不能为空！");
+				    		return;
+				    	}
 				        q= {
 			            	"JzzHouseFuzzyQueryVo" : {
-				            	"jlxdm" : document.getElementById("roadname").value,
-				            	"mlphxx" : document.getElementById("fuzzy_info").value,
+				            	"jlxdm" : jlxdm,
+				            	"mlphxx" : mlphxx,
 				            	"latticepoint" : ""
 			            	},
 			            	"BaseOperator" : {
 			            		"countyid" : user.countyid,	//宝山代码 13
 				            	"policeid" : user.policeid,
-				            	"jcwdm" : document.getElementById("village").value,
+				            	"jcwdm" : document.getElementById("village").textContent,
 				            	"applattice" : user.latticepoint,
 				            	"terminalNo" : user.sysimei,
 				            	"oprNo" : user.xgyid,
 				            	"key" : user.key
 			            	}
 			            }
+				        waiting = plus.nativeUI.showWaiting("加载中...");
 			            app.queryHouseInfoListFuzzy(q, function(d){
+			            	waiting.close();
+			            	if(d.datas==null || d.datas.length <=0){
+			            		mui.toast("没有查询到结果！");
+			            		return;
+			            	}
 			            	var $grid = $("#jsGrid");
 						    clients = d.datas;
 						    $grid.jsGrid("loadData");
+			            },function(e){
+			            	console.log(e);
+			            	waiting.close();
 			            });
 				    });
 				    $("#jsGrid").jsGrid({
 						width: "100%",
 						height: "480px",
-						//inserting: true,
-						//editing: true,
+						
 						sorting: true,
 						paging: true,
 						rowClick: function(args) {
@@ -180,7 +238,7 @@
 					floatWebview(info);
 				}
 				window.addEventListener('closeMaskEvent', function(event){
-					closeMask();
+					closeMask(2);
 				});
 				
 		        var floatWebview = function (info) {
@@ -212,17 +270,11 @@
 		                ws.addEventListener("maskClick", closeMask, false);
 		            }
 		        }
-		        var closeMask = function () {
+		        var closeMask = function (d) {
 					ws.setStyle({
 						mask: "none"
 					});
-					if (!floatw) {
-						floatw = plus.webview.getWebviewById("shImmigrant-house-info.html");
-					}
-					if (floatw) {
-						floatw.close();
-						floatw = null;
-					}
+					document.getElementById("roadname").blur();
 				}
 			}(mui, document));
 		</script>

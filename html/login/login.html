@@ -37,11 +37,11 @@
 				<div id="login_div" class="login_div">
 					<div class="mui-input-row">
 						<label>账号</label>
-						<input id='username' type="text" class="mui-input-clear mui-input" placeholder="请输入账号" value="13011085">
+						<input id='username' type="text" class="mui-input-clear mui-input" placeholder="请输入账号" value="">
 					</div>
 					<div class="mui-input-row">
 						<label>密码</label>
-						<input id='password' type="password" class="mui-input-clear mui-input" placeholder="请输入密码" value="1">
+						<input id='password' type="password" class="mui-input-clear mui-input" placeholder="请输入密码" value="">
 					</div>
 					<div class="mui-input-row">
 						<button id="loginButton" type="button" class="mui-btn mui-btn-primary mui-btn-block">登录</button>
@@ -55,6 +55,7 @@
 		<script src="../../js/mui.enterfocus.js"></script>
 		<script src="../../js/app.js"></script>
 		<script src="../../js/Base.js"></script>
+		<script src="../../js/update.js"></script>
 		<script>
 			(function($, doc) {
 				$.init({
@@ -67,6 +68,7 @@
 						id : 'main'
 					});
 					var toMain = function() {
+						page.reload();
 						page.show("pop-in");
 					};
 					var loginButton = doc.getElementById('loginButton');
@@ -83,25 +85,33 @@
 			            }.bind(this), 60000);
 			            
 						var loginInfo = {
-							account: accountBox.value,
-							password: window.btoa(passwordBox.value) // 加密密码
+							"account": accountBox.value,
+							"password": window.btoa(passwordBox.value), // 加密密码
+							"imei" : plus.device.imei,
+							"iccard" : plus.device.imsi
 						};
 						
-						if(Base.userInfoVerification(loginInfo)){
+						Base.userInfoVerification(loginInfo, function(d1){
 							app.login(loginInfo, function(data){
+								mui("#loginButton").button('reset');
 								if(data.result=="1"){
 									plus.nativeUI.toast(data.msg);
 									return;
+								}else if(data.result=="0"){
+									app.createState(data, function(d){
+										toMain();
+									});	//登录成功，记录数据
+									plus.geolocation.getCurrentPosition( function(p){
+										console.log('-->Send Geolocation\nLatitude:' + p.coords.latitude + '\nLongitude:' + p.coords.longitude + '\nAltitude:' + p.coords.altitude);
+										app.sendGPS(p.coords.longitude, p.coords.latitude, "GPS");
+									}, function(e){
+										mui.toast("获取位置信息失败");
+									});
 								}
-								plus.geolocation.getCurrentPosition( function(p){
-									console.log('-->Send Geolocation\nLatitude:' + p.coords.latitude + '\nLongitude:' + p.coords.longitude + '\nAltitude:' + p.coords.altitude);
-									app.sendGPS(p.coords.longitude, p.coords.latitude, "GPS");
-								}, function(e){
-									mui.toast("获取位置信息失败");
-								});
-								toMain();
 							});
-						}
+						}, function(e){
+							console.log(e);
+						});
 					});
 					var backButtonPress = 0;
 					$.back = function(event) {

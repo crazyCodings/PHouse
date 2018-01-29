@@ -13,8 +13,8 @@
 			#receive_btn { height: 30px;border-radius: 15px; float:right;margin: 5px 40px 5px 0;width: 80px; }
 			#menu2_btn { height: 30px;border-radius: 15px; float:right;margin: 5px 40px 5px 0;width: 80px; }
 			.content_div{width:70%;margin-left: 120px;}
-			.baseinfo_div{float: right;width: calc(100% - 100px);margin: 50px 0 0 50px;}
-			.baseinfo_div > div label{width: 100px;margin-left: 0px;margin-top: 40px;}
+			.baseinfo_div{float: right;width: calc(100% - 50px);margin: 50px 0 0 25px;}
+			.baseinfo_div > div label{width: 120px;margin-left: 0px;margin-top: 40px;}
 			.baseinfo_div > div input{margin-top: 24px;height: 50px;margin-left: 10px;width: 350px !important; }
 
 			#btn_div input { width: 230px !important; margin-left: 70%;}
@@ -33,17 +33,19 @@
 		<div class="mui-content">
 			<div class="content_div" >
 				<div id="baseinfo_div" class="baseinfo_div">
-					<div>
+					<div class="mui-hidden">
 						<label>房屋编码</label>
 						<input type="text" name="houseId" id="houseId" value="" />
 					</div>
 					<div id="">
-						<label>路名</label>
-						<input type="text" name="roadname" id="roadname" value="003321" />
+						<label><span style="color: red;">*</span>路名</label>
+						<input type="text" id="roadname" name="dictionary" class="dictionary" dicname="d_lm"  value="" placeholder=""/>
 					</div>
+					
 					<div id="">
-						<label>详址</label>
-						<input type="text" name="detailAddress" id="detailAddress" value="24号102室" />
+						<label><span style="color: red;">*</span>详址</label>
+						<input type="text" name="detailAddress" id="detailAddress" value="" />
+						<label><span style="color: red;font-size: small;">必须完整,例:</br>159弄10号102室</span></label>
 					</div>
 					<div id="btn_div">
 						<input type="button" name="btn_input_div" id="query_village" value="查询" />
@@ -60,8 +62,28 @@
 				$.init({
 					statusBarBackground: '#f7f7f7'
 				});
+				var ws = null, user, floatw, waiting ;
 				$.plusReady(function() {
 					plus.screen.lockOrientation("landscape-primary");
+					user = Utils.getUser();
+					ws = plus.webview.currentWebview();
+					var cache_road = localStorage.getItem("psfthr-cache-query-road"),
+						cache_addrss = localStorage.getItem("psfthr-cache-query-address");
+					try{
+						cache_road = JSON.parse(cache_road);
+						document.getElementById("roadname").value = cache_road.roadname;
+						document.getElementById("roadname").textContent = cache_road.roadcode;
+						document.getElementById("detailAddress").value = cache_addrss;
+					}catch(e){
+						console.log(e.message);
+					}
+					window.addEventListener('closeMask',function(e){
+						//通过event.detail可获得传递过来的参数内容
+						document.getElementById("roadname").value = e.detail.value;
+						document.getElementById("roadname").textContent = e.detail.code;
+						localStorage.setItem('psfthr-cache-query-road', JSON.stringify({ "roadname" : e.detail.value, "roadcode" : e.detail.code }));
+						closeMask(1);
+					});
 					document.getElementById('receive_btn').addEventListener('tap',function () {
 						var uri = "psfthr-receive-statistics.html";
 						openNewPageByURI(uri, "");
@@ -72,29 +94,40 @@
 					});
 					document.getElementById('back_btn').addEventListener('tap',function () {
 					    mui.back();
-					})
+					});
+					document.getElementById('roadname').addEventListener('focus',function (e) {
+					    //打开搜索页面
+					    if(e.sourceCapabilities==null){
+					    	return;
+					    }
+					    Utils.dicWewview(document.getElementById("roadname").getAttribute("dicname"), ws, floatw);
+					});
 					document.getElementById('query_village').addEventListener('tap',function () {
-						
 						//调用查询接口，查询数据，把查询结果传给新页面
 						var houseid = document.getElementById("houseId").value,
 							roadname = document.getElementById("roadname").value,
+							roadcode = document.getElementById("roadname").textContent,
 							detailAddress = document.getElementById("detailAddress").value;
 						var houserinfo = {
 							"houseid" : houseid,
 							"roadname" : roadname,
-							"roadcode" : roadname,
+							"roadcode" : roadcode,
 							"detailAddress" : detailAddress
 						};
-						if(houserinfo.houseid == "" && (roadname == "" || detailAddress=="") ){
+						localStorage.setItem('psfthr-cache-query-address', detailAddress);
+						if(houserinfo.houseid == "" && (roadcode == "" || detailAddress=="")){
 							mui.toast("请填写查询条件！");
 							return;
 						}
+						waiting = plus.nativeUI.showWaiting("查询中...");
 						app.queryRhflFwryxx(houserinfo, function(data){
 							if(data.result == "0"){
+								waiting.close();
 								var uri = "psfthr-address-people-info.html";
 								openNewPageByURI(uri, data.datas);
 								console.log(JSON.stringify(data.datas.fwryxx));
 							}else{
+								waiting.close();
 								mui.toast(data.msg);
 							}
 						});
@@ -121,6 +154,19 @@
 		        		currentWebView = plus.webview.create(uri , uri , {} , {houserinfo : houserinfo});
 		        	}
 		        	currentWebView.show("zoom-out");
+				}
+				var closeMask = function (d) {
+					ws.setStyle({
+						mask: "none"
+					});
+					if (!floatw) {
+						//floatw = plus.webview.getWebviewById("psfthr-query-selector.html");
+					}
+					if (floatw) {
+						floatw.close();
+						floatw = null;
+					}
+					document.getElementById("roadname").blur();
 				}
 			}(mui, document));
 		</script>

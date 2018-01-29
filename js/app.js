@@ -2,16 +2,11 @@
  * 
  **/
 (function($, owner) {
-	/**
-	 * 登录、初始化信息
-	 * @param {Object} data
-	 * @param {Object} callback
-	 * @param {Object} asyn
-	 */
-	owner.login = function(data , callback, asyn) {
+	
+	owner.initInfo = function(){
 		var serviceinfo = {
 			//宝山地址
-			app_ip: "101.230.193.58",
+			/*app_ip: "101.230.193.58",
 			app_port: "5112",
 			path: "/rfcj_bs/services/rfcjService",
 			namespace: "http://webService.bsfj.gaj.sh",
@@ -19,9 +14,9 @@
 			appid: "ssgaj.ydjw.78", //公安网路径 
 			imei : plus.device.imei,
 			key : "1a100d2c0dcb19c4430e7d73762b34c3",
-			countyid : "13"
+			countyid : "13"*/
 			//崇明地址
-			/*app_ip: "10.244.12.152",
+			app_ip: "10.244.12.152",
 			app_port: "5113",
 			path: "/rfcj/services/rfcjService",
 			namespace: "http://webService.bsfj.gaj.sh",
@@ -29,17 +24,26 @@
 			appid: "ssgaj.ydjw.78", //公安网路径 
 			imei : plus.device.imei,
 			key : "1a100d2c0dcb19c4430e7d73762b34c3",
-			countyid : "13"*/
+			countyid : "13"
 		};
 		var url = "http://" + serviceinfo.app_ip + ":" + serviceinfo.app_port + serviceinfo.path;
 		serviceinfo.url = url;
 		localStorage.setItem('$serviceinfo', JSON.stringify(serviceinfo));
+	}
+	
+	/**
+	 * 登录、初始化信息
+	 * @param {Object} data
+	 * @param {Object} callback
+	 * @param {Object} asyn
+	 */
+	owner.login = function(data , callback, asyn) {
 		var userInfo = Utils.getUser();
 		var SoapAction = "loginUser";
 		var sendData = {
 			"accountname": data.account,
 			"password": data.password,
-			"imei": serviceinfo.imei
+			"imei": plus.device.imei
 		};
 		var success = callback;
 		invokeBackEndInterface(SoapAction, sendData, success, null, asyn);
@@ -106,7 +110,7 @@
 	 * @param {Object} callback
 	 * @param {Object} asyn
 	 */
-	owner.queryRhflMsgList = function(data, callback, asyn) {
+	owner.queryRhflMsgList = function(data, callback, failcallback, asyn) {
 		var userInfo = Utils.getUser();
 		var SoapAction = "queryRhflMsgList";
 		var sendData = {
@@ -114,11 +118,37 @@
 			"ICLoginInfo" : userInfo
 		};
 		var success = callback;
-		invokeBackEndInterface(SoapAction, sendData, success, null, asyn);
+		invokeBackEndInterface(SoapAction, sendData, success, failcallback, asyn);
+	};
+	
+	//人户分离 保存人员信息
+	//saveStatus 	saveStatus=0，查询当前人是否做过人户分离，当返回结果result = 2 时，再次调用调用改接口 saveStatus=1，确认保存
+	//result:0  成功 result:1 失败 msg result:2 此人已经做过人户分离采集是否继续
+	owner.saveRhflRyxx = function(data, callback, failcallback, asyn) {
+		var userInfo = Utils.getUser();
+		var SoapAction = "saveRhflRyxx";
+		var sendData = {
+			"RhflSavePersonVo" : data.RhflSavePersonVo,
+			"saveStatus" : data.saveStatus,
+			"ICLoginInfo" : userInfo
+		};
+		var success = callback;
+		invokeBackEndInterface(SoapAction, sendData, success, failcallback, asyn);
+	};
+	
+	owner.leaveRhflRyxx = function(data, callback, failcallback, asyn) {
+		var userInfo = Utils.getUser();
+		var SoapAction = "leaveRhflRyxx";
+		var sendData = {
+			"RhflCancelPersonVo" : data.RhflCancelPersonVo,
+			"ICLoginInfo" : userInfo
+		};
+		var success = callback;
+		invokeBackEndInterface(SoapAction, sendData, success, failcallback, asyn);
 	};
 	
 	//来沪人员--房屋精确查询
-	owner.queryHouseInfoListPrecise = function(data, callback, asyn) {
+	owner.queryHouseInfoListPrecise = function(data, callback, failcallback, asyn) {
 		var userInfo = Utils.getUser();
 		var SoapAction = "queryHouseInfoListPrecise";
 		var sendData = {
@@ -127,7 +157,7 @@
 			"ICLoginInfo" : userInfo
 		};
 		var success = callback;
-		invokeBackEndInterface(SoapAction, sendData, success, null, asyn);
+		invokeBackEndInterface(SoapAction, sendData, success, failcallback, asyn);
 	};
 	
 	//来沪人员--房屋模糊查询
@@ -162,6 +192,45 @@
 		var SoapAction = "queryBasePersonInfo";
 		var sendData = {
 			"BasePersonInfoQueryVo" : data.BasePersonInfoQueryVo,
+			"BaseOperator" : data.BaseOperator,
+			"ICLoginInfo" : userInfo
+		};
+		var success = callback;
+		invokeBackEndInterface(SoapAction, sendData, success, null, asyn);
+	};
+	
+	//来沪人员--可受理业务查询
+	owner.queryBasePersonInfoAll = function(data, callback, asyn) {
+		var userInfo = Utils.getUser();
+		var SoapAction = "queryBasePersonInfoAll";
+		var sendData = {
+			"BasePersonInfoAllQueryVo" : data.BasePersonInfoAllQueryVo,
+			"BaseOperator" : data.BaseOperator,
+			"ICLoginInfo" : userInfo
+		};
+		var success = callback;
+		invokeBackEndInterface(SoapAction, sendData, success, null, asyn);
+	};
+	
+	//来沪人员--新增
+	owner.addPerson = function(data, callback, asyn) {
+		var userInfo = Utils.getUser();
+		var SoapAction = "addPerson";
+		var sendData = {
+			"PersonVo" : data.PersonVo,
+			"BaseOperator" : data.BaseOperator,
+			"ICLoginInfo" : userInfo
+		};
+		var success = callback;
+		invokeBackEndInterface(SoapAction, sendData, success, null, asyn);
+	};
+	
+	//来沪人员--注销
+	owner.cancelPerson = function(data, callback, asyn) {
+		var userInfo = Utils.getUser();
+		var SoapAction = "cancelPerson";
+		var sendData = {
+			"CancelPersonVo" : data.CancelPersonVo,
 			"BaseOperator" : data.BaseOperator,
 			"ICLoginInfo" : userInfo
 		};
@@ -242,6 +311,48 @@
 			}
 		}
 		invokeBackEndInterface(SoapAction, sendData, success, null, asyn);
+	};
+
+	owner.queryVersion = function(data, callback, errCallback, asyn) {
+		var SoapAction = "queryVersion";
+		var sendData = {
+			"version" : data.version
+		};
+		var success = function(data) {
+			if(data.result == "0"){
+				//Done nothing
+			}else if( data.result == "1"){
+				mui.toast(data.msg);
+			}
+		}
+		var success = callback, fail = errCallback;
+		invokeBackEndInterface(SoapAction, sendData, success, null, asyn);
+	};
+	
+	owner.queryDict = function(data, callback, errCallback, asyn) {
+		var SoapAction = "queryDict";
+		var success = function(data) {
+			if(data.result == "0"){
+				//Done nothing
+			}else if( data.result == "1"){
+				mui.toast(data.msg);
+			}
+		}
+		var success = callback, fail = errCallback;
+		invokeBackEndInterface(SoapAction, data, success, null, asyn);
+	};
+	
+	owner.register = function(data, callback, errCallback, asyn) {
+		var SoapAction = "register";
+		var success = function(data) {
+			if(data.result == "0"){
+				//Done nothing
+			}else if( data.result == "1"){
+				mui.toast(data.msg);
+			}
+		}
+		var success = callback, fail = errCallback;
+		invokeBackEndInterface(SoapAction, data, success, null, asyn);
 	};
 
 	owner.createState = function(data, callback) {
@@ -341,7 +452,7 @@
 			},
 			error: function( xhr, type, errorThrown) {
 				if(failInfo(soapAction, xhr, type, errorThrown)){
-					failCallback();
+					failCallback(type);
 				};
 			}
 		});

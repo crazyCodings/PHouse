@@ -28,7 +28,7 @@
 	        .client-info p { line-height: 25px; }
 	        .client-info input{ height: 35px; width: 80px !important;float: right;margin: 0 100px 10px 0;}
 	        
-	        #register { margin-left: 300px;background-color: cadetblue; }
+	        #register { margin-left: 350px;background-color: cadetblue; }
 		</style>
 	</head>
 
@@ -80,15 +80,15 @@
 						mui.back();
 					});
 					document.getElementById('register').addEventListener('tap',function () {
-					    createWebviewByURI("psfthr-register.html");
+					    createWebviewByURI("psfthr-register.html", housrInfo);
 					});
 					document.getElementById("houseAddress").textContent = housrInfo.fwjbxx.fwdz;
-					document.getElementById("houseType").textContent = housrInfo.fwjbxx.jzfwlx;
-					document.getElementById("houseHoldPIDType").textContent = housrInfo.fwjbxx.fzzjlx;
+					document.getElementById("houseType").textContent = gethouseType(housrInfo.fwjbxx.jzfwlx);
+					document.getElementById("houseHoldPIDType").textContent = housrInfo.fwjbxx.fzzjmc;		//housrInfo.fwjbxx.fzzjlx;需要字典翻译，目前字典对不上
 					document.getElementById("houseHoldPID").textContent = housrInfo.fwjbxx.fzzjhm;
 					document.getElementById("houseHoldName").textContent = housrInfo.fwjbxx.fzxm;
 					document.getElementById("houseHoldPhone").textContent = housrInfo.fwjbxx.fzlxdh;
-					document.getElementById("residentialType").textContent = housrInfo.fwjbxx.jzlx;
+					document.getElementById("residentialType").textContent = getLiveType(housrInfo.fwjbxx.jzlx);
 					loadData();
 				});
 				var createWebviewByURI = function (uri, item) {
@@ -107,6 +107,7 @@
 		                height: "350px",
 		                width: "500px",
 		                autoload: true,
+		                noDataContent : "无人",
 		                paging: false,
 		                controller: {
 		                    loadData: function() {
@@ -210,6 +211,39 @@
 	                		Utils.saveBase64AsPicture(regcode + ".png", d.img);
 						}
 	                });
+				};
+				
+				var gethouseType = function(num){
+					var returnStr = "";
+					if(num=="" || num == null){
+						return returnStr;
+					}
+					if(num == '01'){
+						returnStr = "出租房屋";
+					}else if(num=="02"){
+						returnStr = "闲置空房";
+					}else if(num=="03"){
+						returnStr = "自住房屋";
+					}else if(num=="04"){
+						returnStr = "单位内部集体宿舍";
+					}else if(num=="05"){
+						returnStr = "工地工棚";
+					}
+					return returnStr;
+				};
+				var getLiveType = function(num){
+					var returnStr = "";
+					if(num=="" || num == null){
+						return returnStr;
+					}
+					if(num == '01'){
+						returnStr = "个人房";
+					}else if(num=="02"){
+						returnStr = "单位房";
+					}else{
+						returnStr = "";
+					}
+					return returnStr;
 				};
 	
 	            String.prototype.capitalize = function() {
