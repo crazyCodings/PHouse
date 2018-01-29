@@ -72,6 +72,7 @@
 					if (sourcePage) {
 						mui.fire(sourcePage, 'closeMaskEvent');
 					}
+					ws.close();
 				}
 				var newPage = null;
 				var createNewPage = function (info) {
