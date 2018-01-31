@@ -18,9 +18,11 @@
 			.query_div > div .search_btn{width: 100px !important;float: right;background-color: cadetblue;}
 			.query_div .road {width: 100px !important;}
 			.mui-content .readonly { background-color: darkgray;}
-			.mui-content .dictionary {background-color: dodgerblue;}
-			#query_div > div:first-child input{ width: 215px !important;}
+			.mui-content .dictionary {background-color: dodgerblue; height: 35px;}
+			#query_div > div:first-child input{ width: 215px !important;height: 35px;}
 			#result_list{width: 100%;margin-top: 10px;}
+			
+			.select select {height: 35px;}
 
 		</style>
 	</head>
@@ -36,7 +38,11 @@
 						<!--<label>派出所</label>
 						<input type="text" id="policeStation" readonly="readonly" class="readonly" value="" />-->
 						<label>居村委</label>
-						<input type="text" id="village" class="readonly" dicname="d_jcw" readonly="readonly" value="" />
+						<input type="text" id="village" class="readonly" style="display: none;" dicname="d_jcw" readonly="readonly" value="" />
+						<span class='mui-select select' id="village_span">
+							<select id="village_select" class="input_short ">
+							</select>
+                        </span>
 						<label><span style="color: red;">*</span>道路查询</label>
 						<input type="text" id="roadname" name="dictionary" class="dictionary" dicname="d_lm"  value="" placeholder=""/>
 					</div>
@@ -53,7 +59,7 @@
 						<input type="button" class="search_btn" id="detail_search" value="查询" />
 					</div>
 					<div>
-						<label>用户输入</label>
+						<label>模糊查询</label>
 						<input type="text" name="fuzzy_info" id="fuzzy_info" value="" placeholder="门弄牌号信息"/>
 						<input type="button" class="search_btn" id="fuzzy_search" value="查询" />
 					</div>
@@ -81,8 +87,47 @@
 					ws = plus.webview.currentWebview();
 					/*document.getElementById("policeStation").value = user.pcsmc;
 					document.getElementById("policeStation").textContent = user.pcsdm;*/
+					
+					var cache_road = localStorage.getItem("shInmigrant-cache-query-road");
+					try{
+						cache_road = JSON.parse(cache_road);
+						document.getElementById("roadname").value = cache_road.roadname;
+						document.getElementById("roadname").textContent = cache_road.roadcode;
+					}catch(e){
+						console.log(e.message);
+					}
+					
+					//协管员，则默认不能选择居村委
+					var d_jcw = JSON.parse(localStorage['d_jcw']);
+					var village_select = $("#village_select");
+					if(user.usertype=='4'){
+						//协管员
+						toggleVillage();
+					}else if(user.usertype=="1"){
+						//分局用户
+						village_select.html("");
+						for(var i in d_jcw){
+							village_select.append("<option value='" + d_jcw[i].dm + "'>" + d_jcw[i].mc + "</option");
+						}
+					}else if(user.usertype=="3"){
+						//派出所用户
+						village_select.html("");
+						for(var i in d_jcw){
+							if(d_jcw[i].fdm==user.pcsdm){
+								if(d_jcw[i].dm==user.jcwdm){
+									village_select.append("<option value='" + d_jcw[i].dm + "' selected='selected'>" + d_jcw[i].mc + "</option");
+								}else{
+									village_select.append("<option value='" + d_jcw[i].dm + "'>" + d_jcw[i].mc + "</option");
+								}
+							}
+						}
+					}
 					document.getElementById("village").value = user.jcwmc.split(',')[0];
 					document.getElementById("village").textContent = user.jcwdm;
+					
+					document.getElementById('village_select').addEventListener('change',function () {
+						document.getElementById('village').textContent = this.value;
+					});
 					
 					document.getElementById('roadname').addEventListener('focus',function (e) {
 					    //打开搜索页面
@@ -95,6 +140,7 @@
 						//通过event.detail可获得传递过来的参数内容
 						document.getElementById("roadname").value = e.detail.value;
 						document.getElementById("roadname").textContent = e.detail.code;
+						localStorage.setItem('shInmigrant-cache-query-road', JSON.stringify({ "roadname" : e.detail.value, "roadcode" : e.detail.code }));
 						closeMask(1);
 					});
 					
@@ -138,12 +184,13 @@
 			            waiting = plus.nativeUI.showWaiting("加载中...");
 			            app.queryHouseInfoListPrecise(q, function(d){
 			            	waiting.close();
+			            	var $grid = $("#jsGrid");
 			            	if(d.datas==null || d.datas.length <=0){
 			            		mui.toast("没有查询到结果！");
-			            		return;
+			            		clients = {};
+			            	}else{
+			            		clients = d.datas;
 			            	}
-			            	var $grid = $("#jsGrid");
-						    clients = d.datas;
 						    $grid.jsGrid("loadData");
 			            },function(e){
 			            	console.log(e);
@@ -180,12 +227,13 @@
 				        waiting = plus.nativeUI.showWaiting("加载中...");
 			            app.queryHouseInfoListFuzzy(q, function(d){
 			            	waiting.close();
+			            	var $grid = $("#jsGrid");
 			            	if(d.datas==null || d.datas.length <=0){
 			            		mui.toast("没有查询到结果！");
-			            		return;
+			            		clients = {};
+			            	}else{
+			            		clients = d.datas;
 			            	}
-			            	var $grid = $("#jsGrid");
-						    clients = d.datas;
 						    $grid.jsGrid("loadData");
 			            },function(e){
 			            	console.log(e);
@@ -208,11 +256,10 @@
 		                },
 						data: clients,
 						fields: [
-				            { title: "门楼牌号", name: "mlph", width: 50 },
+				            { title: "门楼牌号", name: "mlph", width: 100 },
 				            { title: "房屋名称", name: "sh", width: 100 },
 				            { title: "房主姓名", name: "fzxm", width: 80},
 				            { title: "房主身份证号码", name: "fzzjhm", width: 180 },
-				            { title: "房屋单位名称", name: "fwdwmc", width: 100 },
 				            { title: "居住类型", name: "jzlx", width: 80,
 				            	itemTemplate : function(value){
 				            		if(value=="01"){ return '个人房';}
@@ -230,10 +277,15 @@
 				            		else{ return "其他"; }
 				            	}
 				            },
-				            { title: "派出所名称", name: "pcsmc", width: 100 }
+				            { title: "派出所名称", name: "pcsmc", width: 100 },
+				            { title: "房屋单位名称", name: "fwdwmc", width: 100 }
 				        ]
 					});
 				});
+				var toggleVillage = function(){
+					$("#village").toggle("mui-hidden");
+					$("#village_span").toggle("mui-hidden");
+				};
 				var showDetailsDialog = function(info){
 					floatWebview(info);
 				}

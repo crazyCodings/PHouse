@@ -15,6 +15,9 @@
 .content_div{width: 90%;height: 380px;overflow:scroll;background-color: #1ea3de;margin: 5%;margin-bottom:0px;border-radius:10px;}
 .content_div div{float: left;}
 
+.select {float: left; width: 250px !important;margin-top: 20px;}
+.select select {height: 40px; border-radius: 15px; float: left; font-family: arial; background-color: dodgerblue;}
+
 /*提交Button*/
 .button_div{margin:10px 0 5px 180px;}
 .button_div input{width: 200px;margin-left: 20px;background-color:#1ea3de;border: 0;}

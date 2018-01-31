@@ -485,7 +485,7 @@
 			return false;
 		}
 		var jsonData = JSON.parse(data.childNodes[0].textContent);
-		console.log('success:<--soapaction: ' + soapaction + "\n<--jsonData:" + JSON.stringify(jsonData));
+		console.log('success:<--soapaction: ' + soapaction + "\n<--jsonData:" + (jsonData));
 		return true;
 	};
 	var failInfo = function(soapaction, xhr, type, errorThrown) {

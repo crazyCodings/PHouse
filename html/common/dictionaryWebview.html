@@ -105,11 +105,13 @@
 								break;
 							}
 							arr.push("<li data-value='" + dm + "' data-tags='" + py + "' class='mui-table-view-cell mui-indexed-list-item'>" + mc +"</li>");
-							//arr.push("<option value='" + dm + "'>" + mc + "</option>");
 						}
 					}
 					ullist.innerHTML = arr.join("");
-					//ullist.innerHTML = "<select autofocus>" + arr.join("") + "</select>";
+					var self = this;
+					self.box = ullist;
+					var withoutSearchHeight = (self.box.offsetHeight) + 'px';
+					self.box.style.height = '460px';
 				}
 				
 				var initDict = function(dictname){
@@ -124,6 +126,10 @@
 						arr.push("<li data-value='" + dm + "' data-tags='" + py + "' class='mui-table-view-cell mui-indexed-list-item'>" + mc +"</li>");
 					}
 					ullist.innerHTML = arr.join("");
+					var self = this;
+					self.box = ullist;
+					var withoutSearchHeight = (self.box.offsetHeight) + 'px';
+					self.box.style.height = '460px';
 				}
 				
 				mui.back = function() {
