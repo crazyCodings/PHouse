@@ -55,7 +55,7 @@
 	 * @param {Object} callback 前台调用后的回调函数
 	 * @param {Object} asyn	默认为异步，当参数中指定同步参数时，方法为同步
 	 */
-	owner.queryRhflFwryxx = function(data, callback, asyn) {
+	owner.queryRhflFwryxx = function(data, callback, failcallback, asyn) {
 		var userInfo = Utils.getUser();
 		var SoapAction = "queryRhflFwryxx";
 		var sendData = {
@@ -66,7 +66,7 @@
 			"ICLoginInfo" : userInfo
 		};
 		var success = callback;
-		invokeBackEndInterface(SoapAction, sendData, success, null, asyn);
+		invokeBackEndInterface(SoapAction, sendData, success, failcallback, asyn);
 	};
 	/**
 	 * 人户分离注销、离开前查询请求 
@@ -84,6 +84,34 @@
 		};
 		var success = callback;
 		invokeBackEndInterface(SoapAction, sendData, success, null, asyn);
+	};
+	
+	owner.insertJzrbzRhflRyxx = function(data, callback, failcallback, asyn) {
+		var userInfo = Utils.getUser();
+		var SoapAction = "insertJzrbzRhflRyxx";
+		data.RhflSavePersonVo.czrid = userInfo.xgyid;
+		data.RhflSavePersonVo.czrxm = userInfo.xgyname;
+		data.RhflSavePersonVo.czrzjhm = userInfo.xgypid;
+		var sendData = {
+			"RhflSavePersonVo" : data.RhflSavePersonVo,
+			"ICLoginInfo" : userInfo
+		};
+		var success = callback;
+		invokeBackEndInterface(SoapAction, sendData, success, failcallback, asyn);
+	};
+	
+	owner.insertHzrbzRhflRyxx = function(data, callback, failcallback, asyn) {
+		var userInfo = Utils.getUser();
+		var SoapAction = "insertHzrbzRhflRyxx";
+		data.RhflSavePersonVo.czrid = userInfo.xgyid;
+		data.RhflSavePersonVo.czrxm = userInfo.xgyname;
+		data.RhflSavePersonVo.czrzjhm = userInfo.xgypid;
+		var sendData = {
+			"RhflSavePersonVo" : data.RhflSavePersonVo,
+			"ICLoginInfo" : userInfo
+		};
+		var success = callback;
+		invokeBackEndInterface(SoapAction, sendData, success, failcallback, asyn);
 	};
 	
 	/**
@@ -486,6 +514,7 @@
 		}
 		var jsonData = JSON.parse(data.childNodes[0].textContent);
 		console.log('success:<--soapaction: ' + soapaction + "\n<--jsonData:" + (jsonData));
+		console.log(jsonData);
 		return true;
 	};
 	var failInfo = function(soapaction, xhr, type, errorThrown) {

@@ -130,6 +130,9 @@
 								waiting.close();
 								mui.toast(data.msg);
 							}
+						},function(e){
+							mui.toast(e);
+							waiting.close();
 						});
 						
 					});

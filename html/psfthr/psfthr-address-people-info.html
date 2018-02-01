@@ -71,11 +71,11 @@
 				$$.init({
 					statusBarBackground: '#f7f7f7'
 				});
-				var housrInfo = {};
+				var housrInfo = {}, ws;
 				$$.plusReady(function() {
 					plus.screen.lockOrientation("landscape-primary");
-					var self =  plus.webview.currentWebview();
-					housrInfo = self.houserinfo;
+					ws =  plus.webview.currentWebview();
+					housrInfo = ws.houserinfo;
 					document.getElementById('back_btn').addEventListener('tap',function () {
 						mui.back();
 					});
@@ -167,8 +167,48 @@
 			                		});
 		                		}else if(usertype == "06" || usertype == "07"){  // 06 户在人不在   07居在人不在
 		                			//确认是否在住， 06：insertHzrbzRhflRyxx 07:insertJzrbzRhflRyxx
+		                			var q = {
+		                				"RhflSavePersonVo" : {
+		                					"fwid": housrInfo.fwjbxx.fwid,
+											"zjhm": item.item.zjhm,
+											"xm": item.item.xm,
+											"rid": item.item.rid,
+											"jzyy": "",
+											"jzyymc": "",
+											"yfzgx": "",
+											"yfzgxmc": "",
+											"lxfs": ""
+		                				}
+		                			}
 		                			mui.confirm('在住确认', '', ['在住', '不在住'], function(e){
-		                				mui.toast("此为测试，禁止操作数据");
+		                				if(e.index=="0"){
+		                					if(usertype == "07"){
+		                						app.insertJzrbzRhflRyxx(q, function(d){
+			                						if(d.result=="0"){
+			                							mui.toast(d.msg);
+			                							ws.reload();
+			                						}else{
+			                							mui.toast(d.msg);
+			                						}
+			                					},function(e){
+			                						mui.toast(e);
+			                					});
+		                					}else if(usertype == "06"){
+		                						app.insertHzrbzRhflRyxx(q, function(d){
+			                						if(d.result=="0"){
+			                							mui.toast(d.msg);
+			                							ws.reload();
+			                						}else{
+			                							mui.toast(d.msg);
+			                						}
+			                					},function(e){
+			                						mui.toast(e);
+			                					});
+		                					}
+		                					
+		                				}else{
+		                					console.log("不在住");
+		                				}
 		                			});
 		                		}
 		                	}
