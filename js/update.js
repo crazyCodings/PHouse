@@ -44,7 +44,7 @@
 			}, function(entry) {
 				dir = entry;
 				checkUpdate();
-				Utils.updateDictAll();
+				Utils.updateDictAll(true);
 			}, function(e) {
 				console.log("准备升级操作，打开update目录失败：" + e.message);
 			});
