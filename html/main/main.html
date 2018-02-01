@@ -22,14 +22,31 @@
 			.img_div_small {float: left; padding: 20px;padding-left: 170px; }
 			.img_div_small img{width: 60px;height: 60px;}
 			.img_div_small label{color: antiquewhite; font-size: medium; padding: 5px ;}
+			#topPopover { position: fixed; top: 16px; right: 6px;}
+			#topPopover .mui-popover-arrow { left: auto; right: 6px; }
+			.mui-popover { height: 90px; }
 		</style>
 	</head>
 	<body>
 		<div class="mui-content">
 			<div id="menu_div" class="menu_div">
 				<div class="mui-input-row">
-					<a  id="menubtn"  >退出</a>
-					<a  id="userinfo" >username</a>
+					<a  id="menubtn" class="mui-action-menu mui-icon mui-pull-right" href="#topPopover">菜单</a>
+					<div id="topPopover" class="mui-popover">
+						<div class="mui-scroll-wrapper">
+							<div class="mui-scroll">
+								<ul class="mui-table-view">
+									<li class="mui-table-view-cell"><a href="#" id="update_dict">更新字典</a>
+									</li>
+									<li class="mui-table-view-cell"><a href="#" id="logout">退出</a>
+									</li>
+									<li class="mui-table-view-cell"><a href="#" id="check_version">查看版本</a>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<a  id="userinfo" class="mui-action-menu mui-icon mui-pull-right">username</a>
 				</div>
 			</div>
 			<div id="main_div" class="main_div">
@@ -83,10 +100,24 @@
 				var ws , floatw;
 				$.plusReady(function() {
 					plus.screen.lockOrientation("landscape-primary");
+					ws = plus.webview.currentWebview();
 					document.getElementById("userinfo").text = Utils.getUser().xgyname;
-					document.getElementById('menubtn').addEventListener('tap',function () {
+					document.getElementById('logout').addEventListener('tap',function () {
 					    mui.back();
-					})
+					    mui.confirm("退出？", '', ['是', '否'], function(e){
+					    	if(e.index=="0"){
+					    		ws.hide();
+					    	}
+					    });
+					});
+					document.getElementById('update_dict').addEventListener('tap',function () {
+					    mui.back();
+					    mui.confirm("更新字典？", '', ['是', '否'], function(e){
+					    	if(e.index=="0"){
+					    		Utils.updateDictAll(false);
+					    	}
+					    });
+					});
 					mui(".img_div, .img_div_small").on('tap','.img_div div, .img_div_small div', function(){
 						var subname = this.firstElementChild.id;
 						if( subname==null || subname=="") {

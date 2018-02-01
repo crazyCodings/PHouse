@@ -122,7 +122,8 @@
         return dataURL
 	},
 	
-	Utils.updateDictAll = function(){
+	//是否检查本地，true：检查本地  ，false 直接更新
+	Utils.updateDictAll = function(isCheck){
 		var dict = [
 			{ "dictName" : "d_lm", "dictDes" : "路名"},
 			{ "dictName" : "d_jcw", "dictDes" : "居委会（居村委）"},
@@ -163,19 +164,25 @@
 				create: true
 			}, function(entry) {
 				var dictname = "";
+				var wait = plus.nativeUI.showWaiting("更新【" + dict.length +  "】个字典");
 				for(var i in dict){
 					dictname = dict[i].dictName;
-					if(localStorage[dictname]==undefined){
+					if(isCheck){
+						if(localStorage[dictname]==undefined){
+							Utils.updateDict(dictname, entry);
+						}
+					}else{
+						localStorage.removeItem(dictname);
 						Utils.updateDict(dictname, entry);
 					}
 				}
+				wait.close();
 			}, function(e) {
 				console.log("字典更新，打开dict目录失败：" + e.message);
 			});
 		}, function(e) {
 			console.log("字典更新，打开doc目录失败：" + e.message);
 		});
-		
 	},
 	Utils.updateDict = function(dictName, entry){
 		var localFile = dictName + ".json";
